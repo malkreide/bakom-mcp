@@ -13,7 +13,7 @@
 
 `bakom-mcp` verbindet KI-Assistenten mit der Open-Data-Infrastruktur des Bundesamts für Kommunikation (BAKOM). Ermöglicht Abfragen in natürlicher Sprache zu Breitbandverfügbarkeit, 5G/4G-Abdeckung, Mobilfunkstandorten, konzessionierten Rundfunkveranstaltern (RTV-Datenbank) und Telekommunikationsstatistiken – ohne API-Schlüssel.
 
-Entwickelt für das **Schulamt der Stadt Zürich**, die **Stadtverwaltung Zürich** und die **KI-Fachgruppe** der Stadtverwaltung. Zentraler Use Case: Automatisierter Breitband- und 5G-Check für alle Schulhäuser der Stadt Zürich.
+Zentraler Use Case: Automatisierter Breitband- und 5G-Check für alle Schulhäuser der Stadt Zürich.
 
 ### Anker-Demo
 
