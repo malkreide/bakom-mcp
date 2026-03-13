@@ -13,7 +13,7 @@
 
 `bakom-mcp` connects AI assistants to the Swiss Federal Office of Communications (BAKOM) open data infrastructure. It enables natural-language queries about broadband availability, 5G/4G coverage, mobile antenna locations, licensed broadcasters (RTV database), and telecommunications statistics — all without API keys.
 
-Designed for use at the **Schulamt der Stadt Zürich** (city school department), **Stadtverwaltung Zürich** and the **KI-Fachgruppe** of Zurich city administration. A key use case: automatically checking broadband and 5G status for all school buildings in the city.
+A key use case: automatically checking broadband and 5G status for all school buildings in the city.
 
 ## Features
 
