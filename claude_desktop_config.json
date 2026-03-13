@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "bakom": {
+      "command": "uvx",
+      "args": [
+        "bakom-mcp"
+      ]
+    }
+  }
+}
