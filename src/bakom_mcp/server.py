@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import json
 import logging
-from enum import Enum
-from typing import Any, Optional
+from enum import StrEnum
+from typing import Any
 
 import httpx
 from mcp.server.fastmcp import FastMCP
@@ -53,18 +53,18 @@ LAYER_BROADBAND_FESTNETZ = "ch.bakom.anschlussart-verfuegbarkeit"
 # ---------------------------------------------------------------------------
 # Enums
 # ---------------------------------------------------------------------------
-class ResponseFormat(str, Enum):
+class ResponseFormat(StrEnum):
     MARKDOWN = "markdown"
     JSON = "json"
 
 
-class MobilGenerations(str, Enum):
+class MobilGenerations(StrEnum):
     G5 = "5G"
     G4 = "4G"
     G3 = "3G"
 
 
-class BroadbandSpeed(str, Enum):
+class BroadbandSpeed(StrEnum):
     S30 = "30"
     S100 = "100"
     S300 = "300"
@@ -72,7 +72,7 @@ class BroadbandSpeed(str, Enum):
     S1000 = "1000"
 
 
-class MediaType(str, Enum):
+class MediaType(StrEnum):
     RADIO = "radio"
     TV = "tv"
     ALLE = "alle"
@@ -182,7 +182,7 @@ class AntennaSearchInput(BaseModel):
 class RTVSearchInput(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
 
-    query: Optional[str] = Field(
+    query: str | None = Field(
         default=None,
         description="Suchbegriff (Name des Senders, z.B. 'SRF', 'Radio 1', 'Tele Züri')",
         max_length=100,
@@ -191,7 +191,7 @@ class RTVSearchInput(BaseModel):
         default=MediaType.ALLE,
         description="Medientyp: 'radio', 'tv' oder 'alle'",
     )
-    kanton: Optional[str] = Field(
+    kanton: str | None = Field(
         default=None,
         description="Kantonskürzel (z.B. 'ZH', 'BE', 'GE')",
         max_length=2,
@@ -209,7 +209,7 @@ class RTVSearchInput(BaseModel):
 
     @field_validator("kanton")
     @classmethod
-    def kanton_uppercase(cls, v: Optional[str]) -> Optional[str]:
+    def kanton_uppercase(cls, v: str | None) -> str | None:
         return v.upper() if v else v
 
 
@@ -845,7 +845,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput) -> str:
             if params.response_format == ResponseFormat.JSON:
                 return json.dumps(output, indent=2, ensure_ascii=False)
 
-            md = f"## Mobilfunkanlagen im Umkreis\n"
+            md = "## Mobilfunkanlagen im Umkreis\n"
             md += f"**Standort:** {params.latitude:.4f}° N, {params.longitude:.4f}° E  \n"
             md += f"**Suchradius:** {params.radius_m} m  \n"
             md += f"**Gefunden:** {len(anlagen)} Anlage(n)\n\n"
@@ -863,7 +863,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput) -> str:
                 if len(anlagen) > 20:
                     md += f"\n_... und {len(anlagen) - 20} weitere Anlagen._\n"
 
-            md += f"\n**Datenquelle:** BAKOM Mobilfunkanlagen  \n"
+            md += "\n**Datenquelle:** BAKOM Mobilfunkanlagen  \n"
             md += f"**Karte:** https://map.geo.admin.ch/?layers={LAYER_MOBILFUNKANLAGEN}"
             return md
 
@@ -954,7 +954,7 @@ async def bakom_frequenzdaten(params: CoordinateInput) -> str:
             if params.response_format == ResponseFormat.JSON:
                 return json.dumps(output, indent=2, ensure_ascii=False)
 
-            md = f"## Radio- und TV-Sendeanlagen\n"
+            md = "## Radio- und TV-Sendeanlagen\n"
             md += f"**Standort:** {params.latitude:.4f}° N, {params.longitude:.4f}° E  \n"
             md += f"**Suchradius:** {radius // 1000} km  \n"
             md += f"**Gefunden:** {len(sender)} Anlage(n)\n\n"
@@ -971,7 +971,7 @@ async def bakom_frequenzdaten(params: CoordinateInput) -> str:
                     betr = s.get("betreiber") or "–"
                     md += f"| {typ} | {prog} | {freq} | {betr} |\n"
 
-            md += f"\n**Datenquelle:** BAKOM Radio-/TV-Sendeanlagen  \n"
+            md += "\n**Datenquelle:** BAKOM Radio-/TV-Sendeanlagen  \n"
             md += f"**Karte:** https://map.geo.admin.ch/?layers={LAYER_RADIO_TV}"
             return md
 
@@ -1082,7 +1082,7 @@ async def bakom_rtv_suche(params: RTVSearchInput) -> str:
             if params.response_format == ResponseFormat.JSON:
                 return json.dumps(output, indent=2, ensure_ascii=False)
 
-            md = f"## BAKOM RTV-Datenbank – Suchergebnisse\n"
+            md = "## BAKOM RTV-Datenbank – Suchergebnisse\n"
             md += f"**Suche:** «{params.query or 'alle'}»"
             if params.kanton:
                 md += f" | **Kanton:** {params.kanton}"
@@ -1104,7 +1104,7 @@ async def bakom_rtv_suche(params: RTVSearchInput) -> str:
                         md += f" | [Website]({url})"
                     md += "  \n\n"
 
-            md += f"**Vollständige Datenbank:** https://rtvdb.ofcomnet.ch/de"
+            md += "**Vollständige Datenbank:** https://rtvdb.ofcomnet.ch/de"
             return md
 
     except Exception as e:
@@ -1357,8 +1357,8 @@ async def bakom_aktuell(params: TelekomStatInput) -> str:
             md += f"[Mehr erfahren]({h['url']})\n"
         md += "\n"
 
-    md += f"**BAKOM:** https://www.bakom.admin.ch/de  \n"
-    md += f"**Open Data:** https://opendata.swiss/de/organization/bundesamt-fur-kommunikation-bakom"
+    md += "**BAKOM:** https://www.bakom.admin.ch/de  \n"
+    md += "**Open Data:** https://opendata.swiss/de/organization/bundesamt-fur-kommunikation-bakom"
     return md
 
 
@@ -1472,7 +1472,7 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput) -> str:
                             md += f"- [{fmt} – {name}]({url})\n"
                 md += f"[Zum Datensatz]({ds['url']})\n\n"
 
-            md += f"**Weitere Statistiken:** https://www.bakom.admin.ch/de/telekommunikation/zahlen-und-fakten"
+            md += "**Weitere Statistiken:** https://www.bakom.admin.ch/de/telekommunikation/zahlen-und-fakten"
             return md
 
     except Exception as e:
@@ -1632,8 +1632,8 @@ async def bakom_breitbandatlas_datensaetze(params: TelekomStatInput) -> str:
             md += f"| [{item['titel']}]({item['url']}) | `{item['layer_id']}` | {item['aufloesung']} |\n"
         md += "\n"
 
-    md += f"**API:** `https://api3.geo.admin.ch/rest/services/api/MapServer/identify`  \n"
-    md += f"**Karte:** https://map.geo.admin.ch/"
+    md += "**API:** `https://api3.geo.admin.ch/rest/services/api/MapServer/identify`  \n"
+    md += "**Karte:** https://map.geo.admin.ch/"
     return md
 
 
