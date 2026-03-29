@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import json
 import logging
-from enum import Enum
-from typing import Any, Optional
+from enum import StrEnum
+from typing import Any
 
 import httpx
 from mcp.server.fastmcp import FastMCP
@@ -50,21 +50,22 @@ LAYER_BROADBAND_5G = "ch.bakom.netzabdeckung-5g"
 LAYER_BROADBAND_4G = "ch.bakom.netzabdeckung-4g"
 LAYER_BROADBAND_FESTNETZ = "ch.bakom.anschlussart-verfuegbarkeit"
 
+
 # ---------------------------------------------------------------------------
 # Enums
 # ---------------------------------------------------------------------------
-class ResponseFormat(str, Enum):
+class ResponseFormat(StrEnum):
     MARKDOWN = "markdown"
     JSON = "json"
 
 
-class MobilGenerations(str, Enum):
+class MobilGenerations(StrEnum):
     G5 = "5G"
     G4 = "4G"
     G3 = "3G"
 
 
-class BroadbandSpeed(str, Enum):
+class BroadbandSpeed(StrEnum):
     S30 = "30"
     S100 = "100"
     S300 = "300"
@@ -72,7 +73,7 @@ class BroadbandSpeed(str, Enum):
     S1000 = "1000"
 
 
-class MediaType(str, Enum):
+class MediaType(StrEnum):
     RADIO = "radio"
     TV = "tv"
     ALLE = "alle"
@@ -182,7 +183,7 @@ class AntennaSearchInput(BaseModel):
 class RTVSearchInput(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
 
-    query: Optional[str] = Field(
+    query: str | None = Field(
         default=None,
         description="Suchbegriff (Name des Senders, z.B. 'SRF', 'Radio 1', 'Tele Züri')",
         max_length=100,
@@ -191,7 +192,7 @@ class RTVSearchInput(BaseModel):
         default=MediaType.ALLE,
         description="Medientyp: 'radio', 'tv' oder 'alle'",
     )
-    kanton: Optional[str] = Field(
+    kanton: str | None = Field(
         default=None,
         description="Kantonskürzel (z.B. 'ZH', 'BE', 'GE')",
         max_length=2,
@@ -209,7 +210,7 @@ class RTVSearchInput(BaseModel):
 
     @field_validator("kanton")
     @classmethod
-    def kanton_uppercase(cls, v: Optional[str]) -> Optional[str]:
+    def kanton_uppercase(cls, v: str | None) -> str | None:
         return v.upper() if v else v
 
 
@@ -328,9 +329,7 @@ async def _wms_abgedeckt(
         return False
 
 
-async def _opendata_dataset_info(
-    client: httpx.AsyncClient, dataset_id: str
-) -> dict[str, Any]:
+async def _opendata_dataset_info(client: httpx.AsyncClient, dataset_id: str) -> dict[str, Any]:
     """Metadaten eines opendata.swiss-Datensatzes abrufen."""
     url = f"{OPENDATA_SWISS_API}/package_show"
     r = await client.get(url, params={"id": dataset_id}, timeout=TIMEOUT)
@@ -404,6 +403,7 @@ mcp = FastMCP(
 # ===========================================================================
 # KATEGORIE 1: BREITBAND & KONNEKTIVITÄT
 # ===========================================================================
+
 
 @mcp.tool(
     name="bakom_broadband_coverage",
@@ -479,8 +479,8 @@ async def bakom_broadband_coverage(params: BroadbandCoverageInput) -> str:
 |---------|------|
 | Abdeckung {speed} Mbit/s | {status} |
 
-**Datenquelle:** {result['datenquelle']}  
-**Karte:** {result['geodaten_api']}"""
+**Datenquelle:** {result["datenquelle"]}  
+**Karte:** {result["geodaten_api"]}"""
             return md
 
     except Exception as e:
@@ -544,8 +544,8 @@ async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput) -> str:
 |-------------|--------|
 | Glasfaser (FTTB/FTTH) | {status} |
 
-**Datenquelle:** {result['datenquelle']}  
-**Karte:** {result['geodaten_api']}"""
+**Datenquelle:** {result["datenquelle"]}  
+**Karte:** {result["geodaten_api"]}"""
             return md
 
     except Exception as e:
@@ -604,14 +604,16 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput) -> str
             lon = float(loc.get("longitude", 0))
 
             if not (45.8 <= lat <= 47.9) or not (5.9 <= lon <= 10.6):
-                standort_results.append({
-                    "name": name,
-                    "lat": lat,
-                    "lon": lon,
-                    "5g_abdeckung": None,
-                    "glasfaser_fttb": None,
-                    "fehler": "Koordinaten ausserhalb Schweiz",
-                })
+                standort_results.append(
+                    {
+                        "name": name,
+                        "lat": lat,
+                        "lon": lon,
+                        "5g_abdeckung": None,
+                        "glasfaser_fttb": None,
+                        "fehler": "Koordinaten ausserhalb Schweiz",
+                    }
+                )
                 continue
 
             try:
@@ -619,20 +621,28 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput) -> str
                 has_5g = await _wms_abgedeckt(client, "ch.bakom.mobilnetz-5g", east, north)
                 fttb = await _wms_abgedeckt(client, "ch.bakom.anschlussart-glasfaser", east, north)
 
-                standort_results.append({
-                    "name": name, "lat": lat, "lon": lon,
-                    "5g_abdeckung": has_5g, "glasfaser_fttb": fttb, "fehler": None,
-                })
+                standort_results.append(
+                    {
+                        "name": name,
+                        "lat": lat,
+                        "lon": lon,
+                        "5g_abdeckung": has_5g,
+                        "glasfaser_fttb": fttb,
+                        "fehler": None,
+                    }
+                )
 
             except Exception as e:
-                standort_results.append({
-                    "name": name,
-                    "lat": lat,
-                    "lon": lon,
-                    "5g_abdeckung": None,
-                    "glasfaser_fttb": None,
-                    "fehler": str(e)[:100],
-                })
+                standort_results.append(
+                    {
+                        "name": name,
+                        "lat": lat,
+                        "lon": lon,
+                        "5g_abdeckung": None,
+                        "glasfaser_fttb": None,
+                        "fehler": str(e)[:100],
+                    }
+                )
 
     mit_5g = sum(1 for s in standort_results if s.get("5g_abdeckung") is True)
     mit_glasfaser = sum(1 for s in standort_results if s.get("glasfaser_fttb") is True)
@@ -655,7 +665,9 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput) -> str
     md += "|----------|----|-----------------|---------|\n"
     for s in standort_results:
         g5 = "✅" if s.get("5g_abdeckung") else ("❌" if s.get("5g_abdeckung") is False else "–")
-        fib = "✅" if s.get("glasfaser_fttb") else ("❌" if s.get("glasfaser_fttb") is False else "–")
+        fib = (
+            "✅" if s.get("glasfaser_fttb") else ("❌" if s.get("glasfaser_fttb") is False else "–")
+        )
         err = s.get("fehler") or ""
         md += f"| {s['name']} | {g5} | {fib} | {err} |\n"
 
@@ -668,6 +680,7 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput) -> str
 # ===========================================================================
 # KATEGORIE 2: MOBILFUNK & SENDEANLAGEN
 # ===========================================================================
+
 
 @mcp.tool(
     name="bakom_mobilfunk_abdeckung",
@@ -735,7 +748,7 @@ async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput) -> str:
 > ℹ️ Abdeckungsangaben beziehen sich auf den Aussenbereich (Outdoor).
 > Gebäudedämpfung kann die Innenabdeckung reduzieren.
 
-**Datenquelle:** {result['datenquelle']}  
+**Datenquelle:** {result["datenquelle"]}  
 **Karte:** https://map.geo.admin.ch/?layers={layer}"""
             return md
 
@@ -794,7 +807,6 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput) -> str:
                 f"{GEO_ADMIN_API}/identify",
                 params={
                     "geometry": f"{east - radius},{north - radius},{east + radius},{north + radius}",
-                    
                     "geometryType": "esriGeometryEnvelope",
                     "imageDisplay": "1000,1000,96",
                     "mapExtent": bbox,
@@ -820,16 +832,21 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput) -> str:
                 distanz = None
                 if item_east and item_north:
                     import math
-                    distanz = round(math.sqrt((item_east - east) ** 2 + (item_north - north) ** 2), 0)
 
-                anlagen.append({
-                    "id": str(item.get("id", "")),
-                    "typ": attrs.get("type", attrs.get("label", "Mobilfunkanlage")),
-                    "betreiber": attrs.get("operator", attrs.get("betreiber")),
-                    "adresse": attrs.get("address", attrs.get("adresse")),
-                    "distanz_m": distanz,
-                    "koordinaten": {"east": item_east, "north": item_north},
-                })
+                    distanz = round(
+                        math.sqrt((item_east - east) ** 2 + (item_north - north) ** 2), 0
+                    )
+
+                anlagen.append(
+                    {
+                        "id": str(item.get("id", "")),
+                        "typ": attrs.get("type", attrs.get("label", "Mobilfunkanlage")),
+                        "betreiber": attrs.get("operator", attrs.get("betreiber")),
+                        "adresse": attrs.get("address", attrs.get("adresse")),
+                        "distanz_m": distanz,
+                        "koordinaten": {"east": item_east, "north": item_north},
+                    }
+                )
 
             # Nach Distanz sortieren
             anlagen.sort(key=lambda x: x.get("distanz_m") or float("inf"))
@@ -845,7 +862,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput) -> str:
             if params.response_format == ResponseFormat.JSON:
                 return json.dumps(output, indent=2, ensure_ascii=False)
 
-            md = f"## Mobilfunkanlagen im Umkreis\n"
+            md = "## Mobilfunkanlagen im Umkreis\n"
             md += f"**Standort:** {params.latitude:.4f}° N, {params.longitude:.4f}° E  \n"
             md += f"**Suchradius:** {params.radius_m} m  \n"
             md += f"**Gefunden:** {len(anlagen)} Anlage(n)\n\n"
@@ -863,7 +880,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput) -> str:
                 if len(anlagen) > 20:
                     md += f"\n_... und {len(anlagen) - 20} weitere Anlagen._\n"
 
-            md += f"\n**Datenquelle:** BAKOM Mobilfunkanlagen  \n"
+            md += "\n**Datenquelle:** BAKOM Mobilfunkanlagen  \n"
             md += f"**Karte:** https://map.geo.admin.ch/?layers={LAYER_MOBILFUNKANLAGEN}"
             return md
 
@@ -917,7 +934,6 @@ async def bakom_frequenzdaten(params: CoordinateInput) -> str:
                 f"{GEO_ADMIN_API}/identify",
                 params={
                     "geometry": f"{east - radius},{north - radius},{east + radius},{north + radius}",
-                    
                     "geometryType": "esriGeometryEnvelope",
                     "imageDisplay": "1000,1000,96",
                     "mapExtent": f"{east - radius},{north - radius},{east + radius},{north + radius}",
@@ -935,13 +951,15 @@ async def bakom_frequenzdaten(params: CoordinateInput) -> str:
             sender = []
             for item in results[:30]:
                 attrs = item.get("attributes", {})
-                sender.append({
-                    "typ": attrs.get("type", "Sender"),
-                    "frequenz": attrs.get("frequency", attrs.get("frequenz")),
-                    "betreiber": attrs.get("operator", attrs.get("betreiber")),
-                    "programm": attrs.get("programme", attrs.get("programm")),
-                    "label": attrs.get("label"),
-                })
+                sender.append(
+                    {
+                        "typ": attrs.get("type", "Sender"),
+                        "frequenz": attrs.get("frequency", attrs.get("frequenz")),
+                        "betreiber": attrs.get("operator", attrs.get("betreiber")),
+                        "programm": attrs.get("programme", attrs.get("programm")),
+                        "label": attrs.get("label"),
+                    }
+                )
 
             output = {
                 "standort": {"lat": params.latitude, "lon": params.longitude},
@@ -954,7 +972,7 @@ async def bakom_frequenzdaten(params: CoordinateInput) -> str:
             if params.response_format == ResponseFormat.JSON:
                 return json.dumps(output, indent=2, ensure_ascii=False)
 
-            md = f"## Radio- und TV-Sendeanlagen\n"
+            md = "## Radio- und TV-Sendeanlagen\n"
             md += f"**Standort:** {params.latitude:.4f}° N, {params.longitude:.4f}° E  \n"
             md += f"**Suchradius:** {radius // 1000} km  \n"
             md += f"**Gefunden:** {len(sender)} Anlage(n)\n\n"
@@ -971,7 +989,7 @@ async def bakom_frequenzdaten(params: CoordinateInput) -> str:
                     betr = s.get("betreiber") or "–"
                     md += f"| {typ} | {prog} | {freq} | {betr} |\n"
 
-            md += f"\n**Datenquelle:** BAKOM Radio-/TV-Sendeanlagen  \n"
+            md += "\n**Datenquelle:** BAKOM Radio-/TV-Sendeanlagen  \n"
             md += f"**Karte:** https://map.geo.admin.ch/?layers={LAYER_RADIO_TV}"
             return md
 
@@ -982,6 +1000,7 @@ async def bakom_frequenzdaten(params: CoordinateInput) -> str:
 # ===========================================================================
 # KATEGORIE 3: MEDIEN & RTV
 # ===========================================================================
+
 
 @mcp.tool(
     name="bakom_rtv_suche",
@@ -1082,7 +1101,7 @@ async def bakom_rtv_suche(params: RTVSearchInput) -> str:
             if params.response_format == ResponseFormat.JSON:
                 return json.dumps(output, indent=2, ensure_ascii=False)
 
-            md = f"## BAKOM RTV-Datenbank – Suchergebnisse\n"
+            md = "## BAKOM RTV-Datenbank – Suchergebnisse\n"
             md += f"**Suche:** «{params.query or 'alle'}»"
             if params.kanton:
                 md += f" | **Kanton:** {params.kanton}"
@@ -1093,7 +1112,7 @@ async def bakom_rtv_suche(params: RTVSearchInput) -> str:
             if not resultate:
                 md += "> Keine Einträge gefunden.\n"
             else:
-                for r_item in resultate[:params.limit]:
+                for r_item in resultate[: params.limit]:
                     name = r_item.get("name", "–")
                     typ = r_item.get("typ", "–")
                     kanton = r_item.get("kanton", r_item.get("canton", "–"))
@@ -1104,7 +1123,7 @@ async def bakom_rtv_suche(params: RTVSearchInput) -> str:
                         md += f" | [Website]({url})"
                     md += "  \n\n"
 
-            md += f"**Vollständige Datenbank:** https://rtvdb.ofcomnet.ch/de"
+            md += "**Vollständige Datenbank:** https://rtvdb.ofcomnet.ch/de"
             return md
 
     except Exception as e:
@@ -1167,12 +1186,14 @@ async def bakom_medienstruktur_info(params: TelekomStatInput) -> str:
                 titel_de = titel.get("de") if isinstance(titel, dict) else str(titel)
                 notes = ds.get("notes", {})
                 notes_de = notes.get("de") if isinstance(notes, dict) else str(notes)
-                datensaetze.append({
-                    "titel": titel_de or ds.get("name", ""),
-                    "beschreibung": (notes_de or "")[:200],
-                    "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
-                    "aktualisiert": ds.get("metadata_modified", ""),
-                })
+                datensaetze.append(
+                    {
+                        "titel": titel_de or ds.get("name", ""),
+                        "beschreibung": (notes_de or "")[:200],
+                        "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
+                        "aktualisiert": ds.get("metadata_modified", ""),
+                    }
+                )
 
             medienlinks = {
                 "bakom_medienstruktur": "https://www.bakom.admin.ch/de/medien-strukturbericht",
@@ -1300,9 +1321,7 @@ async def bakom_aktuell(params: TelekomStatInput) -> str:
 
     # Thema-Mapping
     thema_lower = params.thema.lower()
-    matched_key = next(
-        (k for k in highlights_db if k in thema_lower or thema_lower in k), None
-    )
+    matched_key = next((k for k in highlights_db if k in thema_lower or thema_lower in k), None)
     highlights = highlights_db.get(matched_key or "medien", [])
 
     # Ergänzend: opendata.swiss-Suche
@@ -1323,12 +1342,14 @@ async def bakom_aktuell(params: TelekomStatInput) -> str:
             for ds in datasets:
                 titel = ds.get("title", {})
                 titel_de = titel.get("de") if isinstance(titel, dict) else str(titel)
-                highlights.append({
-                    "titel": f"[Datensatz] {titel_de}",
-                    "datum": ds.get("metadata_modified", "")[:10],
-                    "beschreibung": "",
-                    "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
-                })
+                highlights.append(
+                    {
+                        "titel": f"[Datensatz] {titel_de}",
+                        "datum": ds.get("metadata_modified", "")[:10],
+                        "beschreibung": "",
+                        "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
+                    }
+                )
     except Exception:
         pass
 
@@ -1357,14 +1378,15 @@ async def bakom_aktuell(params: TelekomStatInput) -> str:
             md += f"[Mehr erfahren]({h['url']})\n"
         md += "\n"
 
-    md += f"**BAKOM:** https://www.bakom.admin.ch/de  \n"
-    md += f"**Open Data:** https://opendata.swiss/de/organization/bundesamt-fur-kommunikation-bakom"
+    md += "**BAKOM:** https://www.bakom.admin.ch/de  \n"
+    md += "**Open Data:** https://opendata.swiss/de/organization/bundesamt-fur-kommunikation-bakom"
     return md
 
 
 # ===========================================================================
 # KATEGORIE 4: TELEKOMMUNIKATIONSSTATISTIK
 # ===========================================================================
+
 
 @mcp.tool(
     name="bakom_telekomstatistik_uebersicht",
@@ -1430,19 +1452,25 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput) -> str:
                 # Ressourcen-URLs extrahieren
                 ressourcen = []
                 for res in ds.get("resources", [])[:3]:
-                    ressourcen.append({
-                        "format": res.get("format", ""),
-                        "name": res.get("name", {}).get("de") if isinstance(res.get("name"), dict) else str(res.get("name", "")),
-                        "url": res.get("url", ""),
-                    })
+                    ressourcen.append(
+                        {
+                            "format": res.get("format", ""),
+                            "name": res.get("name", {}).get("de")
+                            if isinstance(res.get("name"), dict)
+                            else str(res.get("name", "")),
+                            "url": res.get("url", ""),
+                        }
+                    )
 
-                datensaetze.append({
-                    "titel": titel_de or ds.get("name", ""),
-                    "beschreibung": (notes_de or "")[:300],
-                    "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
-                    "organisation": "BAKOM",
-                    "ressourcen": ressourcen,
-                })
+                datensaetze.append(
+                    {
+                        "titel": titel_de or ds.get("name", ""),
+                        "beschreibung": (notes_de or "")[:300],
+                        "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
+                        "organisation": "BAKOM",
+                        "ressourcen": ressourcen,
+                    }
+                )
 
             output = {
                 "thema": params.thema,
@@ -1472,7 +1500,7 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput) -> str:
                             md += f"- [{fmt} – {name}]({url})\n"
                 md += f"[Zum Datensatz]({ds['url']})\n\n"
 
-            md += f"**Weitere Statistiken:** https://www.bakom.admin.ch/de/telekommunikation/zahlen-und-fakten"
+            md += "**Weitere Statistiken:** https://www.bakom.admin.ch/de/telekommunikation/zahlen-und-fakten"
             return md
 
     except Exception as e:
@@ -1601,9 +1629,9 @@ async def bakom_breitbandatlas_datensaetze(params: TelekomStatInput) -> str:
     thema_lower = params.thema.lower()
     if thema_lower not in ("alle", "breitband", "übersicht", "uebersicht"):
         katalog = [
-            d for d in katalog
-            if thema_lower in d["titel"].lower()
-            or thema_lower in d["kategorie"].lower()
+            d
+            for d in katalog
+            if thema_lower in d["titel"].lower() or thema_lower in d["kategorie"].lower()
         ]
 
     output = {
@@ -1632,8 +1660,8 @@ async def bakom_breitbandatlas_datensaetze(params: TelekomStatInput) -> str:
             md += f"| [{item['titel']}]({item['url']}) | `{item['layer_id']}` | {item['aufloesung']} |\n"
         md += "\n"
 
-    md += f"**API:** `https://api3.geo.admin.ch/rest/services/api/MapServer/identify`  \n"
-    md += f"**Karte:** https://map.geo.admin.ch/"
+    md += "**API:** `https://api3.geo.admin.ch/rest/services/api/MapServer/identify`  \n"
+    md += "**Karte:** https://map.geo.admin.ch/"
     return md
 
 
@@ -1641,58 +1669,75 @@ async def bakom_breitbandatlas_datensaetze(params: TelekomStatInput) -> str:
 # MCP RESOURCES
 # ===========================================================================
 
+
 @mcp.resource("bakom://info")
 def bakom_server_info() -> str:
     """BAKOM MCP Server – Überblick über verfügbare Tools und Datenquellen."""
-    return json.dumps({
-        "server": "bakom-mcp",
-        "version": "1.0.0",
-        "beschreibung": "MCP Server für BAKOM Open Data – Breitband, Mobilfunk, Medien, Telekommunikationsstatistik",
-        "tools": {
-            "breitband": [
-                "bakom_broadband_coverage",
-                "bakom_glasfaser_verfuegbarkeit",
-                "bakom_multi_standort_konnektivitaet",
-            ],
-            "mobilfunk_sendeanlagen": [
-                "bakom_mobilfunk_abdeckung",
-                "bakom_sendeanlagen_suche",
-                "bakom_frequenzdaten",
-            ],
-            "medien_rtv": [
-                "bakom_rtv_suche",
-                "bakom_medienstruktur_info",
-                "bakom_aktuell",
-            ],
-            "statistik": [
-                "bakom_telekomstatistik_uebersicht",
-                "bakom_breitbandatlas_datensaetze",
-            ],
+    return json.dumps(
+        {
+            "server": "bakom-mcp",
+            "version": "1.0.0",
+            "beschreibung": "MCP Server für BAKOM Open Data – Breitband, Mobilfunk, Medien, Telekommunikationsstatistik",
+            "tools": {
+                "breitband": [
+                    "bakom_broadband_coverage",
+                    "bakom_glasfaser_verfuegbarkeit",
+                    "bakom_multi_standort_konnektivitaet",
+                ],
+                "mobilfunk_sendeanlagen": [
+                    "bakom_mobilfunk_abdeckung",
+                    "bakom_sendeanlagen_suche",
+                    "bakom_frequenzdaten",
+                ],
+                "medien_rtv": [
+                    "bakom_rtv_suche",
+                    "bakom_medienstruktur_info",
+                    "bakom_aktuell",
+                ],
+                "statistik": [
+                    "bakom_telekomstatistik_uebersicht",
+                    "bakom_breitbandatlas_datensaetze",
+                ],
+            },
+            "apis": {
+                "geo_admin": "https://api3.geo.admin.ch",
+                "opendata_swiss": "https://ckan.opendata.swiss/api/3/action",
+                "rtv_db": "https://rtvdb.ofcomnet.ch/api",
+            },
+            "koordinaten_format": "WGS84 (lat: 45.8–47.9, lon: 5.9–10.6)",
+            "auth_erforderlich": False,
+            "lizenz": "Open Government Data (CC0 / OGD)",
         },
-        "apis": {
-            "geo_admin": "https://api3.geo.admin.ch",
-            "opendata_swiss": "https://ckan.opendata.swiss/api/3/action",
-            "rtv_db": "https://rtvdb.ofcomnet.ch/api",
-        },
-        "koordinaten_format": "WGS84 (lat: 45.8–47.9, lon: 5.9–10.6)",
-        "auth_erforderlich": False,
-        "lizenz": "Open Government Data (CC0 / OGD)",
-    }, indent=2, ensure_ascii=False)
+        indent=2,
+        ensure_ascii=False,
+    )
 
 
 @mcp.resource("bakom://demo-standorte")
 def bakom_demo_standorte() -> str:
     """Demo-Koordinaten für häufig genutzte Schweizer Standorte."""
-    return json.dumps({
-        "zuerich_zentrum": {"lat": 47.3769, "lon": 8.5417, "beschreibung": "Zürich HB"},
-        "schulhaus_leutschenbach": {"lat": 47.4148, "lon": 8.5654, "beschreibung": "Schulhaus Leutschenbach, Zürich"},
-        "bern_bundeshaus": {"lat": 46.9467, "lon": 7.4444, "beschreibung": "Bundeshaus Bern"},
-        "genf_cern": {"lat": 46.2330, "lon": 6.0560, "beschreibung": "CERN Genf"},
-        "basel_messe": {"lat": 47.5596, "lon": 7.5886, "beschreibung": "Messe Basel"},
-        "luzern_bahnhof": {"lat": 47.0505, "lon": 8.3099, "beschreibung": "Bahnhof Luzern"},
-        "st_gallen_uni": {"lat": 47.4242, "lon": 9.3728, "beschreibung": "Universität St. Gallen"},
-        "zuerich_waedenswil": {"lat": 47.2254, "lon": 8.6697, "beschreibung": "Wädenswil"},
-    }, indent=2, ensure_ascii=False)
+    return json.dumps(
+        {
+            "zuerich_zentrum": {"lat": 47.3769, "lon": 8.5417, "beschreibung": "Zürich HB"},
+            "schulhaus_leutschenbach": {
+                "lat": 47.4148,
+                "lon": 8.5654,
+                "beschreibung": "Schulhaus Leutschenbach, Zürich",
+            },
+            "bern_bundeshaus": {"lat": 46.9467, "lon": 7.4444, "beschreibung": "Bundeshaus Bern"},
+            "genf_cern": {"lat": 46.2330, "lon": 6.0560, "beschreibung": "CERN Genf"},
+            "basel_messe": {"lat": 47.5596, "lon": 7.5886, "beschreibung": "Messe Basel"},
+            "luzern_bahnhof": {"lat": 47.0505, "lon": 8.3099, "beschreibung": "Bahnhof Luzern"},
+            "st_gallen_uni": {
+                "lat": 47.4242,
+                "lon": 9.3728,
+                "beschreibung": "Universität St. Gallen",
+            },
+            "zuerich_waedenswil": {"lat": 47.2254, "lon": 8.6697, "beschreibung": "Wädenswil"},
+        },
+        indent=2,
+        ensure_ascii=False,
+    )
 
 
 # ===========================================================================
@@ -1700,6 +1745,7 @@ def bakom_demo_standorte() -> str:
 # ===========================================================================
 if __name__ == "__main__":
     import sys
+
     transport = "streamable-http" if "--http" in sys.argv else "stdio"
     port = 8050
     if transport == "streamable-http":
