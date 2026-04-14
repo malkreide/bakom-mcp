@@ -13,6 +13,10 @@
 
 > MCP-Server für BAKOM Open Data – Breitband, Mobilfunk, Medien und Schweizer Telekommunikationsstatistiken.
 
+<p align="center">
+  <img src="assets/demo.svg" alt="Demo: Claude fragt Glasfaser- und 5G-Abdeckung via MCP Tool Call ab" width="720">
+</p>
+
 ---
 
 ## Übersicht
@@ -163,6 +167,20 @@ Liste alle Breitbandatlas-Datensätze auf, die via geo.admin.ch verfügbar sind.
 
 ---
 
+## Sicherheit & Limits
+
+| Aspekt | Details |
+|--------|---------|
+| **Zugriff** | Nur lesend (`readOnlyHint: true`) — der Server kann keine Daten verändern oder löschen |
+| **Personendaten** | Keine Personendaten — alle Quellen sind aggregierte, öffentliche Open Data |
+| **Rate Limits** | Eingebaute Abfrage-Limits (max. 50 Antennen, max. 20 Standorte, max. 50 RTV-Resultate) |
+| **Timeout** | 20 Sekunden pro API-Aufruf |
+| **Authentifizierung** | Keine API-Schlüssel nötig — alle 3 APIs sind öffentlich zugänglich |
+| **Lizenzen** | Alle Daten unter CC0 / offenen Lizenzen (Open Government Data) |
+| **Nutzungsbedingungen** | Unterliegt den Nutzungsbedingungen der Datenquellen: [geo.admin.ch](https://www.geo.admin.ch/de/allgemeine-nutzungsbedingungen-bgdi), [opendata.swiss](https://opendata.swiss/de/terms-of-use), [rtvdb.ofcomnet.ch](https://rtvdb.ofcomnet.ch) |
+
+---
+
 ## Datenquellen
 
 | Quelle | Daten | Authentifizierung |
@@ -200,13 +218,17 @@ Weitere Kombinationen:
 bakom-mcp/
 ├── src/bakom_mcp/
 │   ├── __init__.py          # Paket
-│   └── server.py            # MCP-Server (12 Tools, 2 Resources)
+│   ├── server.py            # MCP-Server (12 Tools, 2 Resources)
+│   └── py.typed             # PEP 561 Type-Marker
 ├── tests/
-│   └── test_integration.py  # 18 Integrationstests (Live-APIs)
+│   └── test_integration.py  # Integrationstests (Live-APIs)
+├── assets/
+│   └── demo.svg             # Demo-Flow-Diagramm
 ├── .github/workflows/
-│   └── ci.yml               # GitHub Actions CI (Python 3.11–3.13)
+│   ├── ci.yml               # CI: Lint, Syntax, Import, Tests
+│   └── publish.yml          # PyPI-Publish bei Release
+├── .gitignore
 ├── pyproject.toml           # Build-Konfiguration (hatchling)
-├── claude_desktop_config.json
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── LICENSE

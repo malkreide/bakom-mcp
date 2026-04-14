@@ -13,6 +13,10 @@
 
 [🇩🇪 Deutsche Version](README.de.md)
 
+<p align="center">
+  <img src="assets/demo.svg" alt="Demo: Claude queries fibre and 5G coverage via MCP tool call" width="720">
+</p>
+
 ---
 
 ## Overview
@@ -163,6 +167,20 @@ List all Broadband Atlas datasets available via geo.admin.ch.
 
 ---
 
+## Safety & Limits
+
+| Aspect | Details |
+|--------|---------|
+| **Access** | Read-only (`readOnlyHint: true`) — the server cannot modify or delete any data |
+| **Personal data** | No personal data — all sources are aggregated, public open data |
+| **Rate limits** | Built-in per-query caps (max 50 antennas, max 20 locations, max 50 RTV results) |
+| **Timeout** | 20 seconds per API call |
+| **Authentication** | No API keys required — all 3 APIs are publicly accessible |
+| **Licences** | All data under CC0 / open licences (Open Government Data) |
+| **Terms of Service** | Subject to ToS of the respective data sources: [geo.admin.ch](https://www.geo.admin.ch/en/general-terms-and-conditions-fsdi), [opendata.swiss](https://opendata.swiss/en/terms-of-use), [rtvdb.ofcomnet.ch](https://rtvdb.ofcomnet.ch) |
+
+---
+
 ## Data Sources
 
 | Source | Data | Authentication |
@@ -200,13 +218,17 @@ Further combinations:
 bakom-mcp/
 ├── src/bakom_mcp/
 │   ├── __init__.py          # Package
-│   └── server.py            # MCP server (12 tools, 2 resources)
+│   ├── server.py            # MCP server (12 tools, 2 resources)
+│   └── py.typed             # PEP 561 type marker
 ├── tests/
-│   └── test_integration.py  # 18 integration tests (live APIs)
+│   └── test_integration.py  # Integration tests (live APIs)
+├── assets/
+│   └── demo.svg             # Demo flow diagram
 ├── .github/workflows/
-│   └── ci.yml               # GitHub Actions CI (Python 3.11–3.13)
+│   ├── ci.yml               # CI: lint, syntax, import, tests
+│   └── publish.yml          # PyPI publish on release
+├── .gitignore
 ├── pyproject.toml           # Build config (hatchling)
-├── claude_desktop_config.json
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
 ├── LICENSE
