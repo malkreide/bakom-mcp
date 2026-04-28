@@ -29,6 +29,8 @@ All data is published as Open Government Data (OGD) under open licences (CC0).
 
 > `bakom_multi_standort_konnektivitaet` delivers the comparison table automatically.
 
+[→ More use cases by audience →](EXAMPLES.md)
+
 ---
 
 ## Features

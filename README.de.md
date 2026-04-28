@@ -29,6 +29,8 @@ Alle Daten sind als Open Government Data (OGD) unter offenen Lizenzen (CC0) ver�
 
 > `bakom_multi_standort_konnektivitaet` liefert die Vergleichstabelle automatisch.
 
+[→ Weitere Anwendungsbeispiele nach Zielgruppe →](EXAMPLES.md)
+
 ---
 
 ## Funktionen
