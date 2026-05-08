@@ -15,11 +15,14 @@ from __future__ import annotations
 
 import json
 import logging
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
 import httpx
-from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp import Context, FastMCP
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 # ---------------------------------------------------------------------------
@@ -27,6 +30,47 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 # ---------------------------------------------------------------------------
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("bakom_mcp")
+
+
+# ---------------------------------------------------------------------------
+# Lifespan: ein httpx.AsyncClient für die gesamte Server-Lebensdauer
+# ---------------------------------------------------------------------------
+HTTP_TIMEOUT_SEC = 15.0
+HTTP_USER_AGENT = "bakom-mcp/1.0 (+https://github.com/malkreide/bakom-mcp)"
+
+
+@dataclass
+class AppContext:
+    """Lifespan-Context, via FastMCP an alle Tools gereicht."""
+
+    http: httpx.AsyncClient
+
+
+@asynccontextmanager
+async def lifespan(_server: FastMCP) -> AsyncIterator[AppContext]:
+    """Initialisiert einen einzigen httpx.AsyncClient für alle Tool-Calls.
+
+    Vorher: jeder Tool-Aufruf öffnete und schloss eine eigene Connection
+    (TLS-Handshake pro Call). Mit Lifespan wird genau eine Connection
+    aufgebaut und bei Server-Shutdown sauber geschlossen.
+    """
+    async with httpx.AsyncClient(
+        timeout=HTTP_TIMEOUT_SEC,
+        headers={"User-Agent": HTTP_USER_AGENT},
+    ) as client:
+        yield AppContext(http=client)
+
+
+@asynccontextmanager
+async def _shared_client(ctx: Context) -> AsyncIterator[httpx.AsyncClient]:
+    """Yieldet den Lifespan-Client, ohne ihn zu schliessen.
+
+    Behält die `async with`-Form in Tool-Funktionen bei (kein Dedent
+    grosser Blöcke), während der Client server-weit wiederverwendet wird.
+    Aclose erfolgt im Lifespan-Hook, nicht hier.
+    """
+    yield ctx.request_context.lifespan_context.http
+
 
 # ---------------------------------------------------------------------------
 # Konstanten
@@ -403,6 +447,7 @@ mcp = FastMCP(
         "lat 45.8–47.9, lon 5.9–10.6). Alle Daten sind öffentlich und "
         "kostenlos verfügbar (Open Government Data)."
     ),
+    lifespan=lifespan,
 )
 
 
@@ -421,7 +466,7 @@ mcp = FastMCP(
         "openWorldHint": True,
     },
 )
-async def bakom_broadband_coverage(params: BroadbandCoverageInput) -> str:
+async def bakom_broadband_coverage(params: BroadbandCoverageInput, ctx: Context) -> str:
     """Breitbandversorgung (Festnetz) für einen Standort in der Schweiz abfragen.
 
     Zeigt, ob ein Gebäude am angegebenen Standort mit einer bestimmten
@@ -459,7 +504,7 @@ async def bakom_broadband_coverage(params: BroadbandCoverageInput) -> str:
     layer = speed_to_layer.get(params.min_speed_mbps.value, speed_to_layer["100"])
 
     try:
-        async with httpx.AsyncClient() as client:
+        async with _shared_client(ctx) as client:
             east, north = _wgs84_to_lv95_approx(params.latitude, params.longitude)
             abgedeckt = await _wms_abgedeckt(client, layer, east, north)
 
@@ -503,7 +548,7 @@ async def bakom_broadband_coverage(params: BroadbandCoverageInput) -> str:
         "openWorldHint": True,
     },
 )
-async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput) -> str:
+async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput, ctx: Context) -> str:
     """Glasfaserverfügbarkeit (FTTB/FTTH) für einen Schweizer Standort prüfen.
 
     Zeigt, ob Glasfaseranschluss bis zum Gebäude (FTTB) oder in die
@@ -527,7 +572,7 @@ async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput) -> str:
     """
     layer = "ch.bakom.anschlussart-glasfaser"
     try:
-        async with httpx.AsyncClient() as client:
+        async with _shared_client(ctx) as client:
             east, north = _wgs84_to_lv95_approx(params.latitude, params.longitude)
             abgedeckt = await _wms_abgedeckt(client, layer, east, north)
 
@@ -568,7 +613,7 @@ async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput) -> str:
         "openWorldHint": True,
     },
 )
-async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput) -> str:
+async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput, ctx: Context) -> str:
     """Breitband- und Mobilfunkversorgung für mehrere Standorte gleichzeitig vergleichen.
 
     Ideal für Schulhausvergleiche, Standortentscheide oder
@@ -603,7 +648,7 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput) -> str
     """
     standort_results = []
 
-    async with httpx.AsyncClient() as client:
+    async with _shared_client(ctx) as client:
         for loc in params.locations:
             name = loc.get("name", "Unbekannt")
             lat = float(loc.get("latitude", 0))
@@ -699,7 +744,7 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput) -> str
         "openWorldHint": True,
     },
 )
-async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput) -> str:
+async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput, ctx: Context) -> str:
     """Mobilfunkabdeckung (5G/4G/3G) für einen Schweizer Standort abfragen.
 
     Zeigt, wie viele Anbieter den angegebenen Standort mit der gewählten
@@ -729,7 +774,7 @@ async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput) -> str:
     layer = gen_to_layer.get(params.generation.value, gen_to_layer["5G"])
 
     try:
-        async with httpx.AsyncClient() as client:
+        async with _shared_client(ctx) as client:
             east, north = _wgs84_to_lv95_approx(params.latitude, params.longitude)
             abgedeckt = await _wms_abgedeckt(client, layer, east, north)
             gen = params.generation.value
@@ -773,7 +818,7 @@ async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput) -> str:
         "openWorldHint": True,
     },
 )
-async def bakom_sendeanlagen_suche(params: AntennaSearchInput) -> str:
+async def bakom_sendeanlagen_suche(params: AntennaSearchInput, ctx: Context) -> str:
     """Mobilfunkanlagen und Sendeanlagen in einem Umkreis suchen.
 
     Findet Antennenstandorte (Mobilfunk und Rundfunk) in der Nähe eines
@@ -803,7 +848,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput) -> str:
         }
     """
     try:
-        async with httpx.AsyncClient() as client:
+        async with _shared_client(ctx) as client:
             east, north = _wgs84_to_lv95_approx(params.latitude, params.longitude)
             radius = params.radius_m
 
@@ -905,7 +950,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput) -> str:
         "openWorldHint": True,
     },
 )
-async def bakom_frequenzdaten(params: CoordinateInput) -> str:
+async def bakom_frequenzdaten(params: CoordinateInput, ctx: Context) -> str:
     """UKW-Radio- und TV-Sendeanlagen für einen Standort abfragen.
 
     Zeigt Radio- und Fernsehsendeanlagen in der Nähe mit Frequenz-
@@ -933,7 +978,7 @@ async def bakom_frequenzdaten(params: CoordinateInput) -> str:
         }
     """
     try:
-        async with httpx.AsyncClient() as client:
+        async with _shared_client(ctx) as client:
             east, north = _wgs84_to_lv95_approx(params.latitude, params.longitude)
             radius = 2000  # 2 km für Sender-Suche
 
@@ -1019,7 +1064,7 @@ async def bakom_frequenzdaten(params: CoordinateInput) -> str:
         "openWorldHint": True,
     },
 )
-async def bakom_rtv_suche(params: RTVSearchInput) -> str:
+async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
     """Konzessionierte und gemeldete Radio- und TV-Sender in der Schweiz suchen.
 
     Durchsucht die BAKOM RTV-Datenbank nach lizenzierten Rundfunkveranstaltern.
@@ -1047,7 +1092,7 @@ async def bakom_rtv_suche(params: RTVSearchInput) -> str:
         }
     """
     try:
-        async with httpx.AsyncClient() as client:
+        async with _shared_client(ctx) as client:
             # RTV-Datenbank API
             search_params: dict[str, Any] = {
                 "format": "json",
@@ -1147,7 +1192,7 @@ async def bakom_rtv_suche(params: RTVSearchInput) -> str:
         "openWorldHint": True,
     },
 )
-async def bakom_medienstruktur_info(params: TelekomStatInput) -> str:
+async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> str:
     """Informationen zur Schweizer Medienlandschaft aus BAKOM-Berichten.
 
     Gibt strukturierte Informationen zu Mediensektoren (Radio, TV, Online,
@@ -1171,7 +1216,7 @@ async def bakom_medienstruktur_info(params: TelekomStatInput) -> str:
         }
     """
     try:
-        async with httpx.AsyncClient() as client:
+        async with _shared_client(ctx) as client:
             # Suche auf opendata.swiss nach BAKOM-Medien-Datensätzen
             r = await client.get(
                 f"{OPENDATA_SWISS_API}/package_search",
@@ -1250,7 +1295,7 @@ async def bakom_medienstruktur_info(params: TelekomStatInput) -> str:
         "openWorldHint": True,
     },
 )
-async def bakom_aktuell(params: TelekomStatInput) -> str:
+async def bakom_aktuell(params: TelekomStatInput, ctx: Context) -> str:
     """Aktuelle Themen, News und Regulierungen des BAKOM abrufen.
 
     Gibt aktuelle Informationen zu BAKOM-Tätigkeitsbereichen zurück:
@@ -1333,7 +1378,7 @@ async def bakom_aktuell(params: TelekomStatInput) -> str:
 
     # Ergänzend: opendata.swiss-Suche
     try:
-        async with httpx.AsyncClient() as client:
+        async with _shared_client(ctx) as client:
             r = await client.get(
                 f"{OPENDATA_SWISS_API}/package_search",
                 params={
@@ -1405,7 +1450,7 @@ async def bakom_aktuell(params: TelekomStatInput) -> str:
         "openWorldHint": True,
     },
 )
-async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput) -> str:
+async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput, ctx: Context) -> str:
     """Schweizer Telekommunikationsstatistiken aus BAKOM-Datensätzen abrufen.
 
     Gibt Übersichten zu Telekommunikationsstatistiken (Festnetz, Mobilfunk,
@@ -1433,7 +1478,7 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput) -> str:
         }
     """
     try:
-        async with httpx.AsyncClient() as client:
+        async with _shared_client(ctx) as client:
             r = await client.get(
                 f"{OPENDATA_SWISS_API}/package_search",
                 params={
