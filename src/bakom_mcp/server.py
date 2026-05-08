@@ -369,7 +369,12 @@ def _wgs84_to_lv95_approx(lat: float, lon: float) -> tuple[float, float]:
 
 
 def _handle_api_error(e: Exception) -> str:
-    """Einheitliche Fehlerformatierung."""
+    """Einheitliche Fehlerformatierung.
+
+    Generische Meldung für das LLM; Stack-Details landen im Log (stderr),
+    nicht im Tool-Output. Verhindert Leakage von Pfaden, Library-Versionen
+    und internen URLs an Adversarial-Prompts.
+    """
     if isinstance(e, httpx.HTTPStatusError):
         if e.response.status_code == 404:
             return "Fehler: Ressource nicht gefunden. Bitte Koordinaten oder Parameter prüfen."
@@ -382,7 +387,8 @@ def _handle_api_error(e: Exception) -> str:
         return "Fehler: Zeitüberschreitung. API antwortet nicht – bitte erneut versuchen."
     if isinstance(e, httpx.ConnectError):
         return "Fehler: Keine Verbindung zur API. Netzwerk prüfen."
-    return f"Fehler: Unerwarteter Fehler ({type(e).__name__}): {e}"
+    logger.exception("Unerwarteter Fehler in Tool-Aufruf")
+    return "Fehler: Unerwarteter interner Fehler. Bitte erneut versuchen."
 
 
 # ---------------------------------------------------------------------------
@@ -632,7 +638,8 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput) -> str
                     }
                 )
 
-            except Exception as e:
+            except Exception:
+                logger.exception("Multi-Standort-Abfrage fehlgeschlagen", extra={"standort": name})
                 standort_results.append(
                     {
                         "name": name,
@@ -640,7 +647,7 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput) -> str
                         "lon": lon,
                         "5g_abdeckung": None,
                         "glasfaser_fttb": None,
-                        "fehler": str(e)[:100],
+                        "fehler": "Standort konnte nicht abgefragt werden",
                     }
                 )
 
@@ -1749,17 +1756,43 @@ if __name__ == "__main__":
 
     transport = "streamable-http" if "--http" in sys.argv else "stdio"
     if transport == "streamable-http":
+        import uvicorn
+        from starlette.middleware.cors import CORSMiddleware
+
         host = os.environ.get("BAKOM_MCP_HOST", "127.0.0.1")
         port = int(os.environ.get("BAKOM_MCP_PORT", "8050"))
+        cors_env = os.environ.get("BAKOM_MCP_CORS_ORIGINS", "").strip()
+        cors_origins = [o.strip() for o in cors_env.split(",") if o.strip()]
+
         if host == "0.0.0.0":  # noqa: S104
             print(
                 "WARNUNG: Server bindet auf 0.0.0.0 (alle Interfaces). "
                 "Ohne Auth nur in vertrauenswürdigen Netzen sicher.",
                 file=sys.stderr,
             )
-        mcp.settings.host = host
-        mcp.settings.port = port
+
+        app = mcp.streamable_http_app()
+        if cors_origins:
+            app.add_middleware(
+                CORSMiddleware,
+                allow_origins=cors_origins,
+                allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+                allow_headers=["*"],
+                expose_headers=["Mcp-Session-Id"],
+            )
+            print(
+                f"CORS aktiv für Origins: {', '.join(cors_origins)} "
+                "(expose_headers=Mcp-Session-Id)",
+                file=sys.stderr,
+            )
+        else:
+            print(
+                "CORS deaktiviert. Für Browser-Clients setze "
+                "BAKOM_MCP_CORS_ORIGINS=https://example.com,https://other.com",
+                file=sys.stderr,
+            )
+
         print(f"BAKOM MCP Server läuft auf http://{host}:{port}/mcp", file=sys.stderr)
-        mcp.run(transport=transport)
+        uvicorn.run(app, host=host, port=port, log_level="info")
     else:
         mcp.run()
