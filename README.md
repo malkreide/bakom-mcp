@@ -101,6 +101,35 @@ python -m bakom_mcp.server --http
 # Server running at http://localhost:8050/mcp
 ```
 
+Configuration via environment variables (see [`.env.example`](.env.example)):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `BAKOM_MCP_HOST` | `127.0.0.1` | Bind address. Set to `0.0.0.0` only on trusted networks (warning logged). |
+| `BAKOM_MCP_PORT` | `8050` | TCP port. |
+| `BAKOM_MCP_CORS_ORIGINS` | _(empty)_ | Comma-separated allowed origins for browser clients. Empty = CORS disabled. |
+
+### Docker
+
+A hardened container image is provided. Suitable for cloud deployments behind a reverse proxy (Caddy, Traefik, nginx).
+
+```bash
+# Build & run via compose (recommended)
+docker compose up --build
+
+# Or via docker run
+docker build -t bakom-mcp:latest .
+docker run --rm \
+  --read-only \
+  --cap-drop=ALL \
+  --security-opt=no-new-privileges \
+  --tmpfs /tmp:rw,size=16M \
+  -p 127.0.0.1:8050:8050 \
+  bakom-mcp:latest
+```
+
+The image runs as **non-root** (UID 10001), uses a **read-only filesystem**, drops **all Linux capabilities** and refuses **privilege escalation**. Resource limits are configured in [`docker-compose.yml`](docker-compose.yml) (256 MB memory, 0.5 CPU, 64 PIDs). The default port mapping binds to `127.0.0.1` only — for public exposure, terminate TLS and CORS at a reverse proxy.
+
 ### Cursor / VS Code / LibreChat
 
 ```json
