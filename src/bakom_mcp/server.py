@@ -1744,12 +1744,22 @@ def bakom_demo_standorte() -> str:
 # ENTRY POINT
 # ===========================================================================
 if __name__ == "__main__":
+    import os
     import sys
 
     transport = "streamable-http" if "--http" in sys.argv else "stdio"
-    port = 8050
     if transport == "streamable-http":
-        print(f"BAKOM MCP Server läuft auf http://localhost:{port}/mcp")
-        mcp.run(transport=transport, port=port)
+        host = os.environ.get("BAKOM_MCP_HOST", "127.0.0.1")
+        port = int(os.environ.get("BAKOM_MCP_PORT", "8050"))
+        if host == "0.0.0.0":  # noqa: S104
+            print(
+                "WARNUNG: Server bindet auf 0.0.0.0 (alle Interfaces). "
+                "Ohne Auth nur in vertrauenswürdigen Netzen sicher.",
+                file=sys.stderr,
+            )
+        mcp.settings.host = host
+        mcp.settings.port = port
+        print(f"BAKOM MCP Server läuft auf http://{host}:{port}/mcp", file=sys.stderr)
+        mcp.run(transport=transport)
     else:
         mcp.run()
