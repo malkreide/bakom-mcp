@@ -23,13 +23,42 @@
 
 **bakom-mcp** connects AI assistants like Claude to the Swiss Federal Office of Communications (BAKOM) open data infrastructure. It enables natural-language queries about broadband availability, 5G/4G coverage, mobile antenna locations, licensed broadcasters (RTV database), and telecommunications statistics — all without API keys.
 
-All data is published as Open Government Data (OGD) under open licences (CC0).
+All data is published as Open Government Data (OGD) on opendata.swiss / geo.admin.ch under **CC BY 4.0** — see the [Data Licence](#data-licence) section below for attribution requirements.
 
 **Anchor demo query:** *"Which school buildings in district 7 do not yet have fibre optic connectivity?"*
 
 > `bakom_multi_standort_konnektivitaet` delivers the comparison table automatically.
 
 [→ More use cases by audience →](EXAMPLES.md)
+
+---
+
+## Scope
+
+### What this server does
+
+✓ Read-only queries against three public BAKOM/Confederation APIs:
+  - `api3.geo.admin.ch` / `wms.geo.admin.ch` (broadband, mobile coverage, antennas)
+  - `ckan.opendata.swiss` (telecom statistics, dataset metadata)
+  - `rtvdb.ofcomnet.ch` (licensed radio/TV broadcasters)
+
+✓ Returns aggregated, anonymous data — no personal data, no household-level identification.
+
+✓ Bound to Swiss WGS84 coordinates (lat 45.8–47.9, lon 5.9–10.6) via Pydantic input validation.
+
+✓ Egress is locked to a [code-layer allow-list](src/bakom_mcp/server.py) of the six known data-source hosts.
+
+### What this server does not
+
+✗ Send data anywhere (read-only, no write tools).
+
+✗ Access the local filesystem (no path-traversal surface).
+
+✗ Use authentication tokens (none required — all sources are public OGD).
+
+✗ Cache or persist user inputs across calls.
+
+✗ Execute shell commands or arbitrary code (no `subprocess`/`os.system`/`eval`).
 
 ---
 
@@ -293,9 +322,17 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 
 ---
 
-## License
+## Software Licence
 
-MIT License — see [LICENSE](LICENSE)
+MIT License — see [LICENSE](LICENSE).
+
+## Data Licence
+
+The BAKOM open data delivered through this server is published under **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.de)**. When using or redistributing tool outputs, attribute the source as:
+
+> *Source: Federal Office of Communications (BAKOM) via opendata.swiss / geo.admin.ch · Licence: CC BY 4.0*
+
+Tool outputs already include this footer automatically. The Markdown response format ends with the attribution line; downstream applications that consume the JSON format should propagate the source/licence metadata to their end users.
 
 ---
 

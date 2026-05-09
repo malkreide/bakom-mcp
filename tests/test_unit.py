@@ -318,6 +318,15 @@ class TestStaticTool:
         assert "fttb" in result.lower() or "glasfaser" in result.lower()
 
     @pytest.mark.asyncio
+    async def test_markdown_output_includes_cc_by_attribution(self) -> None:
+        """CH-004: Markdown-Tool-Outputs enthalten CC BY 4.0 Attribution-Footer."""
+        params = TelekomStatInput()
+        result = await bakom_breitbandatlas_datensaetze(params)
+        assert "CC BY 4.0" in result
+        assert "BAKOM" in result
+        assert "creativecommons.org" in result
+
+    @pytest.mark.asyncio
     async def test_breitbandatlas_json_format(self) -> None:
         import json
 
