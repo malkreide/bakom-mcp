@@ -38,6 +38,7 @@ from bakom_mcp.server import (
     _raise_api_error,
     bakom_breitbandatlas_datensaetze,
     bakom_broadband_coverage,
+    bakom_multi_standort_konnektivitaet,
     lifespan,
     mcp,
 )
@@ -387,6 +388,89 @@ class TestEgressAllowlist:
         async with lifespan(mcp) as app_ctx:
             with pytest.raises(EgressNotAllowedError):
                 await app_ctx.http.get("https://attacker.example/data", timeout=2.0)
+
+
+# ---------------------------------------------------------------------------
+# OBS-003: Tool-Call Lifecycle-Logs (Decorator)
+# ---------------------------------------------------------------------------
+class TestToolCallLogging:
+    """_log_tool_call Decorator emittiert start/ok/failed Log-Records."""
+
+    @pytest.mark.asyncio
+    async def test_log_records_on_success(self, caplog: pytest.LogCaptureFixture) -> None:
+        import logging
+
+        caplog.set_level(logging.INFO, logger="bakom_mcp")
+        params = TelekomStatInput()
+        await bakom_breitbandatlas_datensaetze(params)
+
+        msgs = [r.msg for r in caplog.records if hasattr(r, "tool")]
+        assert "tool_call_start" in msgs
+        assert "tool_call_ok" in msgs
+        # tool_call_ok carries duration_ms
+        ok = next(r for r in caplog.records if r.msg == "tool_call_ok")
+        assert hasattr(ok, "tool")
+        assert ok.tool == "bakom_breitbandatlas_datensaetze"
+        assert hasattr(ok, "duration_ms")
+        assert ok.duration_ms >= 0
+
+    @pytest.mark.asyncio
+    async def test_log_records_on_failure(self, caplog: pytest.LogCaptureFixture) -> None:
+        import logging
+
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(side_effect=httpx.TimeoutException("test"))
+
+        caplog.set_level(logging.INFO, logger="bakom_mcp")
+        params = BroadbandCoverageInput(latitude=47.0, longitude=8.5)
+        with pytest.raises(ToolError):
+            await bakom_broadband_coverage(params, _ctx_with(client))
+
+        # tool_call_failed should be present with error_class
+        failed = [r for r in caplog.records if r.msg == "tool_call_failed"]
+        assert len(failed) == 1
+        assert failed[0].tool == "bakom_broadband_coverage"
+        assert failed[0].error_class == "ToolError"
+        assert failed[0].duration_ms >= 0
+
+
+# ---------------------------------------------------------------------------
+# SDK-003: ctx.report_progress + ctx.info in multi_standort
+# ---------------------------------------------------------------------------
+class TestProgressReports:
+    """bakom_multi_standort_konnektivitaet ruft ctx.report_progress + ctx.info."""
+
+    @pytest.mark.asyncio
+    async def test_progress_called_per_location(self) -> None:
+        # Mock client that immediately fails each lookup so we don't hit live APIs
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(side_effect=httpx.ConnectError("offline"))
+
+        ctx = MagicMock()
+        ctx.request_context.lifespan_context = AppContext(http=client)
+        ctx.info = AsyncMock()
+        ctx.report_progress = AsyncMock()
+
+        params = MultiLocationInput(
+            locations=[
+                {"name": "A", "latitude": 47.0, "longitude": 8.5},
+                {"name": "B", "latitude": 47.1, "longitude": 8.6},
+                {"name": "C", "latitude": 47.2, "longitude": 8.7},
+            ]
+        )
+        # Tool catches per-location exceptions itself → no raise
+        result = await bakom_multi_standort_konnektivitaet(params, ctx)
+
+        # 3 per-location progress + 1 final = 4 calls
+        assert ctx.report_progress.call_count == 4
+        # Final progress is total/total
+        last_call = ctx.report_progress.call_args_list[-1]
+        assert last_call.kwargs["progress"] == 3
+        assert last_call.kwargs["total"] == 3
+        # ctx.info called once at the start
+        assert ctx.info.call_count == 1
+        # Result still serializable
+        assert isinstance(result, str)
 
 
 # ---------------------------------------------------------------------------

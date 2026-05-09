@@ -13,13 +13,15 @@ Breitband- und Mediendaten via geo.admin.ch, opendata.swiss und BAKOM-APIs.
 
 from __future__ import annotations
 
+import functools
 import json
 import logging
-from collections.abc import AsyncIterator
+import time
+from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any, NoReturn
+from typing import Any, NoReturn, TypeVar
 
 import httpx
 from mcp.server.fastmcp import Context, FastMCP
@@ -31,6 +33,44 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 # ---------------------------------------------------------------------------
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("bakom_mcp")
+
+
+# Decorator fuer Tool-Call-Lifecycle-Logs (OBS-003).
+# Loggt start/ok/failed mit Tool-Name, Duration und Error-Class auf stderr.
+# Wird auf alle 11 Tools angewendet — `functools.wraps` erhaelt die
+# Signatur, sodass FastMCP weiterhin Pydantic-Inputs/Outputs introspizieren kann.
+T = TypeVar("T")
+
+
+def _log_tool_call(fn: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
+    """Wraps a tool function with start/ok/failed structured logs."""
+    tool_name = fn.__name__
+
+    @functools.wraps(fn)
+    async def wrapper(*args: Any, **kwargs: Any) -> T:
+        start = time.monotonic()
+        logger.info("tool_call_start", extra={"tool": tool_name})
+        try:
+            result = await fn(*args, **kwargs)
+        except Exception as exc:
+            duration_ms = round((time.monotonic() - start) * 1000, 1)
+            logger.warning(
+                "tool_call_failed",
+                extra={
+                    "tool": tool_name,
+                    "duration_ms": duration_ms,
+                    "error_class": type(exc).__name__,
+                },
+            )
+            raise
+        duration_ms = round((time.monotonic() - start) * 1000, 1)
+        logger.info(
+            "tool_call_ok",
+            extra={"tool": tool_name, "duration_ms": duration_ms},
+        )
+        return result
+
+    return wrapper
 
 
 # ---------------------------------------------------------------------------
@@ -530,6 +570,7 @@ mcp = FastMCP(
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_broadband_coverage(params: BroadbandCoverageInput, ctx: Context) -> str:
     """Breitbandversorgung (Festnetz) für einen Standort in der Schweiz abfragen.
 
@@ -612,6 +653,7 @@ async def bakom_broadband_coverage(params: BroadbandCoverageInput, ctx: Context)
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput, ctx: Context) -> str:
     """Glasfaserverfügbarkeit (FTTB/FTTH) für einen Schweizer Standort prüfen.
 
@@ -677,6 +719,7 @@ async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput, ctx: Context) 
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput, ctx: Context) -> str:
     """Breitband- und Mobilfunkversorgung für mehrere Standorte gleichzeitig vergleichen.
 
@@ -711,12 +754,18 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput, ctx: C
         }
     """
     standort_results = []
+    total = len(params.locations)
+    await ctx.info(f"Verarbeite {total} Standort(e)…")
 
     async with _shared_client(ctx) as client:
-        for loc in params.locations:
+        for index, loc in enumerate(params.locations):
             name = loc.get("name", "Unbekannt")
             lat = float(loc.get("latitude", 0))
             lon = float(loc.get("longitude", 0))
+
+            # SDK-003: Progress-Report fuer Long-Running-Tools.
+            # Claude-Desktop / MCP-Inspector zeigt 0/total → total/total Spinner.
+            await ctx.report_progress(progress=index, total=total)
 
             if not (45.8 <= lat <= 47.9) or not (5.9 <= lon <= 10.6):
                 standort_results.append(
@@ -759,6 +808,9 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput, ctx: C
                         "fehler": "Standort konnte nicht abgefragt werden",
                     }
                 )
+
+    # SDK-003: Final-Progress signalisiert "fertig" an die UI.
+    await ctx.report_progress(progress=total, total=total)
 
     mit_5g = sum(1 for s in standort_results if s.get("5g_abdeckung") is True)
     mit_glasfaser = sum(1 for s in standort_results if s.get("glasfaser_fttb") is True)
@@ -808,6 +860,7 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput, ctx: C
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput, ctx: Context) -> str:
     """Mobilfunkabdeckung (5G/4G/3G) für einen Schweizer Standort abfragen.
 
@@ -882,6 +935,7 @@ async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput, ctx: Context) -
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_sendeanlagen_suche(params: AntennaSearchInput, ctx: Context) -> str:
     """Mobilfunkanlagen und Sendeanlagen in einem Umkreis suchen.
 
@@ -1014,6 +1068,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput, ctx: Context) -> 
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_frequenzdaten(params: CoordinateInput, ctx: Context) -> str:
     """UKW-Radio- und TV-Sendeanlagen für einen Standort abfragen.
 
@@ -1128,6 +1183,7 @@ async def bakom_frequenzdaten(params: CoordinateInput, ctx: Context) -> str:
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
     """Konzessionierte und gemeldete Radio- und TV-Sender in der Schweiz suchen.
 
@@ -1256,6 +1312,7 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> str:
     """Informationen zur Schweizer Medienlandschaft aus BAKOM-Berichten.
 
@@ -1359,6 +1416,7 @@ async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> s
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_aktuell(params: TelekomStatInput, ctx: Context) -> str:
     """Aktuelle Themen, News und Regulierungen des BAKOM abrufen.
 
@@ -1514,6 +1572,7 @@ async def bakom_aktuell(params: TelekomStatInput, ctx: Context) -> str:
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput, ctx: Context) -> str:
     """Schweizer Telekommunikationsstatistiken aus BAKOM-Datensätzen abrufen.
 
@@ -1633,6 +1692,7 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput, ctx: Conte
         "openWorldHint": True,
     },
 )
+@_log_tool_call
 async def bakom_breitbandatlas_datensaetze(params: TelekomStatInput) -> str:
     """Alle verfügbaren BAKOM Breitbandatlas-Datensätze auf opendata.swiss auflisten.
 
