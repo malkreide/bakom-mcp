@@ -20,11 +20,13 @@ import pytest
 from pydantic import ValidationError
 
 from bakom_mcp.server import (
+    ALLOWED_EGRESS_HOSTS,
     AntennaSearchInput,
     AppContext,
     BroadbandCoverageInput,
     BroadbandSpeed,
     CoordinateInput,
+    EgressNotAllowedError,
     MediaType,
     MobilGenerations,
     MultiLocationInput,
@@ -260,6 +262,58 @@ class TestStaticTool:
         # JSON-Mode muss valides JSON liefern
         parsed = json.loads(result)
         assert isinstance(parsed, dict)
+
+
+# ---------------------------------------------------------------------------
+# SEC-021: Egress-Allow-List
+# ---------------------------------------------------------------------------
+class TestEgressAllowlist:
+    """Outbound-Calls duerfen nur an gelistete Hosts gehen."""
+
+    def test_allowlist_includes_known_data_sources(self) -> None:
+        """Verifiziert, dass alle bestehenden Datenquellen in der Liste sind."""
+        for host in (
+            "api3.geo.admin.ch",
+            "wms.geo.admin.ch",
+            "geodesy.geo.admin.ch",
+            "ckan.opendata.swiss",
+            "rtvdb.ofcomnet.ch",
+            "www.bakom.admin.ch",
+        ):
+            assert host in ALLOWED_EGRESS_HOSTS, f"missing: {host}"
+
+    def test_allowlist_is_frozen(self) -> None:
+        """Eine frozenset garantiert Immutabilitaet zur Laufzeit."""
+        assert isinstance(ALLOWED_EGRESS_HOSTS, frozenset)
+
+    @pytest.mark.asyncio
+    async def test_allowed_host_passes_through(self) -> None:
+        """Ein erlaubter Host wird vom Hook nicht blockiert."""
+        from bakom_mcp.server import _enforce_egress_allowlist
+
+        allowed = httpx.Request("GET", "https://api3.geo.admin.ch/some/path")
+        # Should not raise
+        await _enforce_egress_allowlist(allowed)
+
+    @pytest.mark.asyncio
+    async def test_disallowed_host_raises(self) -> None:
+        """Ein nicht-gelisteter Host wirft EgressNotAllowedError."""
+        from bakom_mcp.server import _enforce_egress_allowlist
+
+        evil = httpx.Request("GET", "https://evil.example.com/exfil")
+        with pytest.raises(EgressNotAllowedError) as exc_info:
+            await _enforce_egress_allowlist(evil)
+        # Fehlermeldung enthaelt Host (fuers Log/Debug), aber EgressNotAllowedError
+        # ist eine httpx.RequestError-Subklasse — wird vom Tool-Code-Catch eingefangen
+        assert "evil.example.com" in str(exc_info.value)
+        assert isinstance(exc_info.value, httpx.RequestError)
+
+    @pytest.mark.asyncio
+    async def test_lifespan_client_blocks_disallowed_url(self) -> None:
+        """End-to-end: der Lifespan-Client blockiert disallowed URLs auf Request-Ebene."""
+        async with lifespan(mcp) as app_ctx:
+            with pytest.raises(EgressNotAllowedError):
+                await app_ctx.http.get("https://attacker.example/data", timeout=2.0)
 
 
 # ---------------------------------------------------------------------------
