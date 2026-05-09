@@ -59,6 +59,9 @@ packages = ["src/bakom_mcp"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "live: tests that hit real BAKOM/geo.admin.ch/opendata.swiss APIs (excluded from CI default)",
+]
 
 [tool.ruff]
 line-length = 100
