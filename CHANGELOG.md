@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0] - 2026-05-09
+## [2.0.0] - 2026-05-09
 
 Audit-driven hardening release. After three full audit runs against
 [`malkreide/mcp-audit-skill`](https://github.com/malkreide/mcp-audit-skill) v1.0.0
@@ -93,7 +93,7 @@ with 0 findings, 34 of 36 applicable checks passing.
   signature). The new `uvicorn.run(...)` flow is verified end-to-end
   via the new docker smoke-test CI job.
 - Doubled CC BY 4.0 attribution footer in eight tool outputs
-  (regression introduced and corrected within v1.1.0 development).
+  (regression introduced and corrected within v2.0.0 development).
 
 ### Security
 
