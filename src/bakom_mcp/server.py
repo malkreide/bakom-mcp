@@ -637,7 +637,7 @@ async def bakom_broadband_coverage(params: BroadbandCoverageInput, ctx: Context)
 
 **Datenquelle:** {result["datenquelle"]}  
 **Karte:** {result["geodaten_api"]}"""
-            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
+            return md + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -703,7 +703,7 @@ async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput, ctx: Context) 
 
 **Datenquelle:** {result["datenquelle"]}  
 **Karte:** {result["geodaten_api"]}"""
-            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
+            return md + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -919,7 +919,7 @@ async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput, ctx: Context) -
 
 **Datenquelle:** {result["datenquelle"]}  
 **Karte:** https://map.geo.admin.ch/?layers={layer}"""
-            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
+            return md + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -1021,13 +1021,31 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput, ctx: Context) -> 
             # Nach Distanz sortieren
             anlagen.sort(key=lambda x: x.get("distanz_m") or float("inf"))
 
-            output = {
+            # ARCH-003: Heuristik-Hinweis bei leerem Resultat — schlage einen
+            # groesseren Radius vor, falls noch nicht am 5-km-Maximum.
+            hinweis: str | None = None
+            if not anlagen and params.radius_m < 5000:
+                vorschlag_radius = min(params.radius_m * 2, 5000)
+                hinweis = (
+                    f"Keine Anlagen im Radius {params.radius_m} m gefunden. "
+                    f"Empfehlung: Radius auf {vorschlag_radius} m erhoehen "
+                    f"und erneut abfragen."
+                )
+            elif not anlagen:
+                hinweis = (
+                    "Keine Anlagen im maximalen Radius (5000 m) gefunden — "
+                    "Standort ist vermutlich abgelegen."
+                )
+
+            output: dict[str, Any] = {
                 "suchzentrum": {"lat": params.latitude, "lon": params.longitude},
                 "radius_m": params.radius_m,
                 "anlagen": anlagen,
                 "total": len(anlagen),
                 "datenquelle": "BAKOM Mobilfunkanlagen via geo.admin.ch",
             }
+            if hinweis:
+                output["hinweis"] = hinweis
 
             if params.response_format == ResponseFormat.JSON:
                 return json.dumps(output, indent=2, ensure_ascii=False)
@@ -1038,7 +1056,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput, ctx: Context) -> 
             md += f"**Gefunden:** {len(anlagen)} Anlage(n)\n\n"
 
             if not anlagen:
-                md += "> Keine Mobilfunkanlagen im angegebenen Radius gefunden.\n"
+                md += f"> **Hinweis:** {hinweis}\n"
             else:
                 md += "| # | Typ | Betreiber | Distanz |\n"
                 md += "|---|-----|-----------|--------|\n"
@@ -1052,7 +1070,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput, ctx: Context) -> 
 
             md += "\n**Datenquelle:** BAKOM Mobilfunkanlagen  \n"
             md += f"**Karte:** https://map.geo.admin.ch/?layers={LAYER_MOBILFUNKANLAGEN}"
-            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
+            return md + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -1162,7 +1180,7 @@ async def bakom_frequenzdaten(params: CoordinateInput, ctx: Context) -> str:
 
             md += "\n**Datenquelle:** BAKOM Radio-/TV-Sendeanlagen  \n"
             md += f"**Karte:** https://map.geo.admin.ch/?layers={LAYER_RADIO_TV}"
-            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
+            return md + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -1258,7 +1276,27 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
                     for ds in datasets
                 ]
 
-            output = {
+            # ARCH-003: Heuristik bei leerem Resultat — schlage gezielte
+            # Filter-Lockerungen vor, damit der LLM-Agent nicht einfach
+            # "Keine Treffer" zurueckmeldet, sondern iteriert.
+            hinweis: str | None = None
+            if not resultate:
+                vorschlaege = []
+                if params.kanton:
+                    vorschlaege.append(f"ohne Kanton-Filter (kanton={params.kanton}) suchen")
+                if params.media_type != MediaType.ALLE:
+                    vorschlaege.append(
+                        f"alle Medientypen einschliessen (statt nur {params.media_type.value})"
+                    )
+                if params.query and len(params.query) > 3:
+                    vorschlaege.append(f"Suchbegriff '{params.query}' kuerzen oder als Praefix")
+                if not vorschlaege:
+                    vorschlaege.append(
+                        "Suchbegriff anpassen — Datenbank scheint leer fuer diese Anfrage"
+                    )
+                hinweis = "Keine Treffer. Empfehlung: " + ", oder ".join(vorschlaege) + "."
+
+            output: dict[str, Any] = {
                 "suchanfrage": {
                     "query": params.query,
                     "typ": params.media_type.value,
@@ -1269,6 +1307,8 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
                 "datenquelle": "BAKOM RTV-Datenbank",
                 "rtv_datenbank": "https://rtvdb.ofcomnet.ch/de",
             }
+            if hinweis:
+                output["hinweis"] = hinweis
 
             if params.response_format == ResponseFormat.JSON:
                 return json.dumps(output, indent=2, ensure_ascii=False)
@@ -1282,7 +1322,7 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
             md += f"  \n**Treffer:** {len(resultate)}\n\n"
 
             if not resultate:
-                md += "> Keine Einträge gefunden.\n"
+                md += f"> **Hinweis:** {hinweis}\n"
             else:
                 for r_item in resultate[: params.limit]:
                     name = r_item.get("name", "–")
@@ -1296,7 +1336,7 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
                     md += "  \n\n"
 
             md += "**Vollständige Datenbank:** https://rtvdb.ofcomnet.ch/de"
-            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
+            return md + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -1400,7 +1440,7 @@ async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> s
             for key, url in medienlinks.items():
                 md += f"- [{key.replace('_', ' ').title()}]({url})\n"
 
-            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
+            return md + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -1676,7 +1716,7 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput, ctx: Conte
                 md += f"[Zum Datensatz]({ds['url']})\n\n"
 
             md += "**Weitere Statistiken:** https://www.bakom.admin.ch/de/telekommunikation/zahlen-und-fakten"
-            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
+            return md + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)

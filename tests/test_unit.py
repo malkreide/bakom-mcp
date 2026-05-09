@@ -39,6 +39,8 @@ from bakom_mcp.server import (
     bakom_breitbandatlas_datensaetze,
     bakom_broadband_coverage,
     bakom_multi_standort_konnektivitaet,
+    bakom_rtv_suche,
+    bakom_sendeanlagen_suche,
     lifespan,
     mcp,
 )
@@ -527,6 +529,78 @@ class TestPromptTemplates:
         # Wichtige Limit-Doku im Prompt
         assert "20" in text
         assert "bakom_multi_standort_konnektivitaet" in text
+
+
+# ---------------------------------------------------------------------------
+# ARCH-003: «Not-Found»-Heuristiken bei leeren Resultaten
+# ---------------------------------------------------------------------------
+def _ckan_empty_response() -> MagicMock:
+    """Mock-httpx-Response with empty CKAN search results."""
+    resp = MagicMock(spec=httpx.Response)
+    resp.raise_for_status = MagicMock()
+    resp.json = MagicMock(return_value={"result": {"results": []}})
+    return resp
+
+
+def _identify_empty_response() -> MagicMock:
+    """Mock geo.admin.ch identify response with empty results."""
+    resp = MagicMock(spec=httpx.Response)
+    resp.raise_for_status = MagicMock()
+    resp.json = MagicMock(return_value={"results": []})
+    return resp
+
+
+class TestNotFoundHeuristics:
+    """ARCH-003: Tools liefern bei leeren Resultaten konkrete Empfehlungen."""
+
+    @pytest.mark.asyncio
+    async def test_sendeanlagen_empty_suggests_larger_radius(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(return_value=_identify_empty_response())
+
+        params = AntennaSearchInput(latitude=47.0, longitude=8.5, radius_m=200)
+        result = await bakom_sendeanlagen_suche(params, _ctx_with(client))
+        # Hinweis soll konkreten Radius vorschlagen (200 -> 400)
+        assert "400 m" in result
+        assert "Empfehlung" in result
+
+    @pytest.mark.asyncio
+    async def test_sendeanlagen_empty_at_max_radius_says_remote(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(return_value=_identify_empty_response())
+
+        params = AntennaSearchInput(latitude=47.0, longitude=8.5, radius_m=5000)
+        result = await bakom_sendeanlagen_suche(params, _ctx_with(client))
+        # Bei 5000 m max kein doppelt-Vorschlag, sondern "abgelegen"-Hinweis
+        assert "abgelegen" in result.lower()
+
+    @pytest.mark.asyncio
+    async def test_rtv_empty_suggests_dropping_kanton_filter(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        # Primary RTV API returns empty broadcasters list.
+        primary_resp = MagicMock(spec=httpx.Response)
+        primary_resp.raise_for_status = MagicMock()
+        primary_resp.json = MagicMock(return_value={"results": []})
+        client.get = AsyncMock(return_value=primary_resp)
+
+        params = RTVSearchInput(query="Tele Inexistent", kanton="ZH", media_type=MediaType.TV)
+        result = await bakom_rtv_suche(params, _ctx_with(client))
+        # Hinweis schlägt Kanton-Lockerung und Medientyp-Lockerung vor
+        assert "Kanton-Filter" in result or "kanton=ZH" in result
+        assert "Empfehlung" in result
+
+    @pytest.mark.asyncio
+    async def test_rtv_empty_with_no_filters_still_helpful(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        empty_resp = MagicMock(spec=httpx.Response)
+        empty_resp.raise_for_status = MagicMock()
+        empty_resp.json = MagicMock(return_value={"results": []})
+        client.get = AsyncMock(return_value=empty_resp)
+
+        params = RTVSearchInput()  # alle defaults
+        result = await bakom_rtv_suche(params, _ctx_with(client))
+        # Auch ohne Filter-Vorschläge soll Hinweis-Text auftauchen
+        assert "Hinweis" in result or "Empfehlung" in result
 
 
 # ---------------------------------------------------------------------------
