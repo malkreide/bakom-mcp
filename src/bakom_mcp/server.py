@@ -1917,6 +1917,97 @@ def bakom_demo_standorte() -> str:
 
 
 # ===========================================================================
+# PROMPTS — wiederverwendbare LLM-Templates für häufige BAKOM-Use-Cases
+# ===========================================================================
+
+
+@mcp.prompt(
+    name="schulhaus_konnektivitaet",
+    title="Schulhaus-Konnektivität analysieren",
+    description=(
+        "Anchor-Demo des Servers: prüft Glasfaser- und 5G-Status mehrerer "
+        "Schulhäuser in einer Gemeinde / einem Schulkreis und liefert eine "
+        "priorisierte Ausbau-Empfehlung."
+    ),
+)
+def prompt_schulhaus_konnektivitaet(
+    gemeinde: str = "Zürich",
+    schulkreis: str = "Kreis 7",
+) -> str:
+    """Anchor-Demo: Schulhäuser-Glasfaser-Vergleich."""
+    return (
+        f"Untersuche die Konnektivität (Glasfaser FTTH/FTTB sowie 5G-Outdoor) "
+        f"der öffentlichen Schulhäuser in {gemeinde} ({schulkreis}).\n\n"
+        "1. Identifiziere die Schulhäuser im genannten Schulkreis (nutze "
+        "öffentliche Quellen, falls keine Liste vorgegeben ist).\n"
+        "2. Rufe `bakom_multi_standort_konnektivitaet` mit den WGS84-Koordinaten "
+        "auf — bis zu 20 Standorte pro Aufruf.\n"
+        "3. Erstelle eine Tabelle: Schulname | Glasfaser-Status | 5G-Versorgung | "
+        "Empfehlung.\n"
+        "4. Priorisiere Schulhäuser ohne FTTH für den Glasfaser-Ausbau.\n"
+        "5. Verweise im Footer auf die Quelle (BAKOM via opendata.swiss / "
+        "geo.admin.ch, Lizenz CC BY 4.0)."
+    )
+
+
+@mcp.prompt(
+    name="rtv_kanton_uebersicht",
+    title="RTV-Veranstalter pro Kanton",
+    description=(
+        "Listet konzessionierte und gemeldete Radio- und TV-Veranstalter "
+        "in einem Schweizer Kanton aus der BAKOM RTV-Datenbank."
+    ),
+)
+def prompt_rtv_kanton_uebersicht(
+    kanton: str = "ZH",
+    medientyp: str = "alle",
+) -> str:
+    """Übersicht der Konzessionsträger pro Kanton."""
+    return (
+        f"Erstelle eine Übersicht der konzessionierten Radio- und TV-Veranstalter "
+        f"im Kanton {kanton.upper()}.\n\n"
+        f"1. Rufe `bakom_rtv_suche` mit `kanton='{kanton.upper()}'` und "
+        f"`media_type='{medientyp}'` auf.\n"
+        "2. Gruppiere die Ergebnisse nach Medientyp (Radio / TV).\n"
+        "3. Zeige Name, Konzessionsstatus und Link auf die RTV-Datenbank in einer "
+        "Tabelle.\n"
+        "4. Ergänze einen Kontext-Absatz: was bedeutet «konzessioniert» vs. "
+        "«gemeldet» nach Schweizer Medienrecht?\n"
+        "5. Quelle und CC BY 4.0-Lizenz im Footer angeben."
+    )
+
+
+@mcp.prompt(
+    name="standort_konnektivitaet_vergleich",
+    title="Konnektivitätsvergleich mehrerer Standorte",
+    description=(
+        "Allgemeine Variante des Anchor-Demos: vergleicht beliebige Standorte "
+        "auf Breitband- und Mobilfunkversorgung mit strukturierter Empfehlung."
+    ),
+)
+def prompt_standort_konnektivitaet_vergleich(
+    standorte_beschreibung: str = "Liste der zu vergleichenden Standorte (Name + Adresse)",
+    fokus: str = "Glasfaser und 5G",
+) -> str:
+    """Generischer Standort-Vergleich für Verwaltungen, Immobilien, Standortwahl."""
+    return (
+        f"Vergleiche die Konnektivität ({fokus}) der folgenden Standorte:\n\n"
+        f"{standorte_beschreibung}\n\n"
+        "Vorgehen:\n"
+        "1. Bestimme die WGS84-Koordinaten (lat/lon) jedes Standorts; falls nur "
+        "Adressen vorliegen, geocodiere sie zuerst.\n"
+        "2. Rufe `bakom_multi_standort_konnektivitaet` (max. 20 Standorte) mit "
+        "`response_format='json'` auf — strukturiert ist besser für die Tabelle.\n"
+        "3. Bei mehr als 20 Standorten: in Batches aufrufen.\n"
+        "4. Erstelle eine Tabelle: Standort | 5G | Glasfaser | Empfehlung.\n"
+        "5. Falls Ergebnisse fehlen oder Koordinaten ausserhalb der Schweiz "
+        "liegen, zeige das transparent als 'n/a'.\n"
+        "6. Schliesse mit einer kurzen Empfehlung pro Standort und der Quellen-"
+        "Attribution (BAKOM via opendata.swiss / geo.admin.ch, CC BY 4.0)."
+    )
+
+
+# ===========================================================================
 # ENTRY POINT
 # ===========================================================================
 if __name__ == "__main__":

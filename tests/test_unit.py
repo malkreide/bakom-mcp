@@ -474,6 +474,62 @@ class TestProgressReports:
 
 
 # ---------------------------------------------------------------------------
+# ARCH-008: @mcp.prompt-Templates
+# ---------------------------------------------------------------------------
+class TestPromptTemplates:
+    """Drei Prompt-Templates fuer haeufige BAKOM-Use-Cases registriert + rendern."""
+
+    def test_three_prompts_registered(self) -> None:
+        names = set(mcp._prompt_manager._prompts.keys())
+        assert {
+            "schulhaus_konnektivitaet",
+            "rtv_kanton_uebersicht",
+            "standort_konnektivitaet_vergleich",
+        } <= names
+
+    @pytest.mark.asyncio
+    async def test_schulhaus_prompt_renders_with_defaults(self) -> None:
+        res = await mcp._prompt_manager.render_prompt("schulhaus_konnektivitaet", {})
+        text = res[0].content.text
+        # Defaults von Zürich/Kreis 7 müssen drin sein
+        assert "Zürich" in text
+        assert "Kreis 7" in text
+        # Tool-Hinweis (LLM weiss welches Tool)
+        assert "bakom_multi_standort_konnektivitaet" in text
+        # CC BY 4.0 Attribution-Erinnerung
+        assert "CC BY 4.0" in text
+
+    @pytest.mark.asyncio
+    async def test_schulhaus_prompt_with_custom_args(self) -> None:
+        res = await mcp._prompt_manager.render_prompt(
+            "schulhaus_konnektivitaet",
+            {"gemeinde": "Bern", "schulkreis": "Kreis Mitte"},
+        )
+        text = res[0].content.text
+        assert "Bern" in text
+        assert "Kreis Mitte" in text
+
+    @pytest.mark.asyncio
+    async def test_rtv_kanton_prompt_uppercases_canton(self) -> None:
+        res = await mcp._prompt_manager.render_prompt(
+            "rtv_kanton_uebersicht",
+            {"kanton": "ge"},
+        )
+        text = res[0].content.text
+        # Prompt soll uppercased GE im Tool-Aufruf erwähnen
+        assert "GE" in text
+        assert "bakom_rtv_suche" in text
+
+    @pytest.mark.asyncio
+    async def test_vergleich_prompt_mentions_max_20(self) -> None:
+        res = await mcp._prompt_manager.render_prompt("standort_konnektivitaet_vergleich", {})
+        text = res[0].content.text
+        # Wichtige Limit-Doku im Prompt
+        assert "20" in text
+        assert "bakom_multi_standort_konnektivitaet" in text
+
+
+# ---------------------------------------------------------------------------
 # Enum / Konstanten-Sanity
 # ---------------------------------------------------------------------------
 class TestEnumValues:
