@@ -19,10 +19,11 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any
+from typing import Any, NoReturn
 
 import httpx
 from mcp.server.fastmcp import Context, FastMCP
+from mcp.server.fastmcp.exceptions import ToolError
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 # ---------------------------------------------------------------------------
@@ -450,12 +451,14 @@ def _wgs84_to_lv95_approx(lat: float, lon: float) -> tuple[float, float]:
 
 
 def _handle_api_error(e: Exception) -> str:
-    """Einheitliche Fehlerformatierung.
+    """Generische, LLM-sichere Fehlermeldung ohne Stack/URL-Leak (OBS-002).
 
-    Generische Meldung für das LLM; Stack-Details landen im Log (stderr),
-    nicht im Tool-Output. Verhindert Leakage von Pfaden, Library-Versionen
-    und internen URLs an Adversarial-Prompts.
+    Reine Klassifikations-Funktion — ruft kein raise. Genutzt von
+    `_raise_api_error` (Standardpfad) und von Test-Suiten, die den
+    Klassifikator direkt verifizieren wollen.
     """
+    if isinstance(e, EgressNotAllowedError):
+        return "Fehler: Datenquelle nicht in Egress-Allowlist (Konfigurationsproblem)."
     if isinstance(e, httpx.HTTPStatusError):
         if e.response.status_code == 404:
             return "Fehler: Ressource nicht gefunden. Bitte Koordinaten oder Parameter prüfen."
@@ -470,6 +473,17 @@ def _handle_api_error(e: Exception) -> str:
         return "Fehler: Keine Verbindung zur API. Netzwerk prüfen."
     logger.exception("Unerwarteter Fehler in Tool-Aufruf")
     return "Fehler: Unerwarteter interner Fehler. Bitte erneut versuchen."
+
+
+def _raise_api_error(e: Exception) -> NoReturn:
+    """Klassifiziert einen API-Fehler und raise't `ToolError` (OBS-001).
+
+    Resultat auf der Wire: `CallToolResult(isError=True, ...)` — der Client
+    kann zwischen "Tool lief, Daten OK" und "Tool-Aufruf fehlgeschlagen"
+    unterscheiden und Retry-Logik anwenden. Generische Messages stellen
+    sicher, dass keine Stack/URL/Class-Details leaken (OBS-002).
+    """
+    raise ToolError(_handle_api_error(e)) from e
 
 
 # ---------------------------------------------------------------------------
@@ -572,7 +586,7 @@ async def bakom_broadband_coverage(params: BroadbandCoverageInput, ctx: Context)
             return md
 
     except Exception as e:
-        return _handle_api_error(e)
+        _raise_api_error(e)
 
 
 @mcp.tool(
@@ -637,7 +651,7 @@ async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput, ctx: Context) 
             return md
 
     except Exception as e:
-        return _handle_api_error(e)
+        _raise_api_error(e)
 
 
 @mcp.tool(
@@ -842,7 +856,7 @@ async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput, ctx: Context) -
             return md
 
     except Exception as e:
-        return _handle_api_error(e)
+        _raise_api_error(e)
 
 
 @mcp.tool(
@@ -974,7 +988,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput, ctx: Context) -> 
             return md
 
     except Exception as e:
-        return _handle_api_error(e)
+        _raise_api_error(e)
 
 
 @mcp.tool(
@@ -1083,7 +1097,7 @@ async def bakom_frequenzdaten(params: CoordinateInput, ctx: Context) -> str:
             return md
 
     except Exception as e:
-        return _handle_api_error(e)
+        _raise_api_error(e)
 
 
 # ===========================================================================
@@ -1216,7 +1230,7 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
             return md
 
     except Exception as e:
-        return _handle_api_error(e)
+        _raise_api_error(e)
 
 
 @mcp.tool(
@@ -1319,7 +1333,7 @@ async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> s
             return md
 
     except Exception as e:
-        return _handle_api_error(e)
+        _raise_api_error(e)
 
 
 @mcp.tool(
@@ -1593,7 +1607,7 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput, ctx: Conte
             return md
 
     except Exception as e:
-        return _handle_api_error(e)
+        _raise_api_error(e)
 
 
 @mcp.tool(
