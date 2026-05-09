@@ -17,6 +17,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import httpx
 import pytest
+from mcp.server.fastmcp.exceptions import ToolError
 from pydantic import ValidationError
 
 from bakom_mcp.server import (
@@ -34,6 +35,7 @@ from bakom_mcp.server import (
     RTVSearchInput,
     TelekomStatInput,
     _handle_api_error,
+    _raise_api_error,
     bakom_breitbandatlas_datensaetze,
     bakom_broadband_coverage,
     lifespan,
@@ -163,6 +165,61 @@ class TestErrorMasking:
 
 
 # ---------------------------------------------------------------------------
+# OBS-001: _raise_api_error -> ToolError (Execution-Error Trennung)
+# ---------------------------------------------------------------------------
+class TestRaiseApiError:
+    """Tools nutzen _raise_api_error fuer Execution-Errors → isError=True wire."""
+
+    def test_raises_tool_error_for_timeout(self) -> None:
+        with pytest.raises(ToolError) as exc_info:
+            _raise_api_error(httpx.TimeoutException("read timeout on /secret"))
+        msg = str(exc_info.value)
+        assert "Zeitüberschreitung" in msg
+        assert "/secret" not in msg
+
+    def test_raises_tool_error_for_connect_error(self) -> None:
+        with pytest.raises(ToolError) as exc_info:
+            _raise_api_error(httpx.ConnectError("connect to 192.168.1.1 failed"))
+        msg = str(exc_info.value)
+        assert "Keine Verbindung" in msg
+        assert "192.168.1.1" not in msg
+
+    def test_raises_tool_error_for_404(self) -> None:
+        request = httpx.Request("GET", "https://api3.geo.admin.ch/secret")
+        response = httpx.Response(status_code=404, request=request)
+        err = httpx.HTTPStatusError("404", request=request, response=response)
+        with pytest.raises(ToolError) as exc_info:
+            _raise_api_error(err)
+        assert "Ressource nicht gefunden" in str(exc_info.value)
+
+    def test_raises_tool_error_for_egress_block(self) -> None:
+        evil = httpx.Request("GET", "https://attacker.example/x")
+        err = EgressNotAllowedError("blocked", request=evil)
+        with pytest.raises(ToolError) as exc_info:
+            _raise_api_error(err)
+        msg = str(exc_info.value)
+        assert "Egress-Allowlist" in msg
+        # Original-Host darf nicht in der ToolError-Message landen
+        assert "attacker.example" not in msg
+
+    def test_raises_tool_error_for_unknown_exception(self) -> None:
+        with pytest.raises(ToolError) as exc_info:
+            _raise_api_error(ValueError("/etc/passwd contains root:x"))
+        msg = str(exc_info.value)
+        assert "/etc/passwd" not in msg
+        assert "ValueError" not in msg
+        assert "interner fehler" in msg.lower()
+
+    def test_chain_preserves_original_exception(self) -> None:
+        """`from e` erhaelt __cause__ fuer Server-seitige Diagnose."""
+        original = httpx.TimeoutException("internal trace")
+        try:
+            _raise_api_error(original)
+        except ToolError as te:
+            assert te.__cause__ is original
+
+
+# ---------------------------------------------------------------------------
 # SDK-001: Lifespan + shared httpx client
 # ---------------------------------------------------------------------------
 class TestLifespan:
@@ -196,7 +253,7 @@ class TestToolCallsWithMockedHttpx:
 
     @pytest.mark.asyncio
     async def test_broadband_coverage_handles_404(self) -> None:
-        """Tool gibt generische Fehlermeldung bei 404 zurueck (kein Stack-Leak)."""
+        """Tool raise't ToolError bei 404 — isError=True auf der Wire (OBS-001)."""
         client = AsyncMock(spec=httpx.AsyncClient)
         request = httpx.Request("GET", "https://wms.geo.admin.ch/?LAYERS=ch.bakom.downlink100")
         response = httpx.Response(status_code=404, request=request)
@@ -207,34 +264,41 @@ class TestToolCallsWithMockedHttpx:
         params = BroadbandCoverageInput(
             latitude=47.3769, longitude=8.5417, min_speed_mbps=BroadbandSpeed.S100
         )
-        result = await bakom_broadband_coverage(params, _ctx_with(client))
-        assert isinstance(result, str)
-        # Tool darf weder geo.admin.ch-URL noch Layer-Namen leaken
-        assert (
-            "wms.geo.admin.ch" not in result or "Karte" in result
-        )  # nur als opendata.swiss-Link OK
+        with pytest.raises(ToolError) as exc_info:
+            await bakom_broadband_coverage(params, _ctx_with(client))
+        msg = str(exc_info.value)
+        assert "Ressource nicht gefunden" in msg
+        # Kein Layer/URL-Leak (OBS-002)
+        assert "ch.bakom.downlink100" not in msg
+        assert "wms.geo.admin.ch" not in msg
 
     @pytest.mark.asyncio
     async def test_broadband_coverage_handles_timeout(self) -> None:
         client = AsyncMock(spec=httpx.AsyncClient)
-        client.get = AsyncMock(side_effect=httpx.TimeoutException("read timeout"))
+        client.get = AsyncMock(side_effect=httpx.TimeoutException("read timeout on /etc/passwd"))
 
         params = BroadbandCoverageInput(
             latitude=47.3769, longitude=8.5417, min_speed_mbps=BroadbandSpeed.S100
         )
-        result = await bakom_broadband_coverage(params, _ctx_with(client))
-        assert "Zeitüberschreitung" in result
+        with pytest.raises(ToolError) as exc_info:
+            await bakom_broadband_coverage(params, _ctx_with(client))
+        msg = str(exc_info.value)
+        assert "Zeitüberschreitung" in msg
+        assert "/etc/passwd" not in msg
 
     @pytest.mark.asyncio
     async def test_broadband_coverage_handles_connect_error(self) -> None:
         client = AsyncMock(spec=httpx.AsyncClient)
-        client.get = AsyncMock(side_effect=httpx.ConnectError("network unreachable"))
+        client.get = AsyncMock(side_effect=httpx.ConnectError("network unreachable to 10.0.0.5"))
 
         params = BroadbandCoverageInput(
             latitude=47.3769, longitude=8.5417, min_speed_mbps=BroadbandSpeed.S100
         )
-        result = await bakom_broadband_coverage(params, _ctx_with(client))
-        assert "Keine Verbindung" in result
+        with pytest.raises(ToolError) as exc_info:
+            await bakom_broadband_coverage(params, _ctx_with(client))
+        msg = str(exc_info.value)
+        assert "Keine Verbindung" in msg
+        assert "10.0.0.5" not in msg
 
 
 # ---------------------------------------------------------------------------
