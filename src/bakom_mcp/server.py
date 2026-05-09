@@ -39,6 +39,42 @@ HTTP_TIMEOUT_SEC = 15.0
 HTTP_USER_AGENT = "bakom-mcp/1.0 (+https://github.com/malkreide/bakom-mcp)"
 
 
+# Code-Layer-Egress-Allowlist (SEC-021).
+# Jeder Outbound-HTTP-Call wird gegen diese Liste validiert; Aufrufe an
+# Hosts ausserhalb des Sets werfen httpx.RequestError und gehen nicht raus.
+# Bei Erweiterung um neue Datenquellen muss diese Liste explizit erweitert
+# werden — das macht jeden neuen Egress-Punkt im Diff sichtbar (Review-Signal).
+ALLOWED_EGRESS_HOSTS: frozenset[str] = frozenset(
+    {
+        "api3.geo.admin.ch",
+        "wms.geo.admin.ch",
+        "geodesy.geo.admin.ch",
+        "ckan.opendata.swiss",
+        "rtvdb.ofcomnet.ch",
+        "www.bakom.admin.ch",
+    }
+)
+
+
+class EgressNotAllowedError(httpx.RequestError):
+    """Outbound-Call an einen nicht in ALLOWED_EGRESS_HOSTS gelisteten Host."""
+
+
+async def _enforce_egress_allowlist(request: httpx.Request) -> None:
+    """httpx-Event-Hook: prueft jedes Request-Ziel gegen die Allow-List.
+
+    Wird beim Client-Setup im lifespan registriert. Greift unabhaengig
+    davon, ob ein Tool client.get/post/stream/request nutzt.
+    """
+    host = request.url.host
+    if host not in ALLOWED_EGRESS_HOSTS:
+        logger.warning("Egress blocked", extra={"host": host, "url": str(request.url)})
+        raise EgressNotAllowedError(
+            f"Egress blocked: host '{host}' not in ALLOWED_EGRESS_HOSTS",
+            request=request,
+        )
+
+
 @dataclass
 class AppContext:
     """Lifespan-Context, via FastMCP an alle Tools gereicht."""
@@ -57,6 +93,7 @@ async def lifespan(_server: FastMCP) -> AsyncIterator[AppContext]:
     async with httpx.AsyncClient(
         timeout=HTTP_TIMEOUT_SEC,
         headers={"User-Agent": HTTP_USER_AGENT},
+        event_hooks={"request": [_enforce_egress_allowlist]},
     ) as client:
         yield AppContext(http=client)
 
