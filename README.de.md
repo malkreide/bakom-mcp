@@ -23,13 +23,42 @@
 
 **bakom-mcp** verbindet KI-Assistenten wie Claude mit der Open-Data-Infrastruktur des Bundesamts für Kommunikation (BAKOM). Ermöglicht Abfragen in natürlicher Sprache zu Breitbandverfügbarkeit, 5G/4G-Abdeckung, Mobilfunkstandorten, konzessionierten Rundfunkveranstaltern (RTV-Datenbank) und Telekommunikationsstatistiken – ohne API-Schlüssel.
 
-Alle Daten sind als Open Government Data (OGD) unter offenen Lizenzen (CC0) veröffentlicht.
+Alle Daten sind als Open Government Data (OGD) auf opendata.swiss / geo.admin.ch unter **CC BY 4.0** veröffentlicht — siehe Sektion [Datenlizenz](#datenlizenz) für die Attribution-Anforderungen.
 
 **Anker-Demo-Abfrage:** *«Welche Schulhäuser im Schulkreis 7 haben noch kein Glasfaser?»*
 
 > `bakom_multi_standort_konnektivitaet` liefert die Vergleichstabelle automatisch.
 
 [→ Weitere Anwendungsbeispiele nach Zielgruppe →](EXAMPLES.md)
+
+---
+
+## Geltungsbereich
+
+### Was dieser Server tut
+
+✓ Read-only-Abfragen gegen drei öffentliche BAKOM-/Bund-APIs:
+  - `api3.geo.admin.ch` / `wms.geo.admin.ch` (Breitband, Mobilfunkabdeckung, Antennen)
+  - `ckan.opendata.swiss` (Telekomstatistiken, Datensatz-Metadaten)
+  - `rtvdb.ofcomnet.ch` (Konzessionierte Radio-/TV-Veranstalter)
+
+✓ Liefert aggregierte, anonyme Daten — keine Personendaten, keine Haushalts-Identifikation.
+
+✓ Auf Schweizer WGS84-Koordinaten begrenzt (lat 45.8–47.9, lon 5.9–10.6) via Pydantic-Input-Validation.
+
+✓ Egress ist auf eine [Code-Layer-Allow-List](src/bakom_mcp/server.py) der sechs bekannten Datenquellen-Hosts beschränkt.
+
+### Was dieser Server nicht tut
+
+✗ Daten irgendwohin senden (read-only, keine Schreibtools).
+
+✗ Auf das lokale Dateisystem zugreifen (kein Path-Traversal-Vektor).
+
+✗ Authentifizierungs-Tokens nutzen (nicht nötig — alle Quellen sind öffentliche OGD).
+
+✗ User-Eingaben über Calls hinweg cachen oder persistieren.
+
+✗ Shell-Befehle oder beliebigen Code ausführen (kein `subprocess`/`os.system`/`eval`).
 
 ---
 
@@ -293,9 +322,17 @@ Beiträge sind willkommen! Hinweise zu Fehlerberichten, Feature-Vorschlägen und
 
 ---
 
-## Lizenz
+## Software-Lizenz
 
-MIT-Lizenz – siehe [LICENSE](LICENSE)
+MIT-Lizenz – siehe [LICENSE](LICENSE).
+
+## Datenlizenz
+
+Die BAKOM-Open-Data, die dieser Server liefert, sind unter **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.de)** publiziert. Bei Verwendung oder Weiterveröffentlichung der Tool-Outputs bitte folgende Quellenangabe machen:
+
+> *Quelle: Bundesamt für Kommunikation (BAKOM) via opendata.swiss / geo.admin.ch · Lizenz: CC BY 4.0*
+
+Tool-Outputs enthalten diesen Footer bereits automatisch. Markdown-Antworten enden mit der Attribution-Zeile; nachgelagerte Anwendungen, die das JSON-Format konsumieren, sollten die Quellen- und Lizenz-Information an ihre Endnutzer weiterreichen.
 
 ---
 

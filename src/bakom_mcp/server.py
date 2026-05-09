@@ -124,6 +124,19 @@ TIMEOUT = 20.0
 DEFAULT_LIMIT = 20
 MAX_LIMIT = 100
 
+# OGD-CH Lizenz-Attribution (CH-004): BAKOM-Daten auf opendata.swiss /
+# geo.admin.ch sind unter CC BY 4.0 verfuegbar. Tool-Outputs zeigen die
+# Quelle und Lizenz im Footer, damit nachgelagerte Verwendungen die
+# Attribution-Pflicht erfuellen koennen.
+LICENSE_NAME = "CC BY 4.0"
+LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/deed.de"
+ATTRIBUTION_FOOTER_MD = (
+    "\n\n---\n"
+    "**Quelle:** Bundesamt für Kommunikation (BAKOM) "
+    "via opendata.swiss / geo.admin.ch · "
+    f"**Lizenz:** [{LICENSE_NAME}]({LICENSE_URL})"
+)
+
 # geo.admin.ch Layer-IDs für BAKOM-Daten
 LAYER_MOBILFUNKANLAGEN = "ch.bakom.standorte-mobilfunkanlagen"
 WMS_GEO_ADMIN = "https://wms.geo.admin.ch/"
@@ -583,7 +596,7 @@ async def bakom_broadband_coverage(params: BroadbandCoverageInput, ctx: Context)
 
 **Datenquelle:** {result["datenquelle"]}  
 **Karte:** {result["geodaten_api"]}"""
-            return md
+            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -648,7 +661,7 @@ async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput, ctx: Context) 
 
 **Datenquelle:** {result["datenquelle"]}  
 **Karte:** {result["geodaten_api"]}"""
-            return md
+            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -777,7 +790,7 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput, ctx: C
     md += f"\n**Zusammenfassung:** {mit_5g}/{len(standort_results)} Standorte mit 5G, "
     md += f"{mit_glasfaser}/{len(standort_results)} mit Glasfaser.\n"
     md += "\n**Datenquelle:** BAKOM Breitbandatlas via geo.admin.ch"
-    return md
+    return md + ATTRIBUTION_FOOTER_MD
 
 
 # ===========================================================================
@@ -853,7 +866,7 @@ async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput, ctx: Context) -
 
 **Datenquelle:** {result["datenquelle"]}  
 **Karte:** https://map.geo.admin.ch/?layers={layer}"""
-            return md
+            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -985,7 +998,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput, ctx: Context) -> 
 
             md += "\n**Datenquelle:** BAKOM Mobilfunkanlagen  \n"
             md += f"**Karte:** https://map.geo.admin.ch/?layers={LAYER_MOBILFUNKANLAGEN}"
-            return md
+            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -1094,7 +1107,7 @@ async def bakom_frequenzdaten(params: CoordinateInput, ctx: Context) -> str:
 
             md += "\n**Datenquelle:** BAKOM Radio-/TV-Sendeanlagen  \n"
             md += f"**Karte:** https://map.geo.admin.ch/?layers={LAYER_RADIO_TV}"
-            return md
+            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -1227,7 +1240,7 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
                     md += "  \n\n"
 
             md += "**Vollständige Datenbank:** https://rtvdb.ofcomnet.ch/de"
-            return md
+            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -1330,7 +1343,7 @@ async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> s
             for key, url in medienlinks.items():
                 md += f"- [{key.replace('_', ' ').title()}]({url})\n"
 
-            return md
+            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -1483,7 +1496,7 @@ async def bakom_aktuell(params: TelekomStatInput, ctx: Context) -> str:
 
     md += "**BAKOM:** https://www.bakom.admin.ch/de  \n"
     md += "**Open Data:** https://opendata.swiss/de/organization/bundesamt-fur-kommunikation-bakom"
-    return md
+    return md + ATTRIBUTION_FOOTER_MD
 
 
 # ===========================================================================
@@ -1604,7 +1617,7 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput, ctx: Conte
                 md += f"[Zum Datensatz]({ds['url']})\n\n"
 
             md += "**Weitere Statistiken:** https://www.bakom.admin.ch/de/telekommunikation/zahlen-und-fakten"
-            return md
+            return md + ATTRIBUTION_FOOTER_MD + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
         _raise_api_error(e)
@@ -1765,7 +1778,7 @@ async def bakom_breitbandatlas_datensaetze(params: TelekomStatInput) -> str:
 
     md += "**API:** `https://api3.geo.admin.ch/rest/services/api/MapServer/identify`  \n"
     md += "**Karte:** https://map.geo.admin.ch/"
-    return md
+    return md + ATTRIBUTION_FOOTER_MD
 
 
 # ===========================================================================
