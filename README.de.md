@@ -290,8 +290,11 @@ bakom-mcp/
 ├── .gitignore
 ├── pyproject.toml           # Build-Konfiguration (hatchling)
 ├── CHANGELOG.md
-├── CONTRIBUTING.md
-├── LICENSE
+├── CONTRIBUTING.md          # Beitragsleitfaden (Englisch)
+├── CONTRIBUTING.de.md       # Beitragsleitfaden (Deutsch)
+├── SECURITY.md              # Sicherheitsrichtlinie (Englisch)
+├── SECURITY.de.md           # Sicherheitsrichtlinie (Deutsch)
+├── LICENSE                  # MIT-Lizenz
 ├── README.md                # Englische Hauptversion
 └── README.de.md             # Diese Datei (Deutsch)
 ```
@@ -318,7 +321,13 @@ Siehe [CHANGELOG.md](CHANGELOG.md)
 
 ## Mitwirken
 
-Beiträge sind willkommen! Hinweise zu Fehlerberichten, Feature-Vorschlägen und Pull Requests finden sich in [CONTRIBUTING.md](CONTRIBUTING.md).
+Beiträge sind willkommen! Hinweise zu Fehlerberichten, Feature-Vorschlägen und Pull Requests finden sich in [CONTRIBUTING.de.md](CONTRIBUTING.de.md) ([🇬🇧 English](CONTRIBUTING.md)).
+
+---
+
+## Sicherheit
+
+Um eine Schwachstelle zu melden, siehe die [Sicherheitsrichtlinie](SECURITY.de.md) ([🇬🇧 English](SECURITY.md)). Bitte melde Sicherheitsprobleme vertraulich über GitHub Security Advisories statt über öffentliche Issues.
 
 ---
 

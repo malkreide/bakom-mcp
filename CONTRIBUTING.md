@@ -1,5 +1,7 @@
 # Contributing to bakom-mcp
 
+[🇩🇪 Deutsche Version](CONTRIBUTING.de.md)
+
 Thank you for your interest in contributing to **bakom-mcp**! This server is part of the [Swiss Public Data MCP Portfolio](https://github.com/malkreide) and connects AI assistants to Swiss Federal Office of Communications (BAKOM) open data.
 
 ---
