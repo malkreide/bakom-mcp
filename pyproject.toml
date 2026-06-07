@@ -51,7 +51,6 @@ dev = [
 bakom-mcp = "bakom_mcp.server:mcp.run"
 
 [project.urls]
-"mcp-name" = "io.github.malkreide/bakom-mcp"
 Homepage = "https://github.com/malkreide/bakom-mcp"
 Repository = "https://github.com/malkreide/bakom-mcp"
 Issues = "https://github.com/malkreide/bakom-mcp/issues"

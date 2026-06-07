@@ -363,3 +363,5 @@ Hayal Oezkan · [github.com/malkreide](https://github.com/malkreide)
 ---
 
 *Part of the Swiss Open Data MCP portfolio — public data deserves public interfaces.*
+
+<!-- mcp-name: io.github.malkreide/bakom-mcp -->
