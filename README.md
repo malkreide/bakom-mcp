@@ -365,3 +365,22 @@ Hayal Oezkan · [github.com/malkreide](https://github.com/malkreide)
 *Part of the Swiss Open Data MCP portfolio — public data deserves public interfaces.*
 
 <!-- mcp-name: io.github.malkreide/bakom-mcp -->
+
+<!-- BEGIN GENERATED: install -->
+## Installation
+
+Run via [`uv`](https://docs.astral.sh/uv/)'s `uvx` — no clone or manual install needed. Add to your MCP client config (`mcpServers` for Claude Desktop, Cursor and Windsurf; use a top-level `servers` key for VS Code in `.vscode/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "bakom-mcp": {
+      "command": "uvx",
+      "args": [
+        "bakom-mcp"
+      ]
+    }
+  }
+}
+```
+<!-- END GENERATED: install -->
