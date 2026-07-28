@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Behoben / Fixed
+- **User-Agent meldete eine ganze Major-Version zu wenig.** Das Literal in
+  `server.py` las `bakom-mcp/1.0`, während das Paket bei **2.0.3** stand, und
+  `__init__.__version__` stand auf 1.0.0. Jede Anfrage an die BAKOM-Endpoints
+  trug den veralteten Wert. Die Version kommt jetzt aus den installierten
+  Paket-Metadaten (`importlib.metadata`, aus `pyproject.toml` erzeugt), der
+  User-Agent wird daraus abgeleitet. Abgesichert durch `tests/test_version.py`.
+
 ## [2.0.0] - 2026-05-09
 
 Audit-driven hardening release. After three full audit runs against

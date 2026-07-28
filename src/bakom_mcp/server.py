@@ -28,6 +28,8 @@ from mcp.server.fastmcp import Context, FastMCP
 from mcp.server.fastmcp.exceptions import ToolError
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from bakom_mcp import __version__
+
 # ---------------------------------------------------------------------------
 # Logging
 # ---------------------------------------------------------------------------
@@ -77,7 +79,9 @@ def _log_tool_call(fn: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T
 # Lifespan: ein httpx.AsyncClient für die gesamte Server-Lebensdauer
 # ---------------------------------------------------------------------------
 HTTP_TIMEOUT_SEC = 15.0
-HTTP_USER_AGENT = "bakom-mcp/1.0 (+https://github.com/malkreide/bakom-mcp)"
+# Derived from the package version, not hand-maintained: this literal read
+# "bakom-mcp/1.0" while the package was at 2.0.3.
+HTTP_USER_AGENT = f"bakom-mcp/{__version__} (+https://github.com/malkreide/bakom-mcp)"
 
 
 # Code-Layer-Egress-Allowlist (SEC-021).
