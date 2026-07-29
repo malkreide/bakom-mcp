@@ -17,7 +17,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import httpx
 import pytest
-from mcp.server.fastmcp.exceptions import ToolError
+from mcp.server.mcpserver.exceptions import ToolError
 from pydantic import ValidationError
 
 from bakom_mcp.server import (
@@ -50,7 +50,7 @@ from bakom_mcp.server import (
 # Helper: Build a Context-like object that exposes the lifespan AppContext
 # ---------------------------------------------------------------------------
 def _ctx_with(client: httpx.AsyncClient | AsyncMock) -> MagicMock:
-    """Erzeuge ein Mock-Context-Objekt, wie FastMCP es an Tools reicht."""
+    """Erzeuge ein Mock-Context-Objekt, wie MCPServer es an Tools reicht."""
     ctx = MagicMock()
     ctx.request_context.lifespan_context = AppContext(http=client)
     return ctx
@@ -491,8 +491,8 @@ class TestPromptTemplates:
 
     @pytest.mark.asyncio
     async def test_schulhaus_prompt_renders_with_defaults(self) -> None:
-        res = await mcp._prompt_manager.render_prompt("schulhaus_konnektivitaet", {})
-        text = res[0].content.text
+        res = await mcp.get_prompt("schulhaus_konnektivitaet", {})
+        text = res.messages[0].content.text
         # Defaults von Zürich/Kreis 7 müssen drin sein
         assert "Zürich" in text
         assert "Kreis 7" in text
@@ -503,29 +503,29 @@ class TestPromptTemplates:
 
     @pytest.mark.asyncio
     async def test_schulhaus_prompt_with_custom_args(self) -> None:
-        res = await mcp._prompt_manager.render_prompt(
+        res = await mcp.get_prompt(
             "schulhaus_konnektivitaet",
             {"gemeinde": "Bern", "schulkreis": "Kreis Mitte"},
         )
-        text = res[0].content.text
+        text = res.messages[0].content.text
         assert "Bern" in text
         assert "Kreis Mitte" in text
 
     @pytest.mark.asyncio
     async def test_rtv_kanton_prompt_uppercases_canton(self) -> None:
-        res = await mcp._prompt_manager.render_prompt(
+        res = await mcp.get_prompt(
             "rtv_kanton_uebersicht",
             {"kanton": "ge"},
         )
-        text = res[0].content.text
+        text = res.messages[0].content.text
         # Prompt soll uppercased GE im Tool-Aufruf erwähnen
         assert "GE" in text
         assert "bakom_rtv_suche" in text
 
     @pytest.mark.asyncio
     async def test_vergleich_prompt_mentions_max_20(self) -> None:
-        res = await mcp._prompt_manager.render_prompt("standort_konnektivitaet_vergleich", {})
-        text = res[0].content.text
+        res = await mcp.get_prompt("standort_konnektivitaet_vergleich", {})
+        text = res.messages[0].content.text
         # Wichtige Limit-Doku im Prompt
         assert "20" in text
         assert "bakom_multi_standort_konnektivitaet" in text
