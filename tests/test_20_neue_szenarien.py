@@ -22,7 +22,6 @@ Ausführung:
 import asyncio
 import json
 import sys
-import traceback
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -30,6 +29,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from pydantic import ValidationError
 
 from bakom_mcp.server import (
+    AntennaSearchInput,
     BroadbandCoverageInput,
     BroadbandSpeed,
     CoordinateInput,
@@ -37,7 +37,6 @@ from bakom_mcp.server import (
     MobileCoverageInput,
     MobilGenerations,
     MultiLocationInput,
-    AntennaSearchInput,
     ResponseFormat,
     RTVSearchInput,
     TelekomStatInput,
@@ -53,7 +52,6 @@ from bakom_mcp.server import (
     bakom_sendeanlagen_suche,
     bakom_telekomstatistik_uebersicht,
 )
-
 
 # ---------------------------------------------------------------------------
 # Testkoordinaten
