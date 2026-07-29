@@ -14,13 +14,13 @@ Ausführung:
 import asyncio
 import json
 import sys
-import traceback
 from pathlib import Path
 
 # Projekt-Src zum Pfad hinzufügen
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from bakom_mcp.server import (
+    AntennaSearchInput,
     BroadbandCoverageInput,
     BroadbandSpeed,
     CoordinateInput,
@@ -28,7 +28,6 @@ from bakom_mcp.server import (
     MobileCoverageInput,
     MobilGenerations,
     MultiLocationInput,
-    AntennaSearchInput,
     ResponseFormat,
     RTVSearchInput,
     TelekomStatInput,

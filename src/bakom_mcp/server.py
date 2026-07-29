@@ -24,8 +24,8 @@ from enum import StrEnum
 from typing import Any, NoReturn, TypeVar
 
 import httpx
-from mcp.server.fastmcp import Context, FastMCP
-from mcp.server.fastmcp.exceptions import ToolError
+from mcp.server.mcpserver import Context, MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from bakom_mcp import __version__
@@ -40,7 +40,7 @@ logger = logging.getLogger("bakom_mcp")
 # Decorator fuer Tool-Call-Lifecycle-Logs (OBS-003).
 # Loggt start/ok/failed mit Tool-Name, Duration und Error-Class auf stderr.
 # Wird auf alle 11 Tools angewendet — `functools.wraps` erhaelt die
-# Signatur, sodass FastMCP weiterhin Pydantic-Inputs/Outputs introspizieren kann.
+# Signatur, sodass MCPServer weiterhin Pydantic-Inputs/Outputs introspizieren kann.
 T = TypeVar("T")
 
 
@@ -122,13 +122,13 @@ async def _enforce_egress_allowlist(request: httpx.Request) -> None:
 
 @dataclass
 class AppContext:
-    """Lifespan-Context, via FastMCP an alle Tools gereicht."""
+    """Lifespan-Context, via MCPServer an alle Tools gereicht."""
 
     http: httpx.AsyncClient
 
 
 @asynccontextmanager
-async def lifespan(_server: FastMCP) -> AsyncIterator[AppContext]:
+async def lifespan(_server: MCPServer) -> AsyncIterator[AppContext]:
     """Initialisiert einen einzigen httpx.AsyncClient für alle Tool-Calls.
 
     Vorher: jeder Tool-Aufruf öffnete und schloss eine eigene Connection
@@ -546,7 +546,7 @@ def _raise_api_error(e: Exception) -> NoReturn:
 # ---------------------------------------------------------------------------
 # Server-Initialisierung
 # ---------------------------------------------------------------------------
-mcp = FastMCP(
+mcp = MCPServer(
     "bakom_mcp",
     instructions=(
         "Dieser Server bietet Zugriff auf Schweizer Telekommunikations-, "
