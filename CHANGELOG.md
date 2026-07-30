@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Streamable-HTTP wies unter jedem echten Hostnamen mit 421 ab (SEC-005).**
+  Die App wurde mit `mcp.streamable_http_app()` ohne `host` gebaut. Unter mcp 2.x
+  ist das kein neutraler Default: das SDK leitet daraus seine Host-Allow-List ab
+  und aktiviert bei loopback-artigem Wert automatisch `127.0.0.1:*`. Da das
+  Argument selbst auf `127.0.0.1` defaultet, traf das jeden Start mit
+  `BAKOM_MCP_HOST=0.0.0.0`. Vor der Migration auf 2.x ging `host` an den
+  `FastMCP`-Konstruktor, wo dieselbe Logik den echten Bind sah und den Schutz
+  korrekt ausliess.
+
+  Der Bind reist jetzt in die App, und eine echte Allow-List wird aus dem neuen
+  `BAKOM_MCP_ALLOWED_HOSTS` gebaut. Ohne diese Variable bleibt der Schutz auf
+  einem Nicht-Loopback-Bind bewusst aus und der Aufrufer warnt — eine geratene
+  Liste wäre genau der 421-Fall.
+
+- **App-Bau aus dem `__main__`-Block herausgezogen.** Er lag vollständig inline,
+  weshalb kein Test die Transport-Verdrahtung sehen konnte — genau so blieb der
+  fehlende `host`-Kwarg unbemerkt. `build_http_app()` und
+  `build_transport_security()` sind jetzt normale Funktionen; die 13 neuen Tests
+  prüfen die gebaute App, nicht nur ihre Bauteile.
+
+  Darunter der tragende Fall „richtiger Hostname, falscher Port" — nur er
+  unterscheidet eine portgenaue Allow-List von einer, die alles durchlässt.
+  Mutationsgetestet: nimmt man den `host`-Kwarg wieder weg, reproduziert der
+  Test das 421.
+
+  Geprüft mit allen vier CI-Gates: 76 passed / 78 deselected, `ruff check src/`,
+  `ruff format --check src/`, Versions-Sync OK.
+
 ## [2.0.4] - 2026-07-30
 
 ### Behoben / Fixed

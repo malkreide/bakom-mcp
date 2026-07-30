@@ -2054,6 +2054,109 @@ def prompt_standort_konnektivitaet_vergleich(
 # ===========================================================================
 # ENTRY POINT
 # ===========================================================================
+def _cors_origins() -> list[str]:
+    """Erlaubte CORS-Origins aus ``BAKOM_MCP_CORS_ORIGINS`` (komma-separiert)."""
+    import os
+
+    raw = os.environ.get("BAKOM_MCP_CORS_ORIGINS", "").strip()
+    return [o.strip() for o in raw.split(",") if o.strip()]
+
+
+def _allowed_hosts() -> list[str]:
+    """Hostnamen, unter denen dieser Server erreichbar ist (SEC-005, eingehend).
+
+    Nötig, sobald nicht auf Loopback gebunden wird: der Prozess kann den
+    Service- oder DNS-Namen nicht erraten, unter dem er angesprochen wird.
+    """
+    import os
+
+    raw = os.environ.get("BAKOM_MCP_ALLOWED_HOSTS", "").strip()
+    return [h.strip() for h in raw.split(",") if h.strip()]
+
+
+def build_transport_security(host: str, port: int):
+    """Host/Origin-Allow-List für den Streamable-HTTP-Transport (SEC-005).
+
+    Unter mcp 2.x ein per-App-Kwarg — und ihn wegzulassen ist nicht neutral: das
+    SDK leitet aus dem ``host``-Argument der App einen Default ab und aktiviert
+    bei loopback-artigem Wert automatisch ``127.0.0.1:*``. Da ``host`` selbst auf
+    ``127.0.0.1`` defaultet, traf das jeden Start mit ``BAKOM_MCP_HOST=0.0.0.0``:
+    jede Anfrage unter einem echten Hostnamen bekam HTTP 421. Vor der Migration
+    auf 2.x ging ``host`` an den ``FastMCP``-Konstruktor, wo dieselbe Logik den
+    echten Bind sah und den Schutz korrekt ausliess.
+
+    Rückgabe ``None``, wenn keine Allow-List ableitbar ist — Nicht-Loopback-Bind
+    ohne ``BAKOM_MCP_ALLOWED_HOSTS``. Eine geratene Liste reproduziert genau
+    dieses 421, der Aufrufer warnt stattdessen.
+    """
+    from mcp.server.transport_security import TransportSecuritySettings
+
+    loopback = {f"127.0.0.1:{port}", f"localhost:{port}", f"[::1]:{port}"}
+    allowed = _allowed_hosts()
+    if allowed:
+        # Loopback bleibt für Container-Health-Checks und Debugging erreichbar.
+        hosts = set(allowed) | loopback
+    elif host in ("127.0.0.1", "localhost", "::1"):
+        hosts = loopback | {f"{host}:{port}"}
+    else:
+        return None
+
+    # Konfigurierte CORS-Origins müssen auch die Transport-Prüfung passieren,
+    # sonst weist der Server genau die Browser-Clients ab, die CORS erlaubt —
+    # ein Fehler, der sich erst im Browser zeigt. ``*`` ist nicht ausdrückbar
+    # (Origins werden literal verglichen) und wird nicht kopiert.
+    origins = {o for o in _cors_origins() if o != "*"}
+    origins |= {f"http://{h}" for h in hosts}
+    return TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=sorted(hosts),
+        allowed_origins=sorted(origins),
+    )
+
+
+def build_http_app(host: str = "127.0.0.1", port: int = 8050):
+    """Baut die Streamable-HTTP-App inklusive CORS.
+
+    Aus dem ``__main__``-Block herausgezogen, damit die Transport-Verdrahtung
+    testbar ist: inline konnte kein Test den fehlenden ``host``-Kwarg sehen, und
+    genau so blieb das HTTP 421 unbemerkt.
+    """
+    import sys
+
+    from starlette.middleware.cors import CORSMiddleware
+
+    cors_origins = _cors_origins()
+    security = build_transport_security(host, port)
+    if security is None:
+        print(
+            f"WARNUNG: DNS-Rebinding-Schutz ist AUS — Bind auf {host} ist nicht "
+            "Loopback und BAKOM_MCP_ALLOWED_HOSTS ist leer. Setze die Variable "
+            "auf die Hostnamen, unter denen dieser Server erreichbar ist, damit "
+            "Host und Origin geprüft werden.",
+            file=sys.stderr,
+        )
+    app = mcp.streamable_http_app(transport_security=security, host=host)
+    if cors_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=cors_origins,
+            allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+            allow_headers=["*"],
+            expose_headers=["Mcp-Session-Id"],
+        )
+        print(
+            f"CORS aktiv für Origins: {', '.join(cors_origins)} (expose_headers=Mcp-Session-Id)",
+            file=sys.stderr,
+        )
+    else:
+        print(
+            "CORS deaktiviert. Für Browser-Clients setze "
+            "BAKOM_MCP_CORS_ORIGINS=https://example.com,https://other.com",
+            file=sys.stderr,
+        )
+    return app
+
+
 if __name__ == "__main__":
     import os
     import sys
@@ -2061,12 +2164,9 @@ if __name__ == "__main__":
     transport = "streamable-http" if "--http" in sys.argv else "stdio"
     if transport == "streamable-http":
         import uvicorn
-        from starlette.middleware.cors import CORSMiddleware
 
         host = os.environ.get("BAKOM_MCP_HOST", "127.0.0.1")
         port = int(os.environ.get("BAKOM_MCP_PORT", "8050"))
-        cors_env = os.environ.get("BAKOM_MCP_CORS_ORIGINS", "").strip()
-        cors_origins = [o.strip() for o in cors_env.split(",") if o.strip()]
 
         if host == "0.0.0.0":  # noqa: S104
             print(
@@ -2075,27 +2175,9 @@ if __name__ == "__main__":
                 file=sys.stderr,
             )
 
-        app = mcp.streamable_http_app()
-        if cors_origins:
-            app.add_middleware(
-                CORSMiddleware,
-                allow_origins=cors_origins,
-                allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
-                allow_headers=["*"],
-                expose_headers=["Mcp-Session-Id"],
-            )
-            print(
-                f"CORS aktiv für Origins: {', '.join(cors_origins)} "
-                "(expose_headers=Mcp-Session-Id)",
-                file=sys.stderr,
-            )
-        else:
-            print(
-                "CORS deaktiviert. Für Browser-Clients setze "
-                "BAKOM_MCP_CORS_ORIGINS=https://example.com,https://other.com",
-                file=sys.stderr,
-            )
-
+        # Der Bind geht an uvicorn *und* in die App: mcp 2.x leitet seine
+        # Host-Allow-List aus dem App-Argument ab.
+        app = build_http_app(host, port)
         print(f"BAKOM MCP Server läuft auf http://{host}:{port}/mcp", file=sys.stderr)
         uvicorn.run(app, host=host, port=port, log_level="info")
     else:
