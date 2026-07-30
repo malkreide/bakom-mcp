@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.4] - 2026-07-30
+
 ### Behoben / Fixed
 - **User-Agent meldete eine ganze Major-Version zu wenig.** Das Literal in
   `server.py` las `bakom-mcp/1.0`, während das Paket bei **2.0.3** stand, und
