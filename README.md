@@ -2,7 +2,7 @@
 
 # 📡 bakom-mcp
 
-[![Version](https://img.shields.io/badge/version-2.0.3-blue)](https://github.com/malkreide/bakom-mcp/releases)
+[![Version](https://img.shields.io/badge/version-2.0.4-blue)](https://github.com/malkreide/bakom-mcp/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-purple)](https://modelcontextprotocol.io/)

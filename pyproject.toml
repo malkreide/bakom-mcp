@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "bakom-mcp"
-version = "2.0.3"
+version = "2.0.4"
 description = "MCP Server for BAKOM Open Data – broadband, mobile, media and telecom statistics"
 readme = "README.md"
 license = { file = "LICENSE" }
