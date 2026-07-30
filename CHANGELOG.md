@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Geprüft mit allen vier CI-Gates: 76 passed / 78 deselected, `ruff check src/`,
   `ruff format --check src/`, Versions-Sync OK.
 
+## [2.0.4] - 2026-07-30
 
 ### Behoben / Fixed
 - **User-Agent meldete eine ganze Major-Version zu wenig.** Das Literal in
