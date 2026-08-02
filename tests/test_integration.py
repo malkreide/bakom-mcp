@@ -79,7 +79,7 @@ class TestResult:
 
     def summary(self):
         total = self.passed + self.failed
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"RESULTAT: {self.passed}/{total} Tests bestanden")
         if self.errors:
             print("\nFehler:")
@@ -124,7 +124,10 @@ async def test_broadband_coverage_1000():
         data = json.loads(output)
         assert "geschwindigkeit_mbps" in data
         assert data["geschwindigkeit_mbps"] == 1000
-        results.ok("T02: Gigabit-Abdeckung Bern (JSON)", f"Geschwindigkeit: {data['geschwindigkeit_mbps']} Mbit/s")
+        results.ok(
+            "T02: Gigabit-Abdeckung Bern (JSON)",
+            f"Geschwindigkeit: {data['geschwindigkeit_mbps']} Mbit/s",
+        )
     except Exception as e:
         results.fail("T02: Gigabit-Abdeckung Bern", str(e))
 
@@ -149,7 +152,11 @@ async def test_multi_standort():
     try:
         params = MultiLocationInput(
             locations=[
-                {"name": "Schulhaus Leutschenbach", "latitude": LAT_LEUTSCHENBACH, "longitude": LON_LEUTSCHENBACH},
+                {
+                    "name": "Schulhaus Leutschenbach",
+                    "latitude": LAT_LEUTSCHENBACH,
+                    "longitude": LON_LEUTSCHENBACH,
+                },
                 {"name": "Bundeshaus Bern", "latitude": LAT_BERN, "longitude": LON_BERN},
                 {"name": "Wädenswil", "latitude": LAT_WAEDENSWIL, "longitude": LON_WAEDENSWIL},
             ],

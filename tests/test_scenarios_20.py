@@ -49,27 +49,27 @@ from bakom_mcp.server import (
 LAT_JUNGFRAUJOCH = 46.5472  # Höchster Bahnhof Europas, abgelegen
 LON_JUNGFRAUJOCH = 7.9853
 
-LAT_GENF = 46.2044          # Westschweiz (Genf)
+LAT_GENF = 46.2044  # Westschweiz (Genf)
 LON_GENF = 6.1432
 
-LAT_LUGANO = 46.0037        # Tessin (Lugano)
+LAT_LUGANO = 46.0037  # Tessin (Lugano)
 LON_LUGANO = 8.9511
 
-LAT_ST_GALLEN = 47.4245     # Ostschweiz (St. Gallen)
+LAT_ST_GALLEN = 47.4245  # Ostschweiz (St. Gallen)
 LON_ST_GALLEN = 9.3767
 
-LAT_CHUR = 46.8499          # Graubünden (Chur)
+LAT_CHUR = 46.8499  # Graubünden (Chur)
 LON_CHUR = 9.5329
 
 # Grenzwerte der Schweiz-Koordinaten
-LAT_SUEDGRENZE = 45.82      # Nahe Südgrenze
-LON_WESTGRENZE = 5.95       # Nahe Westgrenze
+LAT_SUEDGRENZE = 45.82  # Nahe Südgrenze
+LON_WESTGRENZE = 5.95  # Nahe Westgrenze
 
-LAT_NORDGRENZE = 47.88      # Nahe Nordgrenze
-LON_OSTGRENZE = 10.55       # Nahe Ostgrenze
+LAT_NORDGRENZE = 47.88  # Nahe Nordgrenze
+LON_OSTGRENZE = 10.55  # Nahe Ostgrenze
 
 # Ländliches Gebiet
-LAT_EMMENTAL = 46.9350      # Emmental (ländlich)
+LAT_EMMENTAL = 46.9350  # Emmental (ländlich)
 LON_EMMENTAL = 7.7340
 
 # Basel – Grenzstadt
@@ -98,7 +98,7 @@ class TestResult:
 
     def summary(self):
         total = self.passed + self.failed
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"RESULTAT: {self.passed}/{total} Tests bestanden")
         if self.errors:
             print("\nFehler:")
@@ -126,7 +126,9 @@ async def test_s01_validation_out_of_bounds():
 
         try:
             CoordinateInput(latitude=40.7128, longitude=-74.006)  # New York
-            results.fail("S01: Validierung Ausland", "Keine ValidationError für New-York-Koordinaten")
+            results.fail(
+                "S01: Validierung Ausland", "Keine ValidationError für New-York-Koordinaten"
+            )
             return
         except ValidationError:
             pass
@@ -144,14 +146,18 @@ async def test_s02_antenna_radius_bounds():
     try:
         # Minimaler Radius (100m) – Basel
         params_min = AntennaSearchInput(
-            latitude=LAT_BASEL, longitude=LON_BASEL, radius_m=100,
+            latitude=LAT_BASEL,
+            longitude=LON_BASEL,
+            radius_m=100,
         )
         out_min = await bakom_sendeanlagen_suche(params_min)
         assert isinstance(out_min, str) and len(out_min) > 10
 
         # Maximaler Radius (5000m) – Basel
         params_max = AntennaSearchInput(
-            latitude=LAT_BASEL, longitude=LON_BASEL, radius_m=5000,
+            latitude=LAT_BASEL,
+            longitude=LON_BASEL,
+            radius_m=5000,
         )
         out_max = await bakom_sendeanlagen_suche(params_max)
         assert isinstance(out_max, str)
@@ -198,7 +204,8 @@ async def test_s04_all_speed_tiers():
         ergebnisse = {}
         for speed in BroadbandSpeed:
             params = BroadbandCoverageInput(
-                latitude=LAT_GENF, longitude=LON_GENF,
+                latitude=LAT_GENF,
+                longitude=LON_GENF,
                 min_speed_mbps=speed,
                 response_format=ResponseFormat.JSON,
             )
@@ -219,7 +226,8 @@ async def test_s05_mountain_location():
     """S05: Mobilfunkabdeckung Jungfraujoch (Bergregion)"""
     try:
         params_5g = MobileCoverageInput(
-            latitude=LAT_JUNGFRAUJOCH, longitude=LON_JUNGFRAUJOCH,
+            latitude=LAT_JUNGFRAUJOCH,
+            longitude=LON_JUNGFRAUJOCH,
             generation=MobilGenerations.G5,
             response_format=ResponseFormat.JSON,
         )
@@ -227,7 +235,8 @@ async def test_s05_mountain_location():
         data_5g = json.loads(output_5g)
 
         params_3g = MobileCoverageInput(
-            latitude=LAT_JUNGFRAUJOCH, longitude=LON_JUNGFRAUJOCH,
+            latitude=LAT_JUNGFRAUJOCH,
+            longitude=LON_JUNGFRAUJOCH,
             generation=MobilGenerations.G3,
             response_format=ResponseFormat.JSON,
         )
@@ -249,7 +258,8 @@ async def test_s06_glasfaser_json_schema():
     """S06: Glasfaser JSON-Schema Validierung (Lugano)"""
     try:
         params = CoordinateInput(
-            latitude=LAT_LUGANO, longitude=LON_LUGANO,
+            latitude=LAT_LUGANO,
+            longitude=LON_LUGANO,
             response_format=ResponseFormat.JSON,
         )
         output = await bakom_glasfaser_verfuegbarkeit(params)
@@ -318,16 +328,16 @@ async def test_s09_multi_location_10():
     """S09: Multi-Standort mit 10 diversifizierten Orten"""
     try:
         standorte = [
-            {"name": "Genf",       "latitude": LAT_GENF,       "longitude": LON_GENF},
-            {"name": "Lugano",     "latitude": LAT_LUGANO,     "longitude": LON_LUGANO},
-            {"name": "St. Gallen", "latitude": LAT_ST_GALLEN,  "longitude": LON_ST_GALLEN},
-            {"name": "Chur",       "latitude": LAT_CHUR,       "longitude": LON_CHUR},
-            {"name": "Basel",      "latitude": LAT_BASEL,       "longitude": LON_BASEL},
-            {"name": "Emmental",   "latitude": LAT_EMMENTAL,   "longitude": LON_EMMENTAL},
+            {"name": "Genf", "latitude": LAT_GENF, "longitude": LON_GENF},
+            {"name": "Lugano", "latitude": LAT_LUGANO, "longitude": LON_LUGANO},
+            {"name": "St. Gallen", "latitude": LAT_ST_GALLEN, "longitude": LON_ST_GALLEN},
+            {"name": "Chur", "latitude": LAT_CHUR, "longitude": LON_CHUR},
+            {"name": "Basel", "latitude": LAT_BASEL, "longitude": LON_BASEL},
+            {"name": "Emmental", "latitude": LAT_EMMENTAL, "longitude": LON_EMMENTAL},
             {"name": "Jungfraujoch", "latitude": LAT_JUNGFRAUJOCH, "longitude": LON_JUNGFRAUJOCH},
-            {"name": "Nordgrenze", "latitude": LAT_NORDGRENZE,  "longitude": 8.5},
-            {"name": "Südgrenze",  "latitude": LAT_SUEDGRENZE,  "longitude": 8.5},
-            {"name": "Westgrenze", "latitude": 46.5,            "longitude": LON_WESTGRENZE},
+            {"name": "Nordgrenze", "latitude": LAT_NORDGRENZE, "longitude": 8.5},
+            {"name": "Südgrenze", "latitude": LAT_SUEDGRENZE, "longitude": 8.5},
+            {"name": "Westgrenze", "latitude": 46.5, "longitude": LON_WESTGRENZE},
         ]
 
         params = MultiLocationInput(locations=standorte)
@@ -349,8 +359,7 @@ async def test_s10_multi_location_exceeds_limit():
     """S10: Multi-Standort lehnt >20 Standorte ab"""
     try:
         standorte = [
-            {"name": f"Ort_{i}", "latitude": 47.0 + i * 0.01, "longitude": 8.0}
-            for i in range(21)
+            {"name": f"Ort_{i}", "latitude": 47.0 + i * 0.01, "longitude": 8.0} for i in range(21)
         ]
         try:
             MultiLocationInput(locations=standorte)
@@ -368,7 +377,8 @@ async def test_s11_frequenzdaten_json():
     """S11: Radio-/TV-Frequenzdaten Lugano in JSON"""
     try:
         params = CoordinateInput(
-            latitude=LAT_LUGANO, longitude=LON_LUGANO,
+            latitude=LAT_LUGANO,
+            longitude=LON_LUGANO,
             response_format=ResponseFormat.JSON,
         )
         output = await bakom_frequenzdaten(params)
@@ -392,7 +402,9 @@ async def test_s12_medienstruktur_all_topics():
             params = TelekomStatInput(thema=thema)
             output = await bakom_medienstruktur_info(params)
             ergebnisse[thema] = len(output)
-            assert isinstance(output, str) and len(output) > 20, f"Thema '{thema}' hat zu wenig Output"
+            assert isinstance(output, str) and len(output) > 20, (
+                f"Thema '{thema}' hat zu wenig Output"
+            )
 
         results.ok("S12: Medienstruktur alle Themen", f"Längen: {ergebnisse}")
     except Exception as e:
@@ -411,7 +423,9 @@ async def test_s13_bakom_aktuell_all_topics():
             params = TelekomStatInput(thema=thema)
             output = await bakom_aktuell(params)
             ergebnisse[thema] = len(output)
-            assert isinstance(output, str) and len(output) > 20, f"Thema '{thema}' hat zu wenig Output"
+            assert isinstance(output, str) and len(output) > 20, (
+                f"Thema '{thema}' hat zu wenig Output"
+            )
 
         results.ok("S13: BAKOM Aktuell alle Themen", f"Längen: {ergebnisse}")
     except Exception as e:
@@ -444,7 +458,8 @@ async def test_s15_sendeanlagen_json_sorted():
     """S15: Sendeanlagen JSON – Ergebnisse nach Distanz sortiert"""
     try:
         params = AntennaSearchInput(
-            latitude=LAT_ST_GALLEN, longitude=LON_ST_GALLEN,
+            latitude=LAT_ST_GALLEN,
+            longitude=LON_ST_GALLEN,
             radius_m=2000,
             response_format=ResponseFormat.JSON,
         )
@@ -457,7 +472,10 @@ async def test_s15_sendeanlagen_json_sorted():
         if len(anlagen) > 1:
             distanzen = [a.get("distanz_m", 0) or 0 for a in anlagen]
             is_sorted = all(distanzen[i] <= distanzen[i + 1] for i in range(len(distanzen) - 1))
-            results.ok("S15: Sendeanlagen sortiert St.Gallen", f"{len(anlagen)} Anlagen, sortiert: {is_sorted}")
+            results.ok(
+                "S15: Sendeanlagen sortiert St.Gallen",
+                f"{len(anlagen)} Anlagen, sortiert: {is_sorted}",
+            )
         else:
             results.ok("S15: Sendeanlagen sortiert St.Gallen", f"{len(anlagen)} Anlage(n) gefunden")
     except Exception as e:
@@ -472,7 +490,8 @@ async def test_s16_cross_tool_connectivity_profile():
     try:
         # Breitband
         bb_params = BroadbandCoverageInput(
-            latitude=LAT_CHUR, longitude=LON_CHUR,
+            latitude=LAT_CHUR,
+            longitude=LON_CHUR,
             min_speed_mbps=BroadbandSpeed.S100,
             response_format=ResponseFormat.JSON,
         )
@@ -481,7 +500,8 @@ async def test_s16_cross_tool_connectivity_profile():
 
         # Glasfaser
         gf_params = CoordinateInput(
-            latitude=LAT_CHUR, longitude=LON_CHUR,
+            latitude=LAT_CHUR,
+            longitude=LON_CHUR,
             response_format=ResponseFormat.JSON,
         )
         gf_out = await bakom_glasfaser_verfuegbarkeit(gf_params)
@@ -489,7 +509,8 @@ async def test_s16_cross_tool_connectivity_profile():
 
         # 5G
         m5_params = MobileCoverageInput(
-            latitude=LAT_CHUR, longitude=LON_CHUR,
+            latitude=LAT_CHUR,
+            longitude=LON_CHUR,
             generation=MobilGenerations.G5,
             response_format=ResponseFormat.JSON,
         )
@@ -523,7 +544,7 @@ async def test_s17_broadband_atlas_completeness():
         ]
 
         layer_ids = [d["layer_id"] for d in data["datensaetze"]]
-        fehlende = [l for l in erwartete_layer if l not in layer_ids]
+        fehlende = [layer for layer in erwartete_layer if layer not in layer_ids]
 
         if fehlende:
             results.fail("S17: Breitbandatlas Vollständigkeit", f"Fehlende Layer: {fehlende}")
@@ -559,7 +580,8 @@ async def test_s19_boundary_coordinates():
     try:
         # Südgrenze (nahe Chiasso/Tessin)
         params_sued = BroadbandCoverageInput(
-            latitude=LAT_SUEDGRENZE, longitude=8.95,
+            latitude=LAT_SUEDGRENZE,
+            longitude=8.95,
             min_speed_mbps=BroadbandSpeed.S30,
         )
         out_sued = await bakom_broadband_coverage(params_sued)
@@ -567,7 +589,8 @@ async def test_s19_boundary_coordinates():
 
         # Nordgrenze (nahe Schaffhausen)
         params_nord = BroadbandCoverageInput(
-            latitude=LAT_NORDGRENZE, longitude=8.63,
+            latitude=LAT_NORDGRENZE,
+            longitude=8.63,
             min_speed_mbps=BroadbandSpeed.S30,
         )
         out_nord = await bakom_broadband_coverage(params_nord)
