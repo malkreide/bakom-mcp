@@ -103,7 +103,7 @@ class TestResult:
 
     def summary(self):
         total = self.passed + self.failed
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"RESULTAT: {self.passed}/{total} Tests bestanden")
         if self.errors:
             print("\nFehler:")
@@ -283,7 +283,10 @@ async def test_s08_multi_5_sprachregionen():
         namen = [s["name"] for s in data["standorte"]]
         assert "Genf (FR)" in namen
         assert "Lugano (IT)" in namen
-        results.ok("S08: 5 Sprachregionen", f"5G: {data['zusammenfassung']['mit_5g']}, Glasfaser: {data['zusammenfassung']['mit_glasfaser']}")
+        results.ok(
+            "S08: 5 Sprachregionen",
+            f"5G: {data['zusammenfassung']['mit_5g']}, Glasfaser: {data['zusammenfassung']['mit_glasfaser']}",
+        )
     except Exception as e:
         results.fail("S08: 5 Sprachregionen", str(e))
 
@@ -478,7 +481,10 @@ async def test_s18_breitbandatlas_alle_validierung():
             assert "titel" in ds, f"Titel fehlt in {ds}"
             assert "layer_id" in ds, f"Layer-ID fehlt in {ds}"
             assert ds["layer_id"].startswith("ch.bakom."), f"Ungültige Layer-ID: {ds['layer_id']}"
-        results.ok("S18: Breitbandatlas Validierung", f"{len(kategorien)} Kategorien, {data['total']} Layer")
+        results.ok(
+            "S18: Breitbandatlas Validierung",
+            f"{len(kategorien)} Kategorien, {data['total']} Layer",
+        )
     except Exception as e:
         results.fail("S18: Breitbandatlas Validierung", str(e))
 

@@ -106,7 +106,7 @@ class TestResult:
 
     def summary(self):
         total = self.passed + self.failed
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"RESULTAT: {self.passed}/{total} Tests bestanden")
         if self.errors:
             print("\nFehler:")
@@ -431,7 +431,10 @@ async def test_n15_sendeanlagen_default_radius():
         assert "anlagen" in data
         assert data["radius_m"] == 1000  # Default-Wert prüfen
         assert isinstance(data["anlagen"], list)
-        results.ok("N15: Antennen Default-Radius Lausanne", f"{data['total']} Anlagen, radius={data['radius_m']}m")
+        results.ok(
+            "N15: Antennen Default-Radius Lausanne",
+            f"{data['total']} Anlagen, radius={data['radius_m']}m",
+        )
     except Exception as e:
         results.fail("N15: Antennen Default-Radius", str(e))
 
@@ -443,28 +446,37 @@ async def test_n16_cross_tool_konsistenz_davos():
     """N16: Drei verschiedene Tools am gleichen Standort (Davos) – Konsistenzprüfung"""
     try:
         # 1) Breitband
-        out_bb = await bakom_broadband_coverage(BroadbandCoverageInput(
-            latitude=LAT_DAVOS, longitude=LON_DAVOS,
-            min_speed_mbps=BroadbandSpeed.S100,
-            response_format=ResponseFormat.JSON,
-        ))
+        out_bb = await bakom_broadband_coverage(
+            BroadbandCoverageInput(
+                latitude=LAT_DAVOS,
+                longitude=LON_DAVOS,
+                min_speed_mbps=BroadbandSpeed.S100,
+                response_format=ResponseFormat.JSON,
+            )
+        )
         data_bb = json.loads(out_bb)
         assert "standort" in data_bb
 
         # 2) 5G Mobilfunk
-        out_5g = await bakom_mobilfunk_abdeckung(MobileCoverageInput(
-            latitude=LAT_DAVOS, longitude=LON_DAVOS,
-            generation=MobilGenerations.G5,
-            response_format=ResponseFormat.JSON,
-        ))
+        out_5g = await bakom_mobilfunk_abdeckung(
+            MobileCoverageInput(
+                latitude=LAT_DAVOS,
+                longitude=LON_DAVOS,
+                generation=MobilGenerations.G5,
+                response_format=ResponseFormat.JSON,
+            )
+        )
         data_5g = json.loads(out_5g)
         assert "standort" in data_5g
 
         # 3) Glasfaser
-        out_gf = await bakom_glasfaser_verfuegbarkeit(CoordinateInput(
-            latitude=LAT_DAVOS, longitude=LON_DAVOS,
-            response_format=ResponseFormat.JSON,
-        ))
+        out_gf = await bakom_glasfaser_verfuegbarkeit(
+            CoordinateInput(
+                latitude=LAT_DAVOS,
+                longitude=LON_DAVOS,
+                response_format=ResponseFormat.JSON,
+            )
+        )
         data_gf = json.loads(out_gf)
         assert "standort" in data_gf
 
@@ -524,8 +536,13 @@ async def test_n18_breitbandatlas_mobilfunk_thema():
         assert "datensaetze" in data
         # Mindestens 5G- und 4G-Layer sollten vorhanden sein
         layer_ids = [d["layer_id"] for d in data["datensaetze"]]
-        hat_mobilfunk = any("netzabdeckung" in lid or "mobilfunk" in lid or "5g" in lid or "4g" in lid for lid in layer_ids)
-        results.ok("N18: Breitbandatlas Mobilfunk", f"{data['total']} Layer, Mobilfunk={hat_mobilfunk}")
+        hat_mobilfunk = any(
+            "netzabdeckung" in lid or "mobilfunk" in lid or "5g" in lid or "4g" in lid
+            for lid in layer_ids
+        )
+        results.ok(
+            "N18: Breitbandatlas Mobilfunk", f"{data['total']} Layer, Mobilfunk={hat_mobilfunk}"
+        )
     except Exception as e:
         results.fail("N18: Breitbandatlas Mobilfunk", str(e))
 
