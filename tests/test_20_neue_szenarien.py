@@ -26,6 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from live_support import ctx
 from pydantic import ValidationError
 
 from bakom_mcp.server import (
@@ -187,7 +188,7 @@ async def test_n04_telekomstatistik_marktanteile():
             thema="marktanteile",
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_telekomstatistik_uebersicht(params)
+        output = await bakom_telekomstatistik_uebersicht(params, ctx())
         data = json.loads(output)
         assert "datensaetze" in data
         assert "thema" in data
@@ -204,7 +205,7 @@ async def test_n05_telekomstatistik_haushaltszugang():
     """N05: Telekomstatistik zum Thema Haushaltszugang"""
     try:
         params = TelekomStatInput(thema="haushaltszugang")
-        output = await bakom_telekomstatistik_uebersicht(params)
+        output = await bakom_telekomstatistik_uebersicht(params, ctx())
         assert isinstance(output, str) and len(output) > 30
         assert "Haushalt" in output or "BAKOM" in output or "Telekomstatistik" in output
         results.ok("N05: Statistik Haushaltszugang", f"{len(output)} Zeichen")
@@ -245,7 +246,7 @@ async def test_n06_multi_standort_max_20():
             locations=orte,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_multi_standort_konnektivitaet(params)
+        output = await bakom_multi_standort_konnektivitaet(params, ctx())
         data = json.loads(output)
         assert data["zusammenfassung"]["total"] == 20
         assert len(data["standorte"]) == 20
@@ -269,7 +270,7 @@ async def test_n07_rtv_romandie_rts():
             media_type=MediaType.TV,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         data = json.loads(output)
         assert "resultate" in data
         results.ok("N07: RTV RTS (Romandie)", f"{data['total']} Resultate")
@@ -287,7 +288,7 @@ async def test_n08_rtv_tessin_rsi():
             query="RSI",
             media_type=MediaType.ALLE,
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         assert isinstance(output, str) and len(output) > 20
         results.ok("N08: RTV RSI (Tessin)", f"{len(output)} Zeichen")
     except Exception as e:
@@ -307,7 +308,7 @@ async def test_n09_rtv_kombinierte_parameter():
             limit=5,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         data = json.loads(output)
         assert "resultate" in data
         assert data["suchanfrage"]["typ"] in ("radio",)
@@ -328,7 +329,7 @@ async def test_n10_rtv_max_limit():
             limit=50,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         data = json.loads(output)
         assert "resultate" in data
         assert len(data["resultate"]) <= 50
@@ -348,7 +349,7 @@ async def test_n11_rtv_leere_ergebnismenge():
             media_type=MediaType.TV,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         data = json.loads(output)
         # Server darf entweder 0 Resultate liefern oder via Fallback (opendata.swiss)
         # allgemeine BAKOM-Datensätze zurückgeben – beides ist valides Verhalten.
@@ -369,7 +370,7 @@ async def test_n12_bakom_aktuell_frequenzen():
             thema="frequenzen",
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_aktuell(params)
+        output = await bakom_aktuell(params, ctx())
         data = json.loads(output)
         assert "highlights" in data
         assert "bakom_homepage" in data
@@ -385,7 +386,7 @@ async def test_n13_medienstruktur_presse():
     """N13: Medienstruktur-Info zum Thema Presse"""
     try:
         params = TelekomStatInput(thema="presse")
-        output = await bakom_medienstruktur_info(params)
+        output = await bakom_medienstruktur_info(params, ctx())
         assert isinstance(output, str) and len(output) > 30
         results.ok("N13: Medienstruktur Presse", f"{len(output)} Zeichen")
     except Exception as e:
@@ -404,7 +405,7 @@ async def test_n14_breitband_grenzwert_sw_ecke():
             min_speed_mbps=BroadbandSpeed.S100,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_broadband_coverage(params)
+        output = await bakom_broadband_coverage(params, ctx())
         data = json.loads(output)
         # Sollte nicht crashen – unabhängig davon ob abgedeckt oder nicht
         assert "standort" in data
@@ -426,7 +427,7 @@ async def test_n15_sendeanlagen_default_radius():
             # radius_m wird NICHT gesetzt → Default 1000m
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_sendeanlagen_suche(params)
+        output = await bakom_sendeanlagen_suche(params, ctx())
         data = json.loads(output)
         assert "anlagen" in data
         assert data["radius_m"] == 1000  # Default-Wert prüfen
@@ -452,7 +453,8 @@ async def test_n16_cross_tool_konsistenz_davos():
                 longitude=LON_DAVOS,
                 min_speed_mbps=BroadbandSpeed.S100,
                 response_format=ResponseFormat.JSON,
-            )
+            ),
+            ctx(),
         )
         data_bb = json.loads(out_bb)
         assert "standort" in data_bb
@@ -464,7 +466,8 @@ async def test_n16_cross_tool_konsistenz_davos():
                 longitude=LON_DAVOS,
                 generation=MobilGenerations.G5,
                 response_format=ResponseFormat.JSON,
-            )
+            ),
+            ctx(),
         )
         data_5g = json.loads(out_5g)
         assert "standort" in data_5g
@@ -475,7 +478,8 @@ async def test_n16_cross_tool_konsistenz_davos():
                 latitude=LAT_DAVOS,
                 longitude=LON_DAVOS,
                 response_format=ResponseFormat.JSON,
-            )
+            ),
+            ctx(),
         )
         data_gf = json.loads(out_gf)
         assert "standort" in data_gf
@@ -509,7 +513,7 @@ async def test_n17_multi_standort_sonderzeichen():
             ],
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_multi_standort_konnektivitaet(params)
+        output = await bakom_multi_standort_konnektivitaet(params, ctx())
         data = json.loads(output)
         namen = [s["name"] for s in data["standorte"]]
         # Sonderzeichen müssen erhalten bleiben
@@ -558,7 +562,7 @@ async def test_n19_frequenzdaten_zermatt():
             longitude=LON_ZERMATT,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_frequenzdaten(params)
+        output = await bakom_frequenzdaten(params, ctx())
         data = json.loads(output)
         assert "sender" in data
         assert isinstance(data["sender"], list)
@@ -580,7 +584,7 @@ async def test_n20_glasfaser_stadt_vollvalidierung():
             longitude=LON_WINTERTHUR,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_glasfaser_verfuegbarkeit(params)
+        output = await bakom_glasfaser_verfuegbarkeit(params, ctx())
         data = json.loads(output)
 
         # Vollständige Strukturprüfung aller erwarteten Felder

@@ -86,14 +86,22 @@ Matrix: Python 3.11 / 3.12 / 3.13. Weitere Workflows: `docker.yml`
 `test_integration.py`, `test_20_szenarien.py`, `test_20_neue_szenarien.py` und
 `test_scenarios_20.py` gesetzt.
 
-**Offener Befund: die Live-Suite kann nicht rot werden — bzw. konnte es nicht.**
 Die vier Module stammen aus Skripten: jeder Testkörper fängt `Exception` ab und
-bucht sie auf ein modulweites `TestResult`, das nur auf stdout landet. `pytest
--m live` meldete 78 passed in 1,4 s — ohne dass ein einziger Aufruf die Quelle
-erreichte. 66 der 78 Tests rufen die Tools seit dem Lifespan-Refactor mit
-falscher Signatur auf (`missing 1 required positional argument: 'ctx'`).
+bucht sie auf ein modulweites `TestResult`, das nur auf stdout landet. Deshalb
+zwei Vorkehrungen in `tests/conftest.py`, ohne die die Suite nichts prüft:
 
-`pytest_runtest_call` in `tests/conftest.py` vergleicht jetzt `results.errors`
-vor und nach jedem Test und lässt den Test fallen, sobald ein Eintrag dazukommt.
-Damit ist der Fehler sichtbar — behoben ist er nicht: die 66 Aufrufstellen
-brauchen ein echtes `ctx`. Bis dahin ist der Cron-Lauf rot, und zwar zu Recht.
+- `pytest_runtest_call` vergleicht `results.errors` vor und nach jedem Test und
+  lässt den Test fallen, sobald ein Eintrag dazukommt.
+- Die Fixture `live_ctx` baut den Context aus dem echten `lifespan(mcp)` und
+  hinterlegt ihn in `tests/live_support.py`; die Tests holen ihn per `ctx()`.
+  Nicht handgeschrieben, damit Timeout, User-Agent und Egress-Allowlist aus
+  derselben Quelle kommen wie im Betrieb.
+
+Laufzeit als Plausibilitätsprüfung: `pytest -m live` braucht ~90–130 s. Meldet
+die Suite 78 passed in unter 2 s, hat kein Aufruf die Quelle erreicht — genau so
+lief es, bevor die Aufrufstellen ihr `ctx` bekamen.
+
+Gegenprobe bei Änderungen an der Suite: `OPENDATA_SWISS_API` in `server.py`
+kurz auf einen falschen Pfad zeigen lassen. Erwartung: 23 der 29 CKAN-Tests
+fallen. Die sechs `bakom_aktuell`-Tests bleiben grün — dieses Tool hat einen
+Pfad ohne CKAN und ist gegen CKAN-Drift nicht abgesichert.
