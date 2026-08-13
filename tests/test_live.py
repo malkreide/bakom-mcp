@@ -509,7 +509,12 @@ async def test_frequenzdaten_json(live_ctx, ort):
 
 
 # ---------------------------------------------------------------------------
-# RTV-Datenbank
+# Radio-/TV-Datensaetze (opendata.swiss)
+#
+# Das Tool liefert Datensaetze des BAKOM-Katalogs, keine einzelnen Sender —
+# die stehen nur in der RTV-Datenbank, einer SPA ohne Schnittstelle. `kanton`
+# und `media_type` gehen als Suchwort in die Volltextsuche und gewichten die
+# Treffer; ein Test darf hier keine exakte Filterung behaupten.
 # ---------------------------------------------------------------------------
 @pytest.mark.parametrize(
     ("query", "media_type"),
@@ -521,11 +526,11 @@ async def test_frequenzdaten_json(live_ctx, ort):
     ],
 )
 async def test_rtv_suche_nach_sender(live_ctx, query, media_type):
-    """Suche nach Sendern aller drei Sprachregionen."""
+    """Suchbegriffe aus allen drei Sprachregionen liefern Datensaetze."""
     output = text(
         await bakom_rtv_suche(RTVSearchInput(query=query, media_type=media_type), live_ctx)
     )
-    assert len(output) > 30
+    assert "opendata.swiss" in output
 
 
 async def test_rtv_ohne_query(live_ctx):
@@ -538,8 +543,12 @@ async def test_rtv_ohne_query(live_ctx):
     assert isinstance(data["resultate"], list)
 
 
-async def test_rtv_kanton_filter(live_ctx):
-    """Kantonsfilter liefert Resultate und der Typ wird zurueckgespiegelt."""
+async def test_rtv_nennt_quelle_und_grenzen(live_ctx):
+    """Die Antwort benennt opendata.swiss als Quelle und die Art der Filterung.
+
+    Vorher stand hier `datenquelle: "BAKOM RTV-Datenbank"` — eine Quelle, aus
+    der die Daten nicht stammten.
+    """
     data = daten(
         await bakom_rtv_suche(
             RTVSearchInput(
@@ -550,6 +559,8 @@ async def test_rtv_kanton_filter(live_ctx):
     )
     assert "resultate" in data
     assert data["suchanfrage"]["typ"] == "radio"
+    assert data["datenquelle"] == "opendata.swiss – Datensatzkatalog des BAKOM"
+    assert "filtern nicht exakt" in data["suchanfrage"]["filterung"]
 
 
 async def test_rtv_kanton_wird_normalisiert(live_ctx):

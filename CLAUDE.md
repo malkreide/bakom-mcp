@@ -111,5 +111,17 @@ Gegenprobe bei Änderungen an der Suite — in `server.py` kurz umbiegen:
 
 Vorher prüfen, ob die umgebogene Konstante überhaupt gelesen wird — sonst
 beweist die grüne Suite nichts. `GEO_ADMIN_IDENTIFY`, `GEO_ADMIN_FIND` und
-`RTV_DB_API` waren solche Fälle; die ersten beiden sind entfernt, `RTV_DB_API`
-wird nur vom RTV-Fallback-Pfad gelesen.
+`RTV_DB_API` waren solche Fälle und sind alle drei entfernt.
+
+### Was `bakom_rtv_suche` liefert
+
+Datensätze aus dem BAKOM-Katalog auf opendata.swiss, **keine einzelnen Sender**.
+`rtvdb.ofcomnet.ch` ist eine Meteor-SPA: jeder Pfad antwortet mit HTTP 200 und
+derselben HTML-Hülle, der einzige JSON-Endpunkt ist der DDP-Handshake
+`/sockjs/info`. Der frühere Erstaufruf gegen `/api/broadcasters` konnte deshalb
+nie Daten liefern — er scheiterte an `r.json()` und fiel still auf CKAN zurück,
+während die Antwort weiter «BAKOM RTV-Datenbank» als Quelle nannte.
+
+`kanton` und `media_type` gehen als Suchwort in die Volltextsuche; der Katalog
+hat für beides keine Facette. Ein Test darf hier keine exakte Filterung
+behaupten — er würde grün bleiben, egal was die Parameter tun.

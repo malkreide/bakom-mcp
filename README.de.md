@@ -21,7 +21,7 @@
 
 ## Übersicht
 
-**bakom-mcp** verbindet KI-Assistenten wie Claude mit der Open-Data-Infrastruktur des Bundesamts für Kommunikation (BAKOM). Ermöglicht Abfragen in natürlicher Sprache zu Breitbandverfügbarkeit, 5G/4G-Abdeckung, Mobilfunkstandorten, konzessionierten Rundfunkveranstaltern (RTV-Datenbank) und Telekommunikationsstatistiken – ohne API-Schlüssel.
+**bakom-mcp** verbindet KI-Assistenten wie Claude mit der Open-Data-Infrastruktur des Bundesamts für Kommunikation (BAKOM). Ermöglicht Abfragen in natürlicher Sprache zu Breitbandverfügbarkeit, 5G/4G-Abdeckung, Mobilfunkstandorten, BAKOM-Datensätzen zu Radio und Fernsehen und Telekommunikationsstatistiken – ohne API-Schlüssel.
 
 Alle Daten sind als Open Government Data (OGD) auf opendata.swiss / geo.admin.ch unter **CC BY 4.0** veröffentlicht — siehe Sektion [Datenlizenz](#datenlizenz) für die Attribution-Anforderungen.
 
@@ -40,7 +40,6 @@ Alle Daten sind als Open Government Data (OGD) auf opendata.swiss / geo.admin.ch
 ✓ Read-only-Abfragen gegen drei öffentliche BAKOM-/Bund-APIs:
   - `api3.geo.admin.ch` / `wms.geo.admin.ch` (Breitband, Mobilfunkabdeckung, Antennen)
   - `ckan.opendata.swiss` (Telekomstatistiken, Datensatz-Metadaten)
-  - `rtvdb.ofcomnet.ch` (Konzessionierte Radio-/TV-Veranstalter)
 
 ✓ Liefert aggregierte, anonyme Daten — keine Personendaten, keine Haushalts-Identifikation.
 
@@ -69,7 +68,7 @@ Alle Daten sind als Open Government Data (OGD) auf opendata.swiss / geo.admin.ch
 - 📍 **Multi-Standort-Vergleich** – Konnektivitätsprüfung für bis zu 20 Standorte gleichzeitig
 - 📱 **Mobilfunkabdeckung** – 5G/4G/3G Outdoor-Abdeckung (100×100m-Raster)
 - 📡 **Antennensuche** – Mobil- und Sendeanlagen im konfigurierbaren Radius
-- 📺 **RTV-Datenbank** – Konzessionierte Radio- und TV-Sender nach Name, Typ, Kanton
+- 📺 **Radio- und TV-Datensätze** – Volltextsuche über die BAKOM-Datensätze zu Radio und Fernsehen auf opendata.swiss
 - 🗞️ **Medienlandschaft** – BAKOM-Medienstrukturberichte und Datensätze
 - 📊 **Telekommunikationsstatistik** – Festnetz, Mobilfunk, Breitband-Marktdaten via opendata.swiss
 - 🗂️ **Breitbandatlas-Katalog** – Alle BAKOM-Datensatz-Layer mit direkten API-Links
@@ -81,7 +80,7 @@ Alle Daten sind als Open Government Data (OGD) auf opendata.swiss / geo.admin.ch
 
 - Python 3.11+
 - `uv` oder `pip` für die Installation
-- Internetverbindung (Live-APIs: geo.admin.ch, opendata.swiss, rtvdb.ofcomnet.ch)
+- Internetverbindung (Live-APIs: geo.admin.ch, opendata.swiss)
 
 ---
 
@@ -197,7 +196,7 @@ Das Image läuft als **non-root** (UID 10001), nutzt ein **read-only-Dateisystem
 
 | Tool | Beschreibung |
 |------|--------------|
-| `bakom_rtv_suche` | Konzessionierte Sender suchen (RTV-Datenbank) |
+| `bakom_rtv_suche` | BAKOM-Datensätze zu Radio/TV auf opendata.swiss suchen |
 | `bakom_medienstruktur_info` | Schweizer Medienlandschaft – Datensätze |
 | `bakom_aktuell` | Aktuelle BAKOM-Themen (5G, Medien, KI, Post) |
 
@@ -237,7 +236,7 @@ Liste alle Breitbandatlas-Datensätze auf, die via geo.admin.ch verfügbar sind.
 | **Timeout** | 20 Sekunden pro API-Aufruf |
 | **Authentifizierung** | Keine API-Schlüssel nötig — alle 3 APIs sind öffentlich zugänglich |
 | **Lizenzen** | Alle Daten unter CC0 / offenen Lizenzen (Open Government Data) |
-| **Nutzungsbedingungen** | Unterliegt den Nutzungsbedingungen der Datenquellen: [geo.admin.ch](https://www.geo.admin.ch/de/allgemeine-nutzungsbedingungen-bgdi), [opendata.swiss](https://opendata.swiss/de/terms-of-use), [rtvdb.ofcomnet.ch](https://rtvdb.ofcomnet.ch) |
+| **Nutzungsbedingungen** | Unterliegt den Nutzungsbedingungen der Datenquellen: [geo.admin.ch](https://www.geo.admin.ch/de/allgemeine-nutzungsbedingungen-bgdi), [opendata.swiss](https://opendata.swiss/de/terms-of-use) |
 
 ---
 
@@ -247,7 +246,6 @@ Liste alle Breitbandatlas-Datensätze auf, die via geo.admin.ch verfügbar sind.
 |--------|-------|-------------------|
 | [geo.admin.ch](https://api3.geo.admin.ch) | Breitbandatlas, Mobilfunkabdeckung, Antennenstandorte | Keine |
 | [opendata.swiss](https://opendata.swiss) | BAKOM-Datensätze, Telekommunikationsstatistik | Keine |
-| [rtvdb.ofcomnet.ch](https://rtvdb.ofcomnet.ch) | Konzessionierte Radio-/TV-Sender | Keine |
 
 Alle Daten stehen unter offenen Lizenzen (CC0 / OGD).
 
