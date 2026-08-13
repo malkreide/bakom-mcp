@@ -19,6 +19,8 @@ from pathlib import Path
 # Projekt-Src zum Pfad hinzufügen
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from live_support import ctx
+
 from bakom_mcp.server import (
     AntennaSearchInput,
     BroadbandCoverageInput,
@@ -103,7 +105,7 @@ async def test_broadband_coverage():
             longitude=LON_LEUTSCHENBACH,
             min_speed_mbps=BroadbandSpeed.S100,
         )
-        output = await bakom_broadband_coverage(params)
+        output = await bakom_broadband_coverage(params, ctx())
         assert isinstance(output, str) and len(output) > 50
         assert "Breitbandversorgung" in output or "100" in output
         results.ok("T01: Breitbandabdeckung Leutschenbach", f"{len(output)} Zeichen")
@@ -120,7 +122,7 @@ async def test_broadband_coverage_1000():
             min_speed_mbps=BroadbandSpeed.S1000,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_broadband_coverage(params)
+        output = await bakom_broadband_coverage(params, ctx())
         data = json.loads(output)
         assert "geschwindigkeit_mbps" in data
         assert data["geschwindigkeit_mbps"] == 1000
@@ -139,7 +141,7 @@ async def test_glasfaser():
             latitude=LAT_WAEDENSWIL,
             longitude=LON_WAEDENSWIL,
         )
-        output = await bakom_glasfaser_verfuegbarkeit(params)
+        output = await bakom_glasfaser_verfuegbarkeit(params, ctx())
         assert isinstance(output, str) and len(output) > 30
         assert "Glasfaser" in output or "FTTB" in output
         results.ok("T03: Glasfaser Wädenswil", f"{len(output)} Zeichen")
@@ -161,7 +163,7 @@ async def test_multi_standort():
                 {"name": "Wädenswil", "latitude": LAT_WAEDENSWIL, "longitude": LON_WAEDENSWIL},
             ],
         )
-        output = await bakom_multi_standort_konnektivitaet(params)
+        output = await bakom_multi_standort_konnektivitaet(params, ctx())
         assert "Schulhaus Leutschenbach" in output
         assert "Bundeshaus Bern" in output
         results.ok("T04: Multi-Standort-Vergleich", "3 Standorte verglichen")
@@ -179,7 +181,7 @@ async def test_multi_standort_json():
             ],
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_multi_standort_konnektivitaet(params)
+        output = await bakom_multi_standort_konnektivitaet(params, ctx())
         data = json.loads(output)
         assert "zusammenfassung" in data
         assert data["zusammenfassung"]["total"] == 2
@@ -199,7 +201,7 @@ async def test_mobilfunk_5g():
             longitude=8.5417,
             generation=MobilGenerations.G5,
         )
-        output = await bakom_mobilfunk_abdeckung(params)
+        output = await bakom_mobilfunk_abdeckung(params, ctx())
         assert "5G" in output
         results.ok("T06: 5G-Abdeckung Zürich HB", f"{len(output)} Zeichen")
     except Exception as e:
@@ -215,7 +217,7 @@ async def test_mobilfunk_4g_json():
             generation=MobilGenerations.G4,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_mobilfunk_abdeckung(params)
+        output = await bakom_mobilfunk_abdeckung(params, ctx())
         data = json.loads(output)
         assert data["generation"] == "4G"
         assert "abgedeckt" in data
@@ -232,7 +234,7 @@ async def test_sendeanlagen():
             longitude=8.5417,
             radius_m=500,
         )
-        output = await bakom_sendeanlagen_suche(params)
+        output = await bakom_sendeanlagen_suche(params, ctx())
         assert "Mobilfunkanlagen" in output
         results.ok("T08: Sendeanlagen Zürich HB (500m)", f"{len(output)} Zeichen")
     except Exception as e:
@@ -246,7 +248,7 @@ async def test_frequenzdaten():
             latitude=LAT_LEUTSCHENBACH,
             longitude=LON_LEUTSCHENBACH,
         )
-        output = await bakom_frequenzdaten(params)
+        output = await bakom_frequenzdaten(params, ctx())
         assert isinstance(output, str) and len(output) > 30
         assert "Sender" in output or "Radio" in output or "TV" in output or "Sender" in output
         results.ok("T09: Radio-/TV-Sendeanlagen Leutschenbach", f"{len(output)} Zeichen")
@@ -261,7 +263,7 @@ async def test_rtv_suche():
             query="SRF",
             media_type=MediaType.TV,
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         assert isinstance(output, str) and len(output) > 30
         results.ok("T10: RTV-Suche «SRF»", f"{len(output)} Zeichen")
     except Exception as e:
@@ -275,7 +277,7 @@ async def test_rtv_suche_kanton():
             media_type=MediaType.RADIO,
             kanton="ZH",
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         assert isinstance(output, str) and len(output) > 30
         results.ok("T11: Radio Kanton ZH", f"{len(output)} Zeichen")
     except Exception as e:
@@ -286,7 +288,7 @@ async def test_medienstruktur():
     """T12: Medienstruktur-Info"""
     try:
         params = TelekomStatInput(thema="radio")
-        output = await bakom_medienstruktur_info(params)
+        output = await bakom_medienstruktur_info(params, ctx())
         assert isinstance(output, str) and len(output) > 50
         results.ok("T12: Medienstruktur Radio", f"{len(output)} Zeichen")
     except Exception as e:
@@ -297,7 +299,7 @@ async def test_bakom_aktuell_medien():
     """T13: BAKOM Aktuell – Medien (SRG-Initiative)"""
     try:
         params = TelekomStatInput(thema="medien")
-        output = await bakom_aktuell(params)
+        output = await bakom_aktuell(params, ctx())
         assert "SRG" in output or "Medien" in output
         results.ok("T13: BAKOM Aktuell Medien", f"{len(output)} Zeichen")
     except Exception as e:
@@ -308,7 +310,7 @@ async def test_bakom_aktuell_5g():
     """T14: BAKOM Aktuell – 5G JSON"""
     try:
         params = TelekomStatInput(thema="5g", response_format=ResponseFormat.JSON)
-        output = await bakom_aktuell(params)
+        output = await bakom_aktuell(params, ctx())
         data = json.loads(output)
         assert "highlights" in data
         results.ok("T14: BAKOM Aktuell 5G JSON", f"{len(data['highlights'])} Highlights")
@@ -320,7 +322,7 @@ async def test_telekomstatistik():
     """T15: Telekommunikationsstatistik Breitband"""
     try:
         params = TelekomStatInput(thema="breitband")
-        output = await bakom_telekomstatistik_uebersicht(params)
+        output = await bakom_telekomstatistik_uebersicht(params, ctx())
         assert isinstance(output, str) and len(output) > 50
         results.ok("T15: Telekomstatistik Breitband", f"{len(output)} Zeichen")
     except Exception as e:
@@ -331,7 +333,7 @@ async def test_telekomstatistik_mobilfunk_json():
     """T16: Telekommunikationsstatistik Mobilfunk JSON"""
     try:
         params = TelekomStatInput(thema="mobilfunk", response_format=ResponseFormat.JSON)
-        output = await bakom_telekomstatistik_uebersicht(params)
+        output = await bakom_telekomstatistik_uebersicht(params, ctx())
         data = json.loads(output)
         assert "datensaetze" in data
         assert "thema" in data

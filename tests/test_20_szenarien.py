@@ -21,6 +21,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from live_support import ctx
+
 from bakom_mcp.server import (
     AntennaSearchInput,
     BroadbandCoverageInput,
@@ -128,7 +130,7 @@ async def test_s01_3g_alpenregion():
             generation=MobilGenerations.G3,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_mobilfunk_abdeckung(params)
+        output = await bakom_mobilfunk_abdeckung(params, ctx())
         data = json.loads(output)
         assert data["generation"] == "3G"
         assert "abgedeckt" in data
@@ -149,7 +151,7 @@ async def test_s02_breitband_30_tessin():
             longitude=LON_LUGANO,
             min_speed_mbps=BroadbandSpeed.S30,
         )
-        output = await bakom_broadband_coverage(params)
+        output = await bakom_broadband_coverage(params, ctx())
         assert isinstance(output, str) and len(output) > 30
         assert "30" in output or "Breitband" in output or "Mbit" in output
         results.ok("S02: 30 Mbit/s Lugano", f"{len(output)} Zeichen")
@@ -169,7 +171,7 @@ async def test_s03_breitband_300_json():
             min_speed_mbps=BroadbandSpeed.S300,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_broadband_coverage(params)
+        output = await bakom_broadband_coverage(params, ctx())
         data = json.loads(output)
         assert data["geschwindigkeit_mbps"] == 300
         assert "standort" in data
@@ -190,7 +192,7 @@ async def test_s04_breitband_500():
             longitude=LON_BASEL,
             min_speed_mbps=BroadbandSpeed.S500,
         )
-        output = await bakom_broadband_coverage(params)
+        output = await bakom_broadband_coverage(params, ctx())
         assert isinstance(output, str) and len(output) > 30
         assert "500" in output or "Breitband" in output
         results.ok("S04: 500 Mbit/s Basel", f"{len(output)} Zeichen")
@@ -209,7 +211,7 @@ async def test_s05_glasfaser_laendlich():
             longitude=LON_APPENZELL,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_glasfaser_verfuegbarkeit(params)
+        output = await bakom_glasfaser_verfuegbarkeit(params, ctx())
         data = json.loads(output)
         assert "glasfaser_verfuegbar" in data
         assert isinstance(data["glasfaser_verfuegbar"], bool)
@@ -231,7 +233,7 @@ async def test_s06_sendeanlagen_minimal_radius():
             radius_m=100,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_sendeanlagen_suche(params)
+        output = await bakom_sendeanlagen_suche(params, ctx())
         data = json.loads(output)
         assert "anlagen" in data
         assert data["radius_m"] == 100
@@ -252,7 +254,7 @@ async def test_s07_sendeanlagen_maximal_radius():
             longitude=LON_ST_MORITZ,
             radius_m=5000,
         )
-        output = await bakom_sendeanlagen_suche(params)
+        output = await bakom_sendeanlagen_suche(params, ctx())
         assert "Mobilfunkanlagen" in output
         results.ok("S07: Antennen 5000m St.Moritz", f"{len(output)} Zeichen")
     except Exception as e:
@@ -275,7 +277,7 @@ async def test_s08_multi_5_sprachregionen():
             ],
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_multi_standort_konnektivitaet(params)
+        output = await bakom_multi_standort_konnektivitaet(params, ctx())
         data = json.loads(output)
         assert data["zusammenfassung"]["total"] == 5
         assert len(data["standorte"]) == 5
@@ -302,7 +304,7 @@ async def test_s09_multi_single_location():
                 {"name": "Chiasso Grenzwert", "latitude": LAT_CHIASSO, "longitude": LON_CHIASSO},
             ],
         )
-        output = await bakom_multi_standort_konnektivitaet(params)
+        output = await bakom_multi_standort_konnektivitaet(params, ctx())
         assert "Chiasso Grenzwert" in output
         results.ok("S09: Multi-Standort (1 Ort)", f"{len(output)} Zeichen")
     except Exception as e:
@@ -321,7 +323,7 @@ async def test_s10_rtv_alle_bern():
             limit=10,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         data = json.loads(output)
         assert "resultate" in data
         assert data["suchanfrage"]["typ"] in ("alle", "radio,tv")
@@ -340,7 +342,7 @@ async def test_s11_rtv_spezifischer_sender():
             query="Tele Züri",
             media_type=MediaType.TV,
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         assert isinstance(output, str) and len(output) > 20
         results.ok("S11: RTV «Tele Züri»", f"{len(output)} Zeichen")
     except Exception as e:
@@ -358,7 +360,7 @@ async def test_s12_rtv_limit_1():
             limit=1,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         data = json.loads(output)
         assert "resultate" in data
         assert len(data["resultate"]) <= 1
@@ -378,7 +380,7 @@ async def test_s13_frequenzdaten_tessin():
             longitude=LON_LUGANO,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_frequenzdaten(params)
+        output = await bakom_frequenzdaten(params, ctx())
         data = json.loads(output)
         assert "sender" in data
         assert isinstance(data["sender"], list)
@@ -398,7 +400,7 @@ async def test_s14_medienstruktur_online():
             thema="online",
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_medienstruktur_info(params)
+        output = await bakom_medienstruktur_info(params, ctx())
         data = json.loads(output)
         assert "datensaetze" in data
         assert "weiterfuehrende_links" in data
@@ -414,7 +416,7 @@ async def test_s15_bakom_aktuell_post():
     """S15: BAKOM Aktuell – Thema Post (bisher nicht getestet)"""
     try:
         params = TelekomStatInput(thema="post")
-        output = await bakom_aktuell(params)
+        output = await bakom_aktuell(params, ctx())
         assert isinstance(output, str) and len(output) > 30
         assert "Post" in output or "BAKOM" in output or "Aktuell" in output
         results.ok("S15: BAKOM Aktuell Post", f"{len(output)} Zeichen")
@@ -432,7 +434,7 @@ async def test_s16_bakom_aktuell_ki():
             thema="ki",
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_aktuell(params)
+        output = await bakom_aktuell(params, ctx())
         data = json.loads(output)
         assert "highlights" in data
         assert "bakom_homepage" in data
@@ -451,7 +453,7 @@ async def test_s17_telekomstatistik_festnetz():
             thema="festnetz",
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_telekomstatistik_uebersicht(params)
+        output = await bakom_telekomstatistik_uebersicht(params, ctx())
         data = json.loads(output)
         assert "datensaetze" in data
         assert "thema" in data
@@ -501,7 +503,7 @@ async def test_s19_grenzwert_suedlich():
             min_speed_mbps=BroadbandSpeed.S100,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_broadband_coverage(params)
+        output = await bakom_broadband_coverage(params, ctx())
         data = json.loads(output)
         assert "standort" in data
         # Prüfe, dass Koordinaten korrekt übernommen wurden
@@ -524,7 +526,7 @@ async def test_s20_kombi_5g_glasfaser_nord():
             generation=MobilGenerations.G5,
             response_format=ResponseFormat.JSON,
         )
-        output_5g = await bakom_mobilfunk_abdeckung(params_5g)
+        output_5g = await bakom_mobilfunk_abdeckung(params_5g, ctx())
         data_5g = json.loads(output_5g)
         assert "abgedeckt" in data_5g
 
@@ -534,7 +536,7 @@ async def test_s20_kombi_5g_glasfaser_nord():
             longitude=LON_SCHAFFHAUSEN,
             response_format=ResponseFormat.JSON,
         )
-        output_gf = await bakom_glasfaser_verfuegbarkeit(params_gf)
+        output_gf = await bakom_glasfaser_verfuegbarkeit(params_gf, ctx())
         data_gf = json.loads(output_gf)
         assert "glasfaser_verfuegbar" in data_gf
 

@@ -15,6 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from live_support import ctx
 from pydantic import ValidationError
 
 from bakom_mcp.server import (
@@ -150,7 +151,7 @@ async def test_s02_antenna_radius_bounds():
             longitude=LON_BASEL,
             radius_m=100,
         )
-        out_min = await bakom_sendeanlagen_suche(params_min)
+        out_min = await bakom_sendeanlagen_suche(params_min, ctx())
         assert isinstance(out_min, str) and len(out_min) > 10
 
         # Maximaler Radius (5000m) – Basel
@@ -159,7 +160,7 @@ async def test_s02_antenna_radius_bounds():
             longitude=LON_BASEL,
             radius_m=5000,
         )
-        out_max = await bakom_sendeanlagen_suche(params_max)
+        out_max = await bakom_sendeanlagen_suche(params_max, ctx())
         assert isinstance(out_max, str)
 
         # 5000m-Suche sollte mindestens so viele Ergebnisse wie 100m haben
@@ -209,7 +210,7 @@ async def test_s04_all_speed_tiers():
                 min_speed_mbps=speed,
                 response_format=ResponseFormat.JSON,
             )
-            output = await bakom_broadband_coverage(params)
+            output = await bakom_broadband_coverage(params, ctx())
             data = json.loads(output)
             ergebnisse[speed.value] = data.get("abgedeckt", data.get("status"))
 
@@ -231,7 +232,7 @@ async def test_s05_mountain_location():
             generation=MobilGenerations.G5,
             response_format=ResponseFormat.JSON,
         )
-        output_5g = await bakom_mobilfunk_abdeckung(params_5g)
+        output_5g = await bakom_mobilfunk_abdeckung(params_5g, ctx())
         data_5g = json.loads(output_5g)
 
         params_3g = MobileCoverageInput(
@@ -240,7 +241,7 @@ async def test_s05_mountain_location():
             generation=MobilGenerations.G3,
             response_format=ResponseFormat.JSON,
         )
-        output_3g = await bakom_mobilfunk_abdeckung(params_3g)
+        output_3g = await bakom_mobilfunk_abdeckung(params_3g, ctx())
         data_3g = json.loads(output_3g)
 
         results.ok(
@@ -262,7 +263,7 @@ async def test_s06_glasfaser_json_schema():
             longitude=LON_LUGANO,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_glasfaser_verfuegbarkeit(params)
+        output = await bakom_glasfaser_verfuegbarkeit(params, ctx())
         data = json.loads(output)
 
         # Schema pruefen (lat/lon statt latitude/longitude)
@@ -290,7 +291,7 @@ async def test_s07_rtv_combined_filters():
             limit=5,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         data = json.loads(output)
 
         # Sollte Resultate liefern
@@ -313,7 +314,7 @@ async def test_s08_rtv_kanton_normalization():
         )
         assert params.kanton == "GE", f"Kanton nicht normalisiert: {params.kanton}"
 
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         assert isinstance(output, str) and len(output) > 20
 
         results.ok("S08: Kanton-Normalisierung", "'ge' -> 'GE' korrekt normalisiert")
@@ -341,7 +342,7 @@ async def test_s09_multi_location_10():
         ]
 
         params = MultiLocationInput(locations=standorte)
-        output = await bakom_multi_standort_konnektivitaet(params)
+        output = await bakom_multi_standort_konnektivitaet(params, ctx())
 
         # Alle 10 Standorte sollten in der Antwort vorkommen
         for s in standorte:
@@ -381,7 +382,7 @@ async def test_s11_frequenzdaten_json():
             longitude=LON_LUGANO,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_frequenzdaten(params)
+        output = await bakom_frequenzdaten(params, ctx())
         data = json.loads(output)
         assert isinstance(data, dict)
 
@@ -400,7 +401,7 @@ async def test_s12_medienstruktur_all_topics():
         ergebnisse = {}
         for thema in themen:
             params = TelekomStatInput(thema=thema)
-            output = await bakom_medienstruktur_info(params)
+            output = await bakom_medienstruktur_info(params, ctx())
             ergebnisse[thema] = len(output)
             assert isinstance(output, str) and len(output) > 20, (
                 f"Thema '{thema}' hat zu wenig Output"
@@ -421,7 +422,7 @@ async def test_s13_bakom_aktuell_all_topics():
         ergebnisse = {}
         for thema in themen:
             params = TelekomStatInput(thema=thema)
-            output = await bakom_aktuell(params)
+            output = await bakom_aktuell(params, ctx())
             ergebnisse[thema] = len(output)
             assert isinstance(output, str) and len(output) > 20, (
                 f"Thema '{thema}' hat zu wenig Output"
@@ -441,7 +442,7 @@ async def test_s14_telekomstatistik_all_json():
         themen = ["breitband", "mobilfunk", "festnetz", "marktanteile", "haushaltszugang"]
         for thema in themen:
             params = TelekomStatInput(thema=thema, response_format=ResponseFormat.JSON)
-            output = await bakom_telekomstatistik_uebersicht(params)
+            output = await bakom_telekomstatistik_uebersicht(params, ctx())
             data = json.loads(output)
             assert isinstance(data, dict), f"JSON von '{thema}' ist kein Objekt"
             assert "thema" in data or "datensaetze" in data, f"JSON von '{thema}' fehlt Struktur"
@@ -463,7 +464,7 @@ async def test_s15_sendeanlagen_json_sorted():
             radius_m=2000,
             response_format=ResponseFormat.JSON,
         )
-        output = await bakom_sendeanlagen_suche(params)
+        output = await bakom_sendeanlagen_suche(params, ctx())
         data = json.loads(output)
         assert isinstance(data, dict)
 
@@ -495,7 +496,7 @@ async def test_s16_cross_tool_connectivity_profile():
             min_speed_mbps=BroadbandSpeed.S100,
             response_format=ResponseFormat.JSON,
         )
-        bb_out = await bakom_broadband_coverage(bb_params)
+        bb_out = await bakom_broadband_coverage(bb_params, ctx())
         bb_data = json.loads(bb_out)
 
         # Glasfaser
@@ -504,7 +505,7 @@ async def test_s16_cross_tool_connectivity_profile():
             longitude=LON_CHUR,
             response_format=ResponseFormat.JSON,
         )
-        gf_out = await bakom_glasfaser_verfuegbarkeit(gf_params)
+        gf_out = await bakom_glasfaser_verfuegbarkeit(gf_params, ctx())
         gf_data = json.loads(gf_out)
 
         # 5G
@@ -514,7 +515,7 @@ async def test_s16_cross_tool_connectivity_profile():
             generation=MobilGenerations.G5,
             response_format=ResponseFormat.JSON,
         )
-        m5_out = await bakom_mobilfunk_abdeckung(m5_params)
+        m5_out = await bakom_mobilfunk_abdeckung(m5_params, ctx())
         m5_data = json.loads(m5_out)
 
         profil = {
@@ -564,7 +565,7 @@ async def test_s18_rtv_no_query():
             media_type=MediaType.TV,
             limit=50,  # Maximum
         )
-        output = await bakom_rtv_suche(params)
+        output = await bakom_rtv_suche(params, ctx())
         assert isinstance(output, str) and len(output) > 30
 
         results.ok("S18: RTV alle TV (kein Query)", f"{len(output)} Zeichen")
@@ -584,7 +585,7 @@ async def test_s19_boundary_coordinates():
             longitude=8.95,
             min_speed_mbps=BroadbandSpeed.S30,
         )
-        out_sued = await bakom_broadband_coverage(params_sued)
+        out_sued = await bakom_broadband_coverage(params_sued, ctx())
         assert isinstance(out_sued, str) and len(out_sued) > 20
 
         # Nordgrenze (nahe Schaffhausen)
@@ -593,7 +594,7 @@ async def test_s19_boundary_coordinates():
             longitude=8.63,
             min_speed_mbps=BroadbandSpeed.S30,
         )
-        out_nord = await bakom_broadband_coverage(params_nord)
+        out_nord = await bakom_broadband_coverage(params_nord, ctx())
         assert isinstance(out_nord, str) and len(out_nord) > 20
 
         results.ok("S19: Grenz-Koordinaten", f"Süd: {len(out_sued)}Z, Nord: {len(out_nord)}Z")
