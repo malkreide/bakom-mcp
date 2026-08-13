@@ -21,7 +21,7 @@
 
 ## Overview
 
-**bakom-mcp** connects AI assistants like Claude to the Swiss Federal Office of Communications (BAKOM) open data infrastructure. It enables natural-language queries about broadband availability, 5G/4G coverage, mobile antenna locations, licensed broadcasters (RTV database), and telecommunications statistics — all without API keys.
+**bakom-mcp** connects AI assistants like Claude to the Swiss Federal Office of Communications (BAKOM) open data infrastructure. It enables natural-language queries about broadband availability, 5G/4G coverage, mobile antenna locations, BAKOM datasets on radio and television, and telecommunications statistics — all without API keys.
 
 All data is published as Open Government Data (OGD) on opendata.swiss / geo.admin.ch under **CC BY 4.0** — see the [Data Licence](#data-licence) section below for attribution requirements.
 
@@ -40,7 +40,6 @@ All data is published as Open Government Data (OGD) on opendata.swiss / geo.admi
 ✓ Read-only queries against three public BAKOM/Confederation APIs:
   - `api3.geo.admin.ch` / `wms.geo.admin.ch` (broadband, mobile coverage, antennas)
   - `ckan.opendata.swiss` (telecom statistics, dataset metadata)
-  - `rtvdb.ofcomnet.ch` (licensed radio/TV broadcasters)
 
 ✓ Returns aggregated, anonymous data — no personal data, no household-level identification.
 
@@ -69,7 +68,7 @@ All data is published as Open Government Data (OGD) on opendata.swiss / geo.admi
 - 📍 **Multi-location comparison** – Connectivity check for up to 20 locations simultaneously
 - 📱 **Mobile coverage** – 5G/4G/3G outdoor coverage (100×100m grid)
 - 📡 **Antenna search** – Mobile and broadcast transmitters within a configurable radius
-- 📺 **RTV database** – Search licensed radio and TV broadcasters by name, type, canton
+- 📺 **Radio & TV datasets** – Full-text search across BAKOM's radio and television datasets on opendata.swiss
 - 🗞️ **Media landscape** – BAKOM media structure reports and datasets
 - 📊 **Telecom statistics** – Fixed-line, mobile, broadband market data via opendata.swiss
 - 🗂️ **Broadband Atlas catalogue** – All BAKOM dataset layers with direct API links
@@ -81,7 +80,7 @@ All data is published as Open Government Data (OGD) on opendata.swiss / geo.admi
 
 - Python 3.11+
 - `uv` or `pip` for installation
-- Internet connection (live APIs: geo.admin.ch, opendata.swiss, rtvdb.ofcomnet.ch)
+- Internet connection (live APIs: geo.admin.ch, opendata.swiss)
 
 ---
 
@@ -197,7 +196,7 @@ The image runs as **non-root** (UID 10001), uses a **read-only filesystem**, dro
 
 | Tool | Description |
 |------|-------------|
-| `bakom_rtv_suche` | Search licensed broadcasters (RTV database) |
+| `bakom_rtv_suche` | Search BAKOM radio/TV datasets on opendata.swiss |
 | `bakom_medienstruktur_info` | Swiss media landscape datasets |
 | `bakom_aktuell` | Current BAKOM topics (5G, media, AI, postal) |
 
@@ -237,7 +236,7 @@ List all Broadband Atlas datasets available via geo.admin.ch.
 | **Timeout** | 20 seconds per API call |
 | **Authentication** | No API keys required — all 3 APIs are publicly accessible |
 | **Licences** | All data under CC0 / open licences (Open Government Data) |
-| **Terms of Service** | Subject to ToS of the respective data sources: [geo.admin.ch](https://www.geo.admin.ch/en/general-terms-and-conditions-fsdi), [opendata.swiss](https://opendata.swiss/en/terms-of-use), [rtvdb.ofcomnet.ch](https://rtvdb.ofcomnet.ch) |
+| **Terms of Service** | Subject to ToS of the respective data sources: [geo.admin.ch](https://www.geo.admin.ch/en/general-terms-and-conditions-fsdi), [opendata.swiss](https://opendata.swiss/en/terms-of-use) |
 
 ---
 
@@ -247,7 +246,6 @@ List all Broadband Atlas datasets available via geo.admin.ch.
 |--------|------|----------------|
 | [geo.admin.ch](https://api3.geo.admin.ch) | Broadband Atlas, mobile coverage, antenna locations | None |
 | [opendata.swiss](https://opendata.swiss) | BAKOM datasets, telecom statistics | None |
-| [rtvdb.ofcomnet.ch](https://rtvdb.ofcomnet.ch) | Licensed radio/TV broadcasters | None |
 
 All data is published under open licences (CC0 / OGD).
 

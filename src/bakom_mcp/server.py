@@ -95,7 +95,6 @@ ALLOWED_EGRESS_HOSTS: frozenset[str] = frozenset(
         "wms.geo.admin.ch",
         "geodesy.geo.admin.ch",
         "ckan.opendata.swiss",
-        "rtvdb.ofcomnet.ch",
         "www.bakom.admin.ch",
     }
 )
@@ -159,7 +158,6 @@ async def _shared_client(ctx: Context) -> AsyncIterator[httpx.AsyncClient]:
 # ---------------------------------------------------------------------------
 GEO_ADMIN_API = "https://api3.geo.admin.ch/rest/services/api/MapServer"
 OPENDATA_SWISS_API = "https://ckan.opendata.swiss/api/3/action"
-RTV_DB_API = "https://rtvdb.ofcomnet.ch/api"
 BAKOM_INFOMAILING = "https://www.bakom.admin.ch/de/bakom-infomailing"
 
 TIMEOUT = 20.0
@@ -327,11 +325,17 @@ class RTVSearchInput(BaseModel):
     )
     media_type: MediaType = Field(
         default=MediaType.ALLE,
-        description="Medientyp: 'radio', 'tv' oder 'alle'",
+        description=(
+            "Medientyp: 'radio', 'tv' oder 'alle'. Geht als Suchwort in die "
+            "Volltextsuche ein und gewichtet die Treffer — kein exakter Filter."
+        ),
     )
     kanton: str | None = Field(
         default=None,
-        description="Kantonskürzel (z.B. 'ZH', 'BE', 'GE')",
+        description=(
+            "Kantonskürzel (z.B. 'ZH', 'BE', 'GE'). Geht als Suchwort in die "
+            "Volltextsuche ein und gewichtet die Treffer — kein exakter Filter."
+        ),
         max_length=2,
     )
     limit: int = Field(
@@ -1203,7 +1207,7 @@ async def bakom_frequenzdaten(params: CoordinateInput, ctx: Context) -> str:
 @mcp.tool(
     name="bakom_rtv_suche",
     annotations={
-        "title": "Radio- und Fernsehsender in der Schweiz suchen",
+        "title": "BAKOM-Datensätze zu Radio und Fernsehen durchsuchen",
         "readOnlyHint": True,
         "destructiveHint": False,
         "idempotentHint": True,
@@ -1212,16 +1216,23 @@ async def bakom_frequenzdaten(params: CoordinateInput, ctx: Context) -> str:
 )
 @_log_tool_call
 async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
-    """Konzessionierte und gemeldete Radio- und TV-Sender in der Schweiz suchen.
+    """BAKOM-Datensätze zu Radio und Fernsehen auf opendata.swiss durchsuchen.
 
-    Durchsucht die BAKOM RTV-Datenbank nach lizenzierten Rundfunkveranstaltern.
-    Filtermöglichkeiten nach Name, Medientyp (Radio/TV) und Kanton.
+    Liefert Datensätze aus dem Katalog des BAKOM, nicht einzelne Sender. Wer
+    Angaben zu einer konkreten konzessionierten Veranstalterin braucht, findet
+    sie in der RTV-Datenbank des BAKOM (https://rtvdb.ofcomnet.ch/de); die ist
+    eine Web-Oberfläche ohne maschinenlesbare Schnittstelle und wird von diesem
+    Server nicht abgefragt.
+
+    `media_type` und `kanton` gehen als Suchwörter in die Volltextsuche ein und
+    gewichten die Treffer — sie filtern nicht exakt. Der Katalog kennt für
+    beides keine Facette.
 
     Args:
         params (RTVSearchInput): Suchbegriff, Medientyp, Kanton, Limit, Format.
 
     Returns:
-        str: Liste von Rundfunkveranstaltern mit Kontakt und Konzessionsinfos.
+        str: Liste von BAKOM-Datensätzen zu Radio und Fernsehen.
 
     Schema:
         {
@@ -1229,10 +1240,8 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
             {
               "name": str,
               "typ": str,
-              "kanton": str | None,
-              "konzession": str | None,
-              "url": str | None,
-              "sprache": str | None
+              "beschreibung": str,
+              "url": str
             }
           ],
           "total": int
@@ -1240,50 +1249,39 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
     """
     try:
         async with _shared_client(ctx) as client:
-            # RTV-Datenbank API
-            search_params: dict[str, Any] = {
-                "format": "json",
-                "limit": params.limit,
-            }
-            if params.query:
-                search_params["search"] = params.query
+            # Der Volltextindex von CKAN kennt weder Kanton noch Medientyp als
+            # Facette — beides geht deshalb als Suchwort in die Anfrage und
+            # gewichtet die Treffer, es filtert nicht exakt. Genau so steht es
+            # auch in den Feldbeschreibungen und im Hinweis der Antwort.
+            suchworte = ["rtv", "radio", "fernsehen"]
             if params.media_type != MediaType.ALLE:
-                search_params["type"] = params.media_type.value
+                suchworte.append(params.media_type.value)
             if params.kanton:
-                search_params["canton"] = params.kanton
+                suchworte.append(params.kanton)
+            if params.query:
+                suchworte.append(params.query)
 
-            try:
-                r = await client.get(
-                    f"{RTV_DB_API}/broadcasters",
-                    params=search_params,
-                    timeout=TIMEOUT,
-                )
-                r.raise_for_status()
-                data = r.json()
-                resultate = data.get("results", data.get("data", []))
-            except Exception:
-                # Fallback: opendata.swiss CKAN für RTV-Metadaten
-                r2 = await client.get(
-                    f"{OPENDATA_SWISS_API}/package_search",
-                    params={
-                        "fq": "organization:bundesamt-fur-kommunikation-bakom",
-                        "q": f"rtv radio fernsehen {params.query or ''}",
-                        "rows": params.limit,
-                    },
-                    timeout=TIMEOUT,
-                )
-                r2.raise_for_status()
-                ckan_data = r2.json()
-                datasets = ckan_data.get("result", {}).get("results", [])
-                resultate = [
-                    {
-                        "name": ds.get("title", {}).get("de", ds.get("name", "")),
-                        "typ": "Datensatz",
-                        "beschreibung": ds.get("notes", {}).get("de", ""),
-                        "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
-                    }
-                    for ds in datasets
-                ]
+            r = await client.get(
+                f"{OPENDATA_SWISS_API}/package_search",
+                params={
+                    "fq": "organization:bundesamt-fur-kommunikation-bakom",
+                    "q": " ".join(suchworte),
+                    "rows": params.limit,
+                },
+                timeout=TIMEOUT,
+            )
+            r.raise_for_status()
+            ckan_data = r.json()
+            datasets = ckan_data.get("result", {}).get("results", [])
+            resultate = [
+                {
+                    "name": ds.get("title", {}).get("de", ds.get("name", "")),
+                    "typ": "Datensatz",
+                    "beschreibung": ds.get("notes", {}).get("de", ""),
+                    "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
+                }
+                for ds in datasets
+            ]
 
             # ARCH-003: Heuristik bei leerem Resultat — schlage gezielte
             # Filter-Lockerungen vor, damit der LLM-Agent nicht einfach
@@ -1310,11 +1308,19 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
                     "query": params.query,
                     "typ": params.media_type.value,
                     "kanton": params.kanton,
+                    "filterung": (
+                        "Volltextsuche im Datensatzkatalog — 'typ' und 'kanton' gewichten "
+                        "die Treffer, sie filtern nicht exakt."
+                    ),
                 },
                 "resultate": resultate,
                 "total": len(resultate),
-                "datenquelle": "BAKOM RTV-Datenbank",
-                "rtv_datenbank": "https://rtvdb.ofcomnet.ch/de",
+                "datenquelle": "opendata.swiss – Datensatzkatalog des BAKOM",
+                "hinweis_senderdaten": (
+                    "Diese Treffer sind Datensätze, keine einzelnen Sender. Angaben zu "
+                    "konzessionierten Veranstaltern stehen in der RTV-Datenbank des BAKOM: "
+                    "https://rtvdb.ofcomnet.ch/de"
+                ),
             }
             if hinweis:
                 output["hinweis"] = hinweis
@@ -1322,7 +1328,7 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
             if params.response_format == ResponseFormat.JSON:
                 return json.dumps(output, indent=2, ensure_ascii=False)
 
-            md = "## BAKOM RTV-Datenbank – Suchergebnisse\n"
+            md = "## BAKOM RTV-Datensätze auf opendata.swiss\n"
             md += f"**Suche:** «{params.query or 'alle'}»"
             if params.kanton:
                 md += f" | **Kanton:** {params.kanton}"
@@ -1336,15 +1342,19 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
                 for r_item in resultate[: params.limit]:
                     name = r_item.get("name", "–")
                     typ = r_item.get("typ", "–")
-                    kanton = r_item.get("kanton", r_item.get("canton", "–"))
                     url = r_item.get("url", "")
                     md += f"**{name}**  \n"
-                    md += f"Typ: {typ} | Kanton: {kanton}"
+                    md += f"Typ: {typ}"
                     if url:
-                        md += f" | [Website]({url})"
+                        md += f" | [Datensatz]({url})"
                     md += "  \n\n"
 
-            md += "**Vollständige Datenbank:** https://rtvdb.ofcomnet.ch/de"
+            md += (
+                "> Volltextsuche im Datensatzkatalog: Kanton und Typ gewichten die Treffer, "
+                "sie filtern nicht exakt.  \n"
+                "> Angaben zu einzelnen konzessionierten Veranstaltern stehen in der "
+                "RTV-Datenbank des BAKOM: https://rtvdb.ofcomnet.ch/de"
+            )
             return md + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:
@@ -1927,7 +1937,6 @@ def bakom_server_info() -> str:
             "apis": {
                 "geo_admin": "https://api3.geo.admin.ch",
                 "opendata_swiss": "https://ckan.opendata.swiss/api/3/action",
-                "rtv_db": "https://rtvdb.ofcomnet.ch/api",
             },
             "koordinaten_format": "WGS84 (lat: 45.8–47.9, lon: 5.9–10.6)",
             "auth_erforderlich": False,
@@ -2001,27 +2010,29 @@ def prompt_schulhaus_konnektivitaet(
 
 @mcp.prompt(
     name="rtv_kanton_uebersicht",
-    title="RTV-Veranstalter pro Kanton",
+    title="Radio- und TV-Datensätze mit Kantonsbezug",
     description=(
-        "Listet konzessionierte und gemeldete Radio- und TV-Veranstalter "
-        "in einem Schweizer Kanton aus der BAKOM RTV-Datenbank."
+        "Sucht BAKOM-Datensätze zu Radio und Fernsehen mit Bezug zu einem "
+        "Kanton und verweist für einzelne Veranstalter auf die RTV-Datenbank."
     ),
 )
 def prompt_rtv_kanton_uebersicht(
     kanton: str = "ZH",
     medientyp: str = "alle",
 ) -> str:
-    """Übersicht der Konzessionsträger pro Kanton."""
+    """Datensatz-Übersicht mit Kantonsbezug."""
     return (
-        f"Erstelle eine Übersicht der konzessionierten Radio- und TV-Veranstalter "
-        f"im Kanton {kanton.upper()}.\n\n"
+        f"Erstelle eine Übersicht der BAKOM-Datensätze zu Radio und Fernsehen "
+        f"mit Bezug zum Kanton {kanton.upper()}.\n\n"
         f"1. Rufe `bakom_rtv_suche` mit `kanton='{kanton.upper()}'` und "
         f"`media_type='{medientyp}'` auf.\n"
-        "2. Gruppiere die Ergebnisse nach Medientyp (Radio / TV).\n"
-        "3. Zeige Name, Konzessionsstatus und Link auf die RTV-Datenbank in einer "
-        "Tabelle.\n"
-        "4. Ergänze einen Kontext-Absatz: was bedeutet «konzessioniert» vs. "
-        "«gemeldet» nach Schweizer Medienrecht?\n"
+        "2. Zeige Titel, Beschreibung und Link je Datensatz in einer Tabelle.\n"
+        "3. Halte fest, dass es sich um Datensätze handelt und dass Kanton und "
+        "Medientyp die Volltextsuche gewichten, aber nicht exakt filtern — ein "
+        "Treffer muss den Kanton also nicht betreffen.\n"
+        "4. Verweise für Angaben zu einzelnen konzessionierten Veranstaltern auf "
+        "die RTV-Datenbank des BAKOM (https://rtvdb.ofcomnet.ch/de). Diese Liste "
+        "nicht aus den Datensatz-Titeln erfinden.\n"
         "5. Quelle und CC BY 4.0-Lizenz im Footer angeben."
     )
 

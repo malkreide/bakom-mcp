@@ -402,10 +402,18 @@ class TestEgressAllowlist:
             "wms.geo.admin.ch",
             "geodesy.geo.admin.ch",
             "ckan.opendata.swiss",
-            "rtvdb.ofcomnet.ch",
             "www.bakom.admin.ch",
         ):
             assert host in ALLOWED_EGRESS_HOSTS, f"missing: {host}"
+
+    def test_allowlist_excludes_rtvdb(self) -> None:
+        """rtvdb.ofcomnet.ch ist eine SPA ohne API — der Server ruft sie nicht auf.
+
+        Der frueher erste Aufruf gegen /api/broadcasters bekam auf jedem Pfad
+        HTTP 200 mit der HTML-Huelle, scheiterte dann an r.json() und fiel auf
+        opendata.swiss zurueck. Der Host gehoert damit nicht in die Allowlist.
+        """
+        assert "rtvdb.ofcomnet.ch" not in ALLOWED_EGRESS_HOSTS
 
     def test_allowlist_is_frozen(self) -> None:
         """Eine frozenset garantiert Immutabilitaet zur Laufzeit."""
@@ -682,13 +690,17 @@ class TestNotFoundHeuristics:
         assert "abgelegen" in result.lower()
 
     @pytest.mark.asyncio
+    @staticmethod
+    def _ckan_empty() -> MagicMock:
+        """CKAN-Antwort ohne Treffer, in der Form der echten Quelle."""
+        resp = MagicMock(spec=httpx.Response)
+        resp.raise_for_status = MagicMock()
+        resp.json = MagicMock(return_value={"result": {"results": [], "count": 0}})
+        return resp
+
     async def test_rtv_empty_suggests_dropping_kanton_filter(self) -> None:
         client = AsyncMock(spec=httpx.AsyncClient)
-        # Primary RTV API returns empty broadcasters list.
-        primary_resp = MagicMock(spec=httpx.Response)
-        primary_resp.raise_for_status = MagicMock()
-        primary_resp.json = MagicMock(return_value={"results": []})
-        client.get = AsyncMock(return_value=primary_resp)
+        client.get = AsyncMock(return_value=self._ckan_empty())
 
         params = RTVSearchInput(query="Tele Inexistent", kanton="ZH", media_type=MediaType.TV)
         result = await bakom_rtv_suche(params, _ctx_with(client))
@@ -699,15 +711,52 @@ class TestNotFoundHeuristics:
     @pytest.mark.asyncio
     async def test_rtv_empty_with_no_filters_still_helpful(self) -> None:
         client = AsyncMock(spec=httpx.AsyncClient)
-        empty_resp = MagicMock(spec=httpx.Response)
-        empty_resp.raise_for_status = MagicMock()
-        empty_resp.json = MagicMock(return_value={"results": []})
-        client.get = AsyncMock(return_value=empty_resp)
+        client.get = AsyncMock(return_value=self._ckan_empty())
 
         params = RTVSearchInput()  # alle defaults
         result = await bakom_rtv_suche(params, _ctx_with(client))
         # Auch ohne Filter-Vorschläge soll Hinweis-Text auftauchen
         assert "Hinweis" in result or "Empfehlung" in result
+
+    @pytest.mark.asyncio
+    async def test_rtv_fragt_nur_ckan(self) -> None:
+        """Genau ein Aufruf, und der geht an opendata.swiss.
+
+        Vorher lief jede RTV-Suche zuerst gegen rtvdb.ofcomnet.ch/api. Die
+        Antwort war HTTP 200 mit der HTML-Huelle der Single-Page-App, r.json()
+        scheiterte, und erst der zweite Aufruf lieferte Daten.
+        """
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(return_value=self._ckan_empty())
+
+        await bakom_rtv_suche(RTVSearchInput(query="SRF"), _ctx_with(client))
+        assert client.get.await_count == 1
+        url = client.get.await_args.args[0]
+        assert "ckan.opendata.swiss" in url
+        assert "rtvdb" not in url
+
+    @pytest.mark.asyncio
+    async def test_rtv_kanton_und_typ_gehen_in_die_volltextsuche(self) -> None:
+        """Beide Werte landen als Suchwort in q — der Katalog hat keine Facette dafuer."""
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(return_value=self._ckan_empty())
+
+        params = RTVSearchInput(query="Tele Züri", kanton="ZH", media_type=MediaType.TV)
+        await bakom_rtv_suche(params, _ctx_with(client))
+        q = client.get.await_args.kwargs["params"]["q"]
+        assert "ZH" in q
+        assert "tv" in q
+        assert "Tele Züri" in q
+
+    @pytest.mark.asyncio
+    async def test_rtv_nennt_opendata_swiss_als_quelle(self) -> None:
+        """Die Antwort behauptet nicht mehr, aus der RTV-Datenbank zu stammen."""
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(return_value=self._ckan_empty())
+
+        params = RTVSearchInput(response_format=ResponseFormat.JSON)
+        data = json.loads(await bakom_rtv_suche(params, _ctx_with(client)))
+        assert data["datenquelle"] == "opendata.swiss – Datensatzkatalog des BAKOM"
 
 
 # ---------------------------------------------------------------------------
