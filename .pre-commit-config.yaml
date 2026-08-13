@@ -1,0 +1,16 @@
+# Lokale Gates, identisch zu .github/workflows/ci.yml.
+# Die ruff-Version ist bewusst gepinnt und MUSS mit dem `pip install ruff==...`
+# in ci.yml uebereinstimmen — eine andere Version meldet Abweichungen, die
+# niemand verursacht hat.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.1
+    hooks:
+      # entspricht: ruff check src/ tests/ scripts/
+      - id: ruff-check
+        files: ^(src|tests|scripts)/
+      # entspricht: ruff format --check src/ tests/ scripts/
+      # Lokal wird formatiert statt nur geprueft; der Commit schlaegt fehl,
+      # sobald eine Datei angefasst wurde.
+      - id: ruff-format
+        files: ^(src|tests|scripts)/

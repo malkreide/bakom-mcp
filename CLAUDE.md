@@ -48,12 +48,15 @@ Ein Codex-Review auf einem PR wird beantwortet oder behoben, nie ignoriert.
 ### ruff
 
 Gepinnt in `.github/workflows/ci.yml`: **`ruff==0.16.1`** (beide Jobs, `test` und `lint`).
-Lokal exakt so installieren: `pip install ruff==0.16.1`.
+Dieselbe Version in `.pre-commit-config.yaml` (`rev: v0.16.1`, Scope
+`^(src|tests|scripts)/`). Lokal einmalig `pre-commit install`, dann läuft das
+Lint-Gate vor jedem Commit mit exakt der CI-Version. Wer die Hooks nicht nutzt:
+`pip install ruff==0.16.1`.
 
-Befunde:
+Beide Stellen müssen zusammen gebumpt werden — Workflow und `rev`.
 
-- **Kein `.pre-commit-config.yaml`** im Repo — die Pinnung wird lokal nirgends
-  erzwungen, nur in der CI.
+Befund:
+
 - `pyproject.toml` `[project.optional-dependencies].dev` deklariert
   `ruff>=0.4.0,<1.0`. Ein `uv pip install -e ".[dev]"` zieht also eine andere
   Version als das Gate; die CI überschreibt sie danach explizit mit `0.16.1`.
