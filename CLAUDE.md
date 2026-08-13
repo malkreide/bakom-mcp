@@ -76,13 +76,24 @@ Matrix: Python 3.11 / 3.12 / 3.13. Weitere Workflows: `docker.yml`
 (Build + Non-root-/Smoke-Test), `secret-scan.yml` (gitleaks), `release.yml`,
 `publish.yml`.
 
-### Live-Tests — Befund DRIFT-005
+### Live-Tests
 
-Es gibt **keinen** geplanten Live-Test-Workflow: kein `schedule:`/cron-Trigger
-in `.github/workflows/`. Live-Tests werden ausschliesslich per `-m "not live"`
-ausgeschlossen (Marker wird in `tests/conftest.py` automatisch auf
+`.github/workflows/live-tests.yml` fährt `pytest tests/ -m live` täglich
+(05:17 UTC) und per `workflow_dispatch`. Ein Fehlschlag wird einmal wiederholt
+— bleibt es rot, öffnet der Workflow ein Issue mit Label `live-test-failure`
+(oder kommentiert das offene). Die CI selbst schliesst diese Tests weiter per
+`-m "not live"` aus; der Marker wird in `tests/conftest.py` automatisch auf
 `test_integration.py`, `test_20_szenarien.py`, `test_20_neue_szenarien.py` und
-`test_scenarios_20.py` gesetzt). Damit verletzt dieses
-Repo **DRIFT-005** des Audit-Katalogs — Drift der externen Quelle bleibt
-unbemerkt, bis er produktiv auffällt. Bis zur Behebung: vor jedem Release
-manuell `PYTHONPATH=src pytest tests/ -m live` fahren.
+`test_scenarios_20.py` gesetzt.
+
+**Offener Befund: die Live-Suite kann nicht rot werden — bzw. konnte es nicht.**
+Die vier Module stammen aus Skripten: jeder Testkörper fängt `Exception` ab und
+bucht sie auf ein modulweites `TestResult`, das nur auf stdout landet. `pytest
+-m live` meldete 78 passed in 1,4 s — ohne dass ein einziger Aufruf die Quelle
+erreichte. 66 der 78 Tests rufen die Tools seit dem Lifespan-Refactor mit
+falscher Signatur auf (`missing 1 required positional argument: 'ctx'`).
+
+`pytest_runtest_call` in `tests/conftest.py` vergleicht jetzt `results.errors`
+vor und nach jedem Test und lässt den Test fallen, sobald ein Eintrag dazukommt.
+Damit ist der Fehler sichtbar — behoben ist er nicht: die 66 Aufrufstellen
+brauchen ein echtes `ctx`. Bis dahin ist der Cron-Lauf rot, und zwar zu Recht.

@@ -1,0 +1,107 @@
+name: Live Tests
+
+# Faengt Drift der externen Quellen (geo.admin.ch, opendata.swiss,
+# rtvdb.ofcomnet.ch) ab. Die CI schliesst diese Tests per `-m "not live"` aus;
+# ohne diesen geplanten Lauf faellt eine geaenderte Kopfzeile oder ein
+# umbenanntes Feld erst produktiv auf, waehrend alle Unit-Tests gruen bleiben.
+on:
+  schedule:
+    # taeglich 05:17 UTC — nicht zur vollen Stunde, dort ist der Runner-Andrang
+    # am groessten und Jobs werden verzoegert.
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write # fuer das Fehler-Issue
+
+concurrency:
+  group: live-tests
+  cancel-in-progress: false
+
+jobs:
+  live:
+    name: pytest -m live
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: uv installieren
+        run: pip install uv
+
+      - name: Abhängigkeiten installieren
+        run: uv pip install -e ".[dev]" --system
+
+      - name: Live-Tests
+        id: live
+        env:
+          PYTHONPATH: src
+        run: |
+          set +e
+          run_tests() { pytest tests/ -m live -v --tb=short 2>&1 | tee live-output.txt; return "${PIPESTATUS[0]}"; }
+          run_tests
+          STATUS=$?
+          # Eine einzelne Wiederholung trennt echten Drift von einem
+          # Netzwerk-Aussetzer. Bleibt es rot, ist es die Quelle.
+          if [ "$STATUS" -ne 0 ]; then
+            echo "::warning::Erster Lauf fehlgeschlagen (exit $STATUS) — Wiederholung in 60s."
+            sleep 60
+            run_tests
+            STATUS=$?
+          fi
+          exit "$STATUS"
+
+      - name: Bei Fehlschlag Issue eröffnen oder kommentieren
+        if: failure() && steps.live.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          gh label create live-test-failure \
+            --description "Geplanter Live-Test gegen die externen Quellen ist rot" \
+            --color B60205 --force
+
+          {
+            echo "Der geplante Live-Test ist zweimal in Folge fehlgeschlagen — ein"
+            echo "einzelner Netzwerk-Aussetzer ist damit ausgeschlossen."
+            echo
+            echo "Lauf: $RUN_URL"
+            echo
+            echo "Erst die Quelle abfragen, dann einordnen: nicht aus der"
+            echo "Fehlermeldung schliessen, dass ein Datensatz weg ist — es kann"
+            echo "genauso eine umbenannte Kopfzeile sein."
+            echo
+            echo '<details><summary>Letzte 40 Zeilen der Testausgabe</summary>'
+            echo
+            echo '```'
+            tail -40 live-output.txt || echo "keine Ausgabe erfasst"
+            echo '```'
+            echo
+            echo '</details>'
+          } > issue-body.md
+
+          EXISTING=$(gh issue list --label live-test-failure --state open \
+            --limit 1 --json number --jq '.[0].number // empty')
+
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file issue-body.md
+          else
+            gh issue create \
+              --title "Live-Tests rot — externe Quelle prüfen" \
+              --label live-test-failure \
+              --body-file issue-body.md
+          fi
+
+      - name: Testausgabe als Artefakt sichern
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-test-output
+          path: live-output.txt
+          if-no-files-found: ignore
+          retention-days: 30
