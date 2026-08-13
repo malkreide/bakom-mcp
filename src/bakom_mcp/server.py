@@ -158,8 +158,6 @@ async def _shared_client(ctx: Context) -> AsyncIterator[httpx.AsyncClient]:
 # Konstanten
 # ---------------------------------------------------------------------------
 GEO_ADMIN_API = "https://api3.geo.admin.ch/rest/services/api/MapServer"
-GEO_ADMIN_IDENTIFY = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify"
-GEO_ADMIN_FIND = "https://api3.geo.admin.ch/rest/services/api/MapServer/find"
 OPENDATA_SWISS_API = "https://ckan.opendata.swiss/api/3/action"
 RTV_DB_API = "https://rtvdb.ofcomnet.ch/api"
 BAKOM_INFOMAILING = "https://www.bakom.admin.ch/de/bakom-infomailing"

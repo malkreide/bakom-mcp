@@ -109,5 +109,7 @@ Gegenprobe bei Änderungen an der Suite — in `server.py` kurz umbiegen:
 | `OPENDATA_SWISS_API` | 22 von 70 fallen |
 | `GEO_ADMIN_API` | 10 von 70 fallen |
 
-`GEO_ADMIN_IDENTIFY` und `GEO_ADMIN_FIND` eignen sich nicht dafür: beide
-Konstanten sind unbenutzt, die Aufrufe bauen den Pfad aus `GEO_ADMIN_API`.
+Vorher prüfen, ob die umgebogene Konstante überhaupt gelesen wird — sonst
+beweist die grüne Suite nichts. `GEO_ADMIN_IDENTIFY`, `GEO_ADMIN_FIND` und
+`RTV_DB_API` waren solche Fälle; die ersten beiden sind entfernt, `RTV_DB_API`
+wird nur vom RTV-Fallback-Pfad gelesen.
