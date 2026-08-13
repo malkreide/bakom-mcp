@@ -13,6 +13,7 @@ in CI bei jedem PR.
 
 from __future__ import annotations
 
+import json
 from unittest.mock import AsyncMock, MagicMock
 
 import httpx
@@ -339,6 +340,54 @@ class TestStaticTool:
         parsed = json.loads(result)
         assert isinstance(parsed, dict)
 
+    # Die folgenden vier Faelle standen bis zur Konsolidierung in den
+    # Live-Modulen. Das Tool ruft keine API auf — dort liefen sie nur nicht
+    # in der CI mit.
+    @pytest.mark.asyncio
+    async def test_breitbandatlas_markdown_nennt_layer_und_technologien(self) -> None:
+        result = await bakom_breitbandatlas_datensaetze(TelekomStatInput(thema="breitband"))
+        assert "ch.bakom." in result
+        assert "5G" in result
+        assert "Glasfaser" in result
+
+    @pytest.mark.asyncio
+    async def test_breitbandatlas_enthaelt_erwartete_layer_ids(self) -> None:
+        import json
+
+        params = TelekomStatInput(thema="alle", response_format=ResponseFormat.JSON)
+        data = json.loads(await bakom_breitbandatlas_datensaetze(params))
+        assert len(data["datensaetze"]) >= 8
+        layer_ids = [d["layer_id"] for d in data["datensaetze"]]
+        for erwartet in (
+            "ch.bakom.netzabdeckung-5g",
+            "ch.bakom.netzabdeckung-4g",
+            "ch.bakom.anschlussart-verfuegbarkeit",
+        ):
+            assert erwartet in layer_ids, f"Layer {erwartet} fehlt"
+
+    @pytest.mark.asyncio
+    async def test_breitbandatlas_pflichtfelder_und_kategorien(self) -> None:
+        import json
+
+        params = TelekomStatInput(thema="alle", response_format=ResponseFormat.JSON)
+        data = json.loads(await bakom_breitbandatlas_datensaetze(params))
+        kategorien = {d["kategorie"] for d in data["datensaetze"]}
+        assert len(kategorien) >= 2, f"Nur {len(kategorien)} Kategorien: {kategorien}"
+        for ds in data["datensaetze"]:
+            assert "titel" in ds, f"Titel fehlt in {ds}"
+            assert ds["layer_id"].startswith("ch.bakom."), f"Ungueltige Layer-ID: {ds['layer_id']}"
+
+    @pytest.mark.asyncio
+    async def test_breitbandatlas_thema_mobilfunk_liefert_mobilfunk_layer(self) -> None:
+        import json
+
+        params = TelekomStatInput(thema="mobilfunk", response_format=ResponseFormat.JSON)
+        data = json.loads(await bakom_breitbandatlas_datensaetze(params))
+        layer_ids = [d["layer_id"] for d in data["datensaetze"]]
+        assert any(
+            teil in lid for lid in layer_ids for teil in ("netzabdeckung", "mobilfunk", "5g", "4g")
+        ), layer_ids
+
 
 # ---------------------------------------------------------------------------
 # SEC-021: Egress-Allow-List
@@ -548,6 +597,64 @@ def _identify_empty_response() -> MagicMock:
     resp.raise_for_status = MagicMock()
     resp.json = MagicMock(return_value={"results": []})
     return resp
+
+
+class TestAntennaGeometrieParsing:
+    """distanz_m aus der Punktgeometrie von geo.admin.ch.
+
+    Aufgezeichnet am 2026-08-13 von
+    api3.geo.admin.ch/rest/services/api/MapServer/identify,
+    Layer ch.bakom.standorte-mobilfunkanlagen: die Geometrie kommt als
+    {"points": [[east, north]]}, nicht als {"x": …, "y": …}. Gegen die
+    Esri-Kurzform gelesen war distanz_m in jeder Antwort None — und die
+    Sortierung nach Distanz damit wirkungslos.
+    """
+
+    @staticmethod
+    def _identify(geometry: dict) -> MagicMock:
+        resp = MagicMock(spec=httpx.Response)
+        resp.raise_for_status = MagicMock()
+        resp.json = MagicMock(
+            return_value={
+                "results": [
+                    {
+                        "featureId": 14028426,
+                        "id": 14028426,
+                        "layerBodId": "ch.bakom.standorte-mobilfunkanlagen",
+                        "attributes": {"type": "Swisscom GEKZ"},
+                        "geometry": geometry,
+                    }
+                ]
+            }
+        )
+        return resp
+
+    @pytest.mark.asyncio
+    async def test_points_geometrie_ergibt_distanz(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(
+            return_value=self._identify(
+                {"points": [[2687400.0, 1251460.0]], "spatialReference": {"wkid": 2056}}
+            )
+        )
+
+        params = AntennaSearchInput(
+            latitude=47.3779, longitude=8.5403, radius_m=5000, response_format=ResponseFormat.JSON
+        )
+        data = json.loads(await bakom_sendeanlagen_suche(params, _ctx_with(client)))
+        assert data["anlagen"][0]["distanz_m"] is not None
+        assert data["anlagen"][0]["koordinaten"]["east"] == 2687400.0
+
+    @pytest.mark.asyncio
+    async def test_esri_kurzform_bleibt_unterstuetzt(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(return_value=self._identify({"x": 2687400.0, "y": 1251460.0}))
+
+        params = AntennaSearchInput(
+            latitude=47.3779, longitude=8.5403, radius_m=5000, response_format=ResponseFormat.JSON
+        )
+        data = json.loads(await bakom_sendeanlagen_suche(params, _ctx_with(client)))
+        assert data["anlagen"][0]["distanz_m"] is not None
 
 
 class TestNotFoundHeuristics:

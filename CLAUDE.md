@@ -82,26 +82,32 @@ Matrix: Python 3.11 / 3.12 / 3.13. Weitere Workflows: `docker.yml`
 (05:17 UTC) und per `workflow_dispatch`. Ein Fehlschlag wird einmal wiederholt
 — bleibt es rot, öffnet der Workflow ein Issue mit Label `live-test-failure`
 (oder kommentiert das offene). Die CI selbst schliesst diese Tests weiter per
-`-m "not live"` aus; der Marker wird in `tests/conftest.py` automatisch auf
-`test_integration.py`, `test_20_szenarien.py`, `test_20_neue_szenarien.py` und
-`test_scenarios_20.py` gesetzt.
+`-m "not live"` aus; alle Live-Tests stehen in `tests/test_live.py` und tragen
+dort `pytestmark = pytest.mark.live`.
 
-Die vier Module stammen aus Skripten: jeder Testkörper fängt `Exception` ab und
-bucht sie auf ein modulweites `TestResult`, das nur auf stdout landet. Deshalb
-zwei Vorkehrungen in `tests/conftest.py`, ohne die die Suite nichts prüft:
+Zwei Regeln für diese Datei:
 
-- `pytest_runtest_call` vergleicht `results.errors` vor und nach jedem Test und
-  lässt den Test fallen, sobald ein Eintrag dazukommt.
-- Die Fixture `live_ctx` baut den Context aus dem echten `lifespan(mcp)` und
-  hinterlegt ihn in `tests/live_support.py`; die Tests holen ihn per `ctx()`.
-  Nicht handgeschrieben, damit Timeout, User-Agent und Egress-Allowlist aus
-  derselben Quelle kommen wie im Betrieb.
+- Antworten über die Helfer `text()` / `daten()` prüfen. Die Tools geben Fehler
+  als Text zurück (`"Fehler: …"`), statt zu werfen. Ein `len(output) > 30` — so
+  stand es in den Vorgängermodulen — ist auf jeder Fehlermeldung erfüllt.
+- Den `ctx` als Fixture `live_ctx` nehmen. Sie kommt aus dem echten
+  `lifespan(mcp)`, damit Timeout, User-Agent und Egress-Allowlist aus derselben
+  Quelle stammen wie im Betrieb.
 
-Laufzeit als Plausibilitätsprüfung: `pytest -m live` braucht ~90–130 s. Meldet
-die Suite 78 passed in unter 2 s, hat kein Aufruf die Quelle erreicht — genau so
-lief es, bevor die Aufrufstellen ihr `ctx` bekamen.
+Was nie ein Netz berührt, gehört nicht hierher, sondern in `test_unit.py` — nur
+dort prüft es die CI. `bakom_breitbandatlas_datensaetze` etwa ist ein statischer
+Katalog ohne API-Aufruf.
 
-Gegenprobe bei Änderungen an der Suite: `OPENDATA_SWISS_API` in `server.py`
-kurz auf einen falschen Pfad zeigen lassen. Erwartung: 23 der 29 CKAN-Tests
-fallen. Die sechs `bakom_aktuell`-Tests bleiben grün — dieses Tool hat einen
-Pfad ohne CKAN und ist gegen CKAN-Drift nicht abgesichert.
+Laufzeit als Plausibilitätsprüfung: `pytest -m live` braucht ~80–130 s für 70
+Tests. Meldet die Suite alles grün in unter 2 s, hat kein Aufruf die Quelle
+erreicht.
+
+Gegenprobe bei Änderungen an der Suite — in `server.py` kurz umbiegen:
+
+| Konstante | Erwartung |
+|---|---|
+| `OPENDATA_SWISS_API` | 22 von 70 fallen |
+| `GEO_ADMIN_API` | 10 von 70 fallen |
+
+`GEO_ADMIN_IDENTIFY` und `GEO_ADMIN_FIND` eignen sich nicht dafür: beide
+Konstanten sind unbenutzt, die Aufrufe bauen den Pfad aus `GEO_ADMIN_API`.

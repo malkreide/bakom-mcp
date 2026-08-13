@@ -999,12 +999,19 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput, ctx: Context) -> 
             for item in results[:50]:  # Max 50 Anlagen
                 attrs = item.get("attributes", {})
                 geom = item.get("geometry", {})
-                item_east = geom.get("x", None)
-                item_north = geom.get("y", None)
+                # geo.admin.ch liefert Punktgeometrien als
+                # {"points": [[east, north]], "spatialReference": …}. Die
+                # Esri-Kurzform {"x": …, "y": …} bleibt als Fallback stehen.
+                item_east = geom.get("x")
+                item_north = geom.get("y")
+                if item_east is None or item_north is None:
+                    punkte = geom.get("points") or []
+                    if punkte and len(punkte[0]) >= 2:
+                        item_east, item_north = punkte[0][0], punkte[0][1]
 
                 # Euklidische Distanz in LV95
                 distanz = None
-                if item_east and item_north:
+                if item_east is not None and item_north is not None:
                     import math
 
                     distanz = round(
