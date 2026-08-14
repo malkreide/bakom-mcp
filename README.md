@@ -199,6 +199,7 @@ The image runs as **non-root** (UID 10001), uses a **read-only filesystem**, dro
 | `bakom_rtv_suche` | Search BAKOM radio/TV datasets on opendata.swiss |
 | `bakom_medienstruktur_info` | Swiss media landscape datasets |
 | `bakom_aktuell` | Current BAKOM topics (5G, media, AI, postal) |
+| `bakom_medien_statistik` | Market shares, reach and programme structure from the BAKOM cubes on LINDAS |
 
 ### Statistics & Catalogue
 
@@ -246,8 +247,20 @@ List all Broadband Atlas datasets available via geo.admin.ch.
 |--------|------|----------------|
 | [geo.admin.ch](https://api3.geo.admin.ch) | Broadband Atlas, mobile coverage, antenna locations | None |
 | [opendata.swiss](https://opendata.swiss) | BAKOM datasets, telecom statistics | None |
+| [lindas.admin.ch](https://lindas.admin.ch/query) | BAKOM media statistics cubes (SPARQL) | None |
 
 All data is published under open licences (CC0 / OGD).
+
+### Architecture decision — media statistics
+
+`bakom_medien_statistik` uses **Architecture A (live API only)**, verified live on 2026-08-13:
+
+- The SPARQL endpoint is `https://lindas.admin.ch/query`; the `/sparql` path documented elsewhere returns 404.
+- The OFCOM cubes live in the named graph `https://lindas.admin.ch/ofcom/cube`. Without an explicit `FROM`, a query hits the default graph and sees 2010 cubes from every federal office instead of 540.
+- A bulk download exists for only 137 of 540 cubes, so a dump-first architecture would cover a quarter of the data.
+- An unknown graph answers HTTP 200 with zero rows — a silent empty, not an error. Requests carry retry with exponential backoff; egress-policy violations are not retried.
+
+**Scope, stated in the tool description because the README does not reach the model:** the cubes cover the programmes that were *surveyed*, not the full inventory. LINDAS's own count cube reports 199+39+17 radio programmes for 2020, while the `Programm` dimension across all cubes exposes 128 labels — some of which are the same station spelled differently (`Energy BE` / `Energy Bern`), plus `Durchschnitt`, which is an aggregate rather than a station. This tool is a statistics source, not a broadcaster register; licensed broadcasters are listed in the [RTV database](https://rtvdb.ofcomnet.ch/de), which offers no machine-readable interface.
 
 ---
 

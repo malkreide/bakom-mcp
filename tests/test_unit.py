@@ -21,6 +21,7 @@ import pytest
 from mcp.server.mcpserver.exceptions import ToolError
 from pydantic import ValidationError
 
+from bakom_mcp import server as server_modul
 from bakom_mcp.server import (
     ALLOWED_EGRESS_HOSTS,
     AntennaSearchInput,
@@ -30,6 +31,7 @@ from bakom_mcp.server import (
     CoordinateInput,
     EgressNotAllowedError,
     MediaType,
+    MedienStatistikInput,
     MobilGenerations,
     MultiLocationInput,
     ResponseFormat,
@@ -39,6 +41,7 @@ from bakom_mcp.server import (
     _raise_api_error,
     bakom_breitbandatlas_datensaetze,
     bakom_broadband_coverage,
+    bakom_medien_statistik,
     bakom_multi_standort_konnektivitaet,
     bakom_rtv_suche,
     bakom_sendeanlagen_suche,
@@ -663,6 +666,203 @@ class TestAntennaGeometrieParsing:
         )
         data = json.loads(await bakom_sendeanlagen_suche(params, _ctx_with(client)))
         assert data["anlagen"][0]["distanz_m"] is not None
+
+
+# ---------------------------------------------------------------------------
+# LINDAS-Medienstatistik
+# ---------------------------------------------------------------------------
+def _sparql_antwort(*zeilen: dict) -> MagicMock:
+    """SPARQL-JSON-Antwort in der Form, die lindas.admin.ch liefert."""
+    resp = MagicMock(spec=httpx.Response)
+    resp.raise_for_status = MagicMock()
+    resp.json = MagicMock(return_value={"results": {"bindings": list(zeilen)}})
+    return resp
+
+
+def _http_fehler(code: int) -> httpx.HTTPStatusError:
+    request = httpx.Request("POST", "https://lindas.admin.ch/query")
+    response = httpx.Response(status_code=code, request=request)
+    return httpx.HTTPStatusError(str(code), request=request, response=response)
+
+
+_EIN_CUBE = {
+    "name": {"value": "Marktanteile Radiomarkt nach Sendergruppe"},
+    "version": {"value": "6"},
+}
+
+
+class TestMedienStatistik:
+    """Aufgezeichnet am 2026-08-13 von lindas.admin.ch/query, Graph ofcom/cube."""
+
+    @pytest.mark.asyncio
+    async def test_katalog_ohne_thema(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.post = AsyncMock(
+            return_value=_sparql_antwort(_EIN_CUBE, {"name": {"value": "Reichweite der SRG"}})
+        )
+
+        params = MedienStatistikInput(response_format=ResponseFormat.JSON)
+        data = json.loads(await bakom_medien_statistik(params, _ctx_with(client)))
+        assert data["total"] == 2
+        assert "Marktanteile Radiomarkt nach Sendergruppe" in data["auswertungen"]
+        assert client.post.await_count == 1
+
+    @pytest.mark.asyncio
+    async def test_mehrdeutiges_thema_fuehrt_zur_auswahl(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.post = AsyncMock(
+            return_value=_sparql_antwort(
+                {"name": {"value": "Reichweite A"}}, {"name": {"value": "Reichweite B"}}
+            )
+        )
+
+        params = MedienStatistikInput(thema="Reichweite", response_format=ResponseFormat.JSON)
+        data = json.loads(await bakom_medien_statistik(params, _ctx_with(client)))
+        assert data["total"] == 2
+        assert "Reichweite" in data["hinweis"]
+
+    @pytest.mark.asyncio
+    async def test_kein_treffer_nennt_naechsten_schritt(self) -> None:
+        """Leermenge traegt einen konkreten naechsten Versuch, keine Ausrede."""
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.post = AsyncMock(return_value=_sparql_antwort())
+
+        params = MedienStatistikInput(thema="Zzz", response_format=ResponseFormat.JSON)
+        data = json.loads(await bakom_medien_statistik(params, _ctx_with(client)))
+        assert data["total"] == 0
+        assert "ohne `thema`" in data["hinweis"]
+
+    @pytest.mark.asyncio
+    async def test_beobachtungen_werden_je_dimension_beschriftet(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.post = AsyncMock(
+            side_effect=[
+                _sparql_antwort(_EIN_CUBE),
+                _sparql_antwort(
+                    {
+                        "pfad": {"value": "http://schema.org/observationDate"},
+                        "dname": {"value": "Jahr"},
+                    },
+                    {
+                        "pfad": {"value": "https://communication.ld.admin.ch/ofcom/marketShare"},
+                        "dname": {"value": "Marktanteil"},
+                    },
+                ),
+                _sparql_antwort(
+                    {
+                        "o": {"value": "urn:obs:1"},
+                        "p": {"value": "http://schema.org/observationDate"},
+                        "v": {"value": "2024"},
+                    },
+                    {
+                        "o": {"value": "urn:obs:1"},
+                        "p": {"value": "https://communication.ld.admin.ch/ofcom/marketShare"},
+                        "v": {"value": "58.0"},
+                    },
+                    {
+                        "o": {"value": "urn:obs:1"},
+                        "p": {"value": "https://cube.link/observedBy"},
+                        "v": {"value": "https://ld.admin.ch/office/VII.1.6"},
+                    },
+                ),
+            ]
+        )
+
+        params = MedienStatistikInput(
+            thema="Marktanteile Radiomarkt nach Sendergruppe",
+            jahr=2024,
+            response_format=ResponseFormat.JSON,
+        )
+        data = json.loads(await bakom_medien_statistik(params, _ctx_with(client)))
+        assert data["beobachtungen"] == [{"Jahr": "2024", "Marktanteil": "58.0"}]
+        # observedBy ist keine deklarierte Dimension und faellt raus
+        assert "observedBy" not in json.dumps(data)
+        assert data["provenance"] == "live_api"
+
+    @pytest.mark.asyncio
+    async def test_retry_bei_503(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Nach einem 503 wird wiederholt — mit gepatchtem Modul-Alias, nicht asyncio."""
+        geschlafen: list[float] = []
+
+        async def _kein_schlaf(sekunden: float) -> None:
+            geschlafen.append(sekunden)
+
+        monkeypatch.setattr(server_modul, "_sleep", _kein_schlaf)
+
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.post = AsyncMock(
+            side_effect=[_http_fehler(503), _sparql_antwort({"name": {"value": "Reichweite A"}})]
+        )
+
+        params = MedienStatistikInput(response_format=ResponseFormat.JSON)
+        data = json.loads(await bakom_medien_statistik(params, _ctx_with(client)))
+        assert data["total"] == 1
+        assert client.post.await_count == 2
+        assert geschlafen == [2]
+
+    @pytest.mark.asyncio
+    async def test_400_wird_nicht_wiederholt(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Eine kaputte Query wird durch Wiederholen nicht besser."""
+
+        async def _kein_schlaf(sekunden: float) -> None:
+            return None
+
+        monkeypatch.setattr(server_modul, "_sleep", _kein_schlaf)
+
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.post = AsyncMock(side_effect=_http_fehler(400))
+
+        with pytest.raises(ToolError):
+            await bakom_medien_statistik(MedienStatistikInput(), _ctx_with(client))
+        assert client.post.await_count == 1
+
+    @pytest.mark.asyncio
+    async def test_timeout_wird_maskiert(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        async def _kein_schlaf(sekunden: float) -> None:
+            return None
+
+        monkeypatch.setattr(server_modul, "_sleep", _kein_schlaf)
+
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.post = AsyncMock(side_effect=httpx.TimeoutException("read timeout on /secret"))
+
+        with pytest.raises(ToolError) as exc_info:
+            await bakom_medien_statistik(MedienStatistikInput(), _ctx_with(client))
+        assert "Zeitüberschreitung" in str(exc_info.value)
+        assert "/secret" not in str(exc_info.value)
+        assert client.post.await_count == 4
+
+    @pytest.mark.asyncio
+    async def test_egress_sperre_wird_nicht_wiederholt(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Eine Allowlist-Verletzung ist Konfiguration, nicht Transienz.
+
+        Ohne diese Ausnahme lief jeder Aufruf in 2s+4s+8s Backoff, bevor er mit
+        demselben Fehler endete.
+        """
+
+        async def _kein_schlaf(sekunden: float) -> None:
+            return None
+
+        monkeypatch.setattr(server_modul, "_sleep", _kein_schlaf)
+
+        client = AsyncMock(spec=httpx.AsyncClient)
+        request = httpx.Request("POST", "https://lindas.admin.ch/query")
+        client.post = AsyncMock(
+            side_effect=EgressNotAllowedError("Egress blocked", request=request)
+        )
+
+        with pytest.raises(ToolError):
+            await bakom_medien_statistik(MedienStatistikInput(), _ctx_with(client))
+        assert client.post.await_count == 1
+
+    def test_sparql_literal_entschaerft_anfuehrungszeichen(self) -> None:
+        """Sonst schliesst ein `"` im Thema das Literal und der Rest wird Query."""
+        from bakom_mcp.server import _sparql_literal
+
+        assert _sparql_literal('a"b') == 'a\\"b'
+        assert "\n" not in _sparql_literal("a\nb")
 
 
 class TestNotFoundHeuristics:

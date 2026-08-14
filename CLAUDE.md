@@ -125,3 +125,30 @@ während die Antwort weiter «BAKOM RTV-Datenbank» als Quelle nannte.
 `kanton` und `media_type` gehen als Suchwort in die Volltextsuche; der Katalog
 hat für beides keine Facette. Ein Test darf hier keine exakte Filterung
 behaupten — er würde grün bleiben, egal was die Parameter tun.
+
+### LINDAS (`bakom_medien_statistik`)
+
+Endpunkt `https://lindas.admin.ch/query` — **nicht** `/sparql`, das gibt 404.
+OFCOM-Cubes liegen im Named Graph `https://lindas.admin.ch/ofcom/cube`; ohne
+`FROM` trifft die Query den Default-Graph mit 2010 Cubes aller Ämter statt 540.
+
+Ein **unbekannter Graph antwortet mit HTTP 200 und null Zeilen**. Eine
+Leermenge ist hier also kein Beleg für Abwesenheit — deshalb trägt jedes leere
+Resultat ein `hinweis`-Feld mit dem nächsten Versuch.
+
+Je Titel gibt es mehrere `schema:version`; ohne Filter auf die höchste
+veröffentlichte Version erscheint jede Beobachtung so oft, wie es Versionen
+gibt.
+
+Gegenprobe: `LINDAS_OFCOM_GRAPH` umbiegen → 4 der 5 Statistik-Tests fallen. Der
+fünfte prüft die Leermenge und kann Graph-Drift nicht sehen.
+
+Fundstücke der Live-Probe (13.08.2026):
+
+- Die `Programm`-Dimension führt 128 Labels, LINDAS' eigener Zähl-Cube nennt für
+  2020 aber 199+39+17 Radioprogramme. Die Statistik deckt die untersuchten
+  Programme ab, nicht den Bestand.
+- Derselbe Sender erscheint mehrfach (`Energy BE` / `Energy Bern`), `Durchschnitt`
+  ist ein Aggregat in der Senderdimension, ein Label beginnt mit Leerzeichen.
+- Die Dimension heisst in 18 Cubes `Konzessionierungsart` und in 13 weiteren
+  `Konzessonierungsart` — Tippfehler in der Quelle.

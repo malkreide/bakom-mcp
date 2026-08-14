@@ -13,6 +13,7 @@ Breitband- und Mediendaten via geo.admin.ch, opendata.swiss und BAKOM-APIs.
 
 from __future__ import annotations
 
+import asyncio
 import functools
 import json
 import logging
@@ -95,6 +96,7 @@ ALLOWED_EGRESS_HOSTS: frozenset[str] = frozenset(
         "wms.geo.admin.ch",
         "geodesy.geo.admin.ch",
         "ckan.opendata.swiss",
+        "lindas.admin.ch",
         "www.bakom.admin.ch",
     }
 )
@@ -142,6 +144,50 @@ async def lifespan(_server: MCPServer) -> AsyncIterator[AppContext]:
         yield AppContext(http=client)
 
 
+# Eigener Alias, damit Tests ihn ersetzen koennen, ohne `asyncio.sleep`
+# prozessweit zu entschaerfen.
+_sleep = asyncio.sleep
+
+
+async def _sparql(client: httpx.AsyncClient, query: str) -> list[dict[str, Any]]:
+    """Fuehrt eine SPARQL-Query gegen LINDAS aus und gibt die Bindings zurueck.
+
+    Mit Retry und exponentiellem Backoff (2s/4s/8s) fuer 5xx, 429 und
+    Netzwerkfehler; 4xx ausser 429 wird sofort durchgereicht — eine kaputte
+    Query wird durch Wiederholen nicht besser.
+    """
+    letzter: Exception | None = None
+    for versuch in range(4):
+        if versuch > 0:
+            await _sleep(2**versuch)
+        try:
+            r = await client.post(
+                LINDAS_ENDPOINT,
+                data={"query": query},
+                headers={"Accept": "application/sparql-results+json"},
+                timeout=TIMEOUT,
+            )
+            r.raise_for_status()
+            return r.json().get("results", {}).get("bindings", [])
+        except EgressNotAllowedError:
+            # Konfigurationsfehler, nie transient — Wiederholen kostet nur Zeit.
+            raise
+        except httpx.HTTPStatusError as e:
+            letzter = e
+            code = e.response.status_code
+            if 400 <= code < 500 and code != 429:
+                raise
+        except httpx.RequestError as e:
+            letzter = e
+    assert letzter is not None
+    raise letzter
+
+
+def _wert(binding: dict[str, Any], name: str, default: str = "") -> str:
+    """Liest einen SPARQL-Bindingwert, ohne bei fehlender Variable zu werfen."""
+    return binding.get(name, {}).get("value", default)
+
+
 @asynccontextmanager
 async def _shared_client(ctx: Context) -> AsyncIterator[httpx.AsyncClient]:
     """Yieldet den Lifespan-Client, ohne ihn zu schliessen.
@@ -159,6 +205,13 @@ async def _shared_client(ctx: Context) -> AsyncIterator[httpx.AsyncClient]:
 GEO_ADMIN_API = "https://api3.geo.admin.ch/rest/services/api/MapServer"
 OPENDATA_SWISS_API = "https://ckan.opendata.swiss/api/3/action"
 BAKOM_INFOMAILING = "https://www.bakom.admin.ch/de/bakom-infomailing"
+
+# LINDAS, der Linked-Data-Dienst des Bundes. Der in mancher Doku genannte
+# Pfad /sparql antwortet mit 404 — der Endpunkt ist /query (POST, Formularfeld
+# "query"). Die OFCOM-Cubes liegen im Named Graph unten; ohne FROM traefe die
+# Query den Default-Graph mit den Cubes aller Aemter (2010 statt 540).
+LINDAS_ENDPOINT = "https://lindas.admin.ch/query"
+LINDAS_OFCOM_GRAPH = "https://lindas.admin.ch/ofcom/cube"
 
 TIMEOUT = 20.0
 DEFAULT_LIMIT = 20
@@ -353,6 +406,36 @@ class RTVSearchInput(BaseModel):
     @classmethod
     def kanton_uppercase(cls, v: str | None) -> str | None:
         return v.upper() if v else v
+
+
+class MedienStatistikInput(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
+
+    thema: str | None = Field(
+        default=None,
+        description=(
+            "Teil des Cube-Namens, z.B. 'Marktanteile Radiomarkt' oder 'Reichweite'. "
+            "Weglassen listet alle verfuegbaren Auswertungen auf. Die Suche matcht "
+            "auf Teilzeichenketten des Titels, nicht auf einzelne Woerter."
+        ),
+        max_length=120,
+    )
+    jahr: int | None = Field(
+        default=None,
+        description="Erhebungsjahr, z.B. 2024. Weglassen liefert alle Jahre.",
+        ge=1980,
+        le=2100,
+    )
+    limit: int = Field(
+        default=DEFAULT_LIMIT,
+        description="Maximale Anzahl Beobachtungen (1-100)",
+        ge=1,
+        le=MAX_LIMIT,
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.MARKDOWN,
+        description="Ausgabeformat: 'markdown' oder 'json'",
+    )
 
 
 class TelekomStatInput(BaseModel):
@@ -1735,6 +1818,209 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput, ctx: Conte
                 md += f"[Zum Datensatz]({ds['url']})\n\n"
 
             md += "**Weitere Statistiken:** https://www.bakom.admin.ch/de/telekommunikation/zahlen-und-fakten"
+            return md + ATTRIBUTION_FOOTER_MD
+
+    except Exception as e:
+        _raise_api_error(e)
+
+
+def _sparql_literal(text: str) -> str:
+    """Escaped einen String fuer die Verwendung als SPARQL-Literal."""
+    return text.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ").replace("\r", " ")
+
+
+@mcp.tool(
+    name="bakom_medien_statistik",
+    annotations={
+        "title": "Medienstatistik des BAKOM (Marktanteile, Reichweite, Programmstruktur)",
+        "readOnlyHint": True,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": True,
+    },
+)
+@_log_tool_call
+async def bakom_medien_statistik(params: MedienStatistikInput, ctx: Context) -> str:
+    """Zahlen zum Schweizer Radio- und Fernsehmarkt aus den BAKOM-Cubes auf LINDAS.
+
+    Liefert Beobachtungen aus den Statistik-Cubes des BAKOM: Marktanteile,
+    Reichweiten, Programm- und Themenstruktur, Ertragsstruktur — je nach Cube
+    aufgeschluesselt nach Jahr, Programm, Sendergruppe, Sprachregion oder
+    Konzessionierungsart.
+
+    `thema` ohne Wert listet alle verfuegbaren Auswertungen auf. Das ist der
+    erste Aufruf, wenn unklar ist, welche Zahl es ueberhaupt gibt.
+
+    Drei Eigenheiten der Quelle, die das Ergebnis praegen:
+
+    - Die Cubes decken die **untersuchten** Programme ab, nicht den Bestand.
+      Ein Sender, der hier fehlt, existiert deswegen nicht weniger.
+    - `Durchschnitt` ist ein Aggregat und kein Sender.
+    - Derselbe Sender kann je nach Erhebung anders geschrieben sein
+      ('Energy BE' und 'Energy Bern').
+
+    Args:
+        params (MedienStatistikInput): Thema, Jahr, Limit, Format.
+
+    Returns:
+        str: Beobachtungen mit Dimensionen und Messwert.
+
+    Schema:
+        {
+          "auswertung": str,
+          "beobachtungen": [{"<Dimension>": str | float}],
+          "total": int,
+          "datenquelle": str,
+          "provenance": "live_api",
+          "hinweis": str | None
+        }
+    """
+    try:
+        async with _shared_client(ctx) as client:
+            graph = f"<{LINDAS_OFCOM_GRAPH}>"
+            # Nur die je Titel hoechste veroeffentlichte Version — sonst
+            # erscheint jede Beobachtung so oft, wie es Cube-Versionen gibt.
+            if params.thema:
+                filter_zeile = (
+                    f'FILTER(CONTAINS(LCASE(STR(?name)), LCASE("{_sparql_literal(params.thema)}")))'
+                )
+            else:
+                filter_zeile = ""
+
+            treffer = await _sparql(
+                client,
+                f"""
+                PREFIX schema: <http://schema.org/>
+                SELECT ?name (MAX(?v) AS ?version) (SAMPLE(?cube) AS ?any) FROM {graph} WHERE {{
+                  ?cube a <https://cube.link/Cube> ; schema:name ?name ; schema:version ?v ;
+                        schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> .
+                  FILTER(LANG(?name) = "de")
+                  {filter_zeile}
+                }} GROUP BY ?name ORDER BY ?name
+                """,
+            )
+            namen = [_wert(b, "name") for b in treffer]
+
+            if not params.thema or len(namen) != 1:
+                katalog = {
+                    "auswertungen": namen,
+                    "total": len(namen),
+                    "datenquelle": "BAKOM via LINDAS (lindas.admin.ch)",
+                    "provenance": "live_api",
+                }
+                if not namen:
+                    katalog["hinweis"] = (
+                        f"Kein Cube-Titel enthaelt «{params.thema}». Rufe das Tool ohne "
+                        "`thema` auf, um die vorhandenen Titel zu sehen, und waehle einen "
+                        "davon woertlich. Erst danach ist die Aussage zulaessig, dass es "
+                        "die Zahl nicht gibt."
+                    )
+                elif params.thema:
+                    katalog["hinweis"] = (
+                        f"{len(namen)} Auswertungen passen auf «{params.thema}». Rufe das "
+                        "Tool mit einem der Titel oben auf."
+                    )
+                else:
+                    katalog["hinweis"] = "Waehle einen Titel und rufe das Tool damit erneut auf."
+                if params.response_format == ResponseFormat.JSON:
+                    return json.dumps(katalog, indent=2, ensure_ascii=False)
+                md = "## BAKOM-Medienstatistik – verfügbare Auswertungen\n"
+                md += f"**Gefunden:** {len(namen)}\n\n"
+                for n in namen[: params.limit]:
+                    md += f"- {n}\n"
+                md += f"\n> **Hinweis:** {katalog['hinweis']}\n"
+                return md + ATTRIBUTION_FOOTER_MD
+
+            titel = namen[0]
+            version = _wert(treffer[0], "version")
+            dims = await _sparql(
+                client,
+                f"""
+                PREFIX schema: <http://schema.org/>
+                PREFIX sh: <http://www.w3.org/ns/shacl#>
+                SELECT DISTINCT ?pfad ?dname FROM {graph} WHERE {{
+                  ?cube a <https://cube.link/Cube> ; schema:name "{_sparql_literal(titel)}"@de ;
+                        schema:version {int(version)} ;
+                        <https://cube.link/observationConstraint>/sh:property ?p .
+                  ?p sh:path ?pfad ; schema:name ?dname .
+                  FILTER(LANG(?dname) = "de")
+                }}
+                """,
+            )
+            beschriftung = {_wert(b, "pfad"): _wert(b, "dname") for b in dims}
+
+            jahr_filter = (
+                f'FILTER(STR(?jahr) = "{int(params.jahr)}")' if params.jahr is not None else ""
+            )
+            zeilen = await _sparql(
+                client,
+                f"""
+                PREFIX schema: <http://schema.org/>
+                SELECT ?o ?p ?v ?vlabel FROM {graph} WHERE {{
+                  {{
+                    SELECT ?o WHERE {{
+                      ?cube a <https://cube.link/Cube> ; schema:name "{_sparql_literal(titel)}"@de ;
+                            schema:version {int(version)} ;
+                            <https://cube.link/observationSet>/<https://cube.link/observation> ?o .
+                      ?o schema:observationDate ?jahr .
+                      {jahr_filter}
+                    }} ORDER BY DESC(?jahr) LIMIT {int(params.limit)}
+                  }}
+                  ?o ?p ?v .
+                  OPTIONAL {{ ?v schema:name ?vlabel FILTER(LANG(?vlabel) = "de") }}
+                }}
+                """,
+            )
+
+            beobachtungen: dict[str, dict[str, Any]] = {}
+            for b in zeilen:
+                pfad = _wert(b, "p")
+                label = beschriftung.get(pfad)
+                if label is None:
+                    continue
+                eintrag = beobachtungen.setdefault(_wert(b, "o"), {})
+                eintrag[label] = _wert(b, "vlabel") or _wert(b, "v")
+
+            werte = list(beobachtungen.values())
+            hinweis: str | None = None
+            if not werte:
+                hinweis = (
+                    f"«{titel}» hat für diese Anfrage keine Beobachtungen"
+                    + (f" im Jahr {params.jahr}" if params.jahr else "")
+                    + ". Rufe das Tool ohne `jahr` auf, um die abgedeckten Jahre zu sehen."
+                )
+
+            output: dict[str, Any] = {
+                "auswertung": titel,
+                "beobachtungen": werte,
+                "total": len(werte),
+                "datenquelle": "BAKOM via LINDAS (lindas.admin.ch)",
+                "provenance": "live_api",
+                "abdeckung": (
+                    "Untersuchte Programme der jeweiligen Erhebung, nicht der "
+                    "Gesamtbestand der Schweizer Radio- und TV-Programme."
+                ),
+            }
+            if hinweis:
+                output["hinweis"] = hinweis
+
+            if params.response_format == ResponseFormat.JSON:
+                return json.dumps(output, indent=2, ensure_ascii=False)
+
+            md = f"## {titel}\n"
+            md += f"**Beobachtungen:** {len(werte)}\n\n"
+            if not werte:
+                md += f"> **Hinweis:** {hinweis}\n"
+            else:
+                spalten = list(werte[0].keys())
+                md += "| " + " | ".join(spalten) + " |\n"
+                md += "|" + "|".join(["---"] * len(spalten)) + "|\n"
+                for w in werte:
+                    md += "| " + " | ".join(str(w.get(sp, "–")) for sp in spalten) + " |\n"
+            md += (
+                "\n> Abgedeckt sind die untersuchten Programme der Erhebung, nicht der "
+                "Gesamtbestand.\n"
+            )
             return md + ATTRIBUTION_FOOTER_MD
 
     except Exception as e:

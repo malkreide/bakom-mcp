@@ -199,6 +199,7 @@ Das Image läuft als **non-root** (UID 10001), nutzt ein **read-only-Dateisystem
 | `bakom_rtv_suche` | BAKOM-Datensätze zu Radio/TV auf opendata.swiss suchen |
 | `bakom_medienstruktur_info` | Schweizer Medienlandschaft – Datensätze |
 | `bakom_aktuell` | Aktuelle BAKOM-Themen (5G, Medien, KI, Post) |
+| `bakom_medien_statistik` | Marktanteile, Reichweite und Programmstruktur aus den BAKOM-Cubes auf LINDAS |
 
 ### Statistik & Katalog
 
@@ -248,6 +249,17 @@ Liste alle Breitbandatlas-Datensätze auf, die via geo.admin.ch verfügbar sind.
 | [opendata.swiss](https://opendata.swiss) | BAKOM-Datensätze, Telekommunikationsstatistik | Keine |
 
 Alle Daten stehen unter offenen Lizenzen (CC0 / OGD).
+
+### Architektur-Entscheid — Medienstatistik
+
+`bakom_medien_statistik` nutzt **Architektur A (Live-API-only)**, live verifiziert am 13.08.2026:
+
+- Der SPARQL-Endpunkt ist `https://lindas.admin.ch/query`; der andernorts dokumentierte Pfad `/sparql` antwortet mit 404.
+- Die OFCOM-Cubes liegen im Named Graph `https://lindas.admin.ch/ofcom/cube`. Ohne explizites `FROM` trifft die Query den Default-Graph und sieht 2010 Cubes aller Ämter statt 540.
+- Ein Bulk-Download existiert nur für 137 von 540 Cubes — eine Dump-first-Architektur deckte ein Viertel der Daten ab.
+- Ein unbekannter Graph antwortet mit HTTP 200 und null Zeilen, also einer stillen Leermenge statt eines Fehlers. Die Aufrufe haben Retry mit exponentiellem Backoff; Verstösse gegen die Egress-Allowlist werden nicht wiederholt.
+
+**Abdeckung, und zwar in der Tool-Description, weil das README das Modell nicht erreicht:** Die Cubes decken die **untersuchten** Programme ab, nicht den Bestand. LINDAS' eigener Zähl-Cube nennt für 2020 199+39+17 Radioprogramme, während die `Programm`-Dimension über alle Cubes 128 Labels führt — darunter derselbe Sender in mehreren Schreibweisen (`Energy BE` / `Energy Bern`) und `Durchschnitt`, ein Aggregat. Das Tool ist eine Statistikquelle, kein Veranstalterregister; konzessionierte Veranstalter stehen in der [RTV-Datenbank](https://rtvdb.ofcomnet.ch/de), die keine maschinenlesbare Schnittstelle anbietet.
 
 ---
 
