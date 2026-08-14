@@ -32,6 +32,7 @@ from bakom_mcp.server import (  # noqa: E402
     BroadbandSpeed,
     CoordinateInput,
     MediaType,
+    MedienStatistikInput,
     MobileCoverageInput,
     MobilGenerations,
     MultiLocationInput,
@@ -42,6 +43,7 @@ from bakom_mcp.server import (  # noqa: E402
     bakom_broadband_coverage,
     bakom_frequenzdaten,
     bakom_glasfaser_verfuegbarkeit,
+    bakom_medien_statistik,
     bakom_medienstruktur_info,
     bakom_mobilfunk_abdeckung,
     bakom_multi_standort_konnektivitaet,
@@ -715,3 +717,79 @@ async def test_konnektivitaetsprofil_konsistent(live_ctx, ort):
     )
     for data in (breitband, mobilfunk, glasfaser):
         standort_stimmt(data, ort)
+
+
+# ---------------------------------------------------------------------------
+# Medienstatistik (LINDAS)
+#
+# Recall-Canary: Untergrenzen deutlich unter dem Ist-Wert. Der Test soll einen
+# Kollaps fangen (Graph umbenannt, Scope geschrumpft), nicht bei jeder
+# Bestandspflege des BAKOM rot werden.
+# ---------------------------------------------------------------------------
+async def test_medien_statistik_katalog(live_ctx):
+    """Der Katalog listet die veroeffentlichten Auswertungen (Ist 2026-08: 73)."""
+    data = daten(
+        await bakom_medien_statistik(
+            MedienStatistikInput(limit=100, response_format=ResponseFormat.JSON), live_ctx
+        )
+    )
+    assert data["total"] >= 50, f"nur {data['total']} Auswertungen — Scope geschrumpft?"
+    assert any("Marktanteile" in t for t in data["auswertungen"])
+
+
+async def test_medien_statistik_marktanteile_radio(live_ctx):
+    """Anchor: Marktanteile im Radiomarkt nach Sendergruppe."""
+    data = daten(
+        await bakom_medien_statistik(
+            MedienStatistikInput(
+                thema="Marktanteile Radiomarkt nach Sendergruppe",
+                jahr=2024,
+                response_format=ResponseFormat.JSON,
+            ),
+            live_ctx,
+        )
+    )
+    assert data["auswertung"] == "Marktanteile Radiomarkt nach Sendergruppe"
+    assert data["total"] >= 4, f"nur {data['total']} Sendergruppen"
+    gruppen = {b["Sendergruppe"]: float(b["Marktanteil"]) for b in data["beobachtungen"]}
+    assert "Radio SRG SSR" in gruppen
+    assert 0 < gruppen["Radio SRG SSR"] <= 100
+    assert all(b["Jahr"] == "2024" for b in data["beobachtungen"])
+
+
+async def test_medien_statistik_mehrdeutig_fuehrt_zur_auswahl(live_ctx):
+    """Ein unspezifisches Thema liefert die Titelliste statt einer willkuerlichen Zahl."""
+    data = daten(
+        await bakom_medien_statistik(
+            MedienStatistikInput(
+                thema="Reichweite", limit=100, response_format=ResponseFormat.JSON
+            ),
+            live_ctx,
+        )
+    )
+    assert data["total"] >= 2
+    assert "hinweis" in data
+
+
+async def test_medien_statistik_ohne_treffer_nennt_naechsten_schritt(live_ctx):
+    """Leermenge traegt einen konkreten naechsten Versuch."""
+    data = daten(
+        await bakom_medien_statistik(
+            MedienStatistikInput(thema="Zzz-gibt-es-nicht", response_format=ResponseFormat.JSON),
+            live_ctx,
+        )
+    )
+    assert data["total"] == 0
+    assert "ohne `thema`" in data["hinweis"]
+
+
+async def test_medien_statistik_markdown(live_ctx):
+    """Markdown nennt Quelle und Abdeckungsgrenze."""
+    output = text(
+        await bakom_medien_statistik(
+            MedienStatistikInput(thema="Marktanteile Radiomarkt nach Sendergruppe"), live_ctx
+        )
+    )
+    assert "Sendergruppe" in output
+    assert "Gesamtbestand" in output
+    assert "CC BY 4.0" in output
