@@ -53,13 +53,13 @@ Dieselbe Version in `.pre-commit-config.yaml` (`rev: v0.16.1`, Scope
 Lint-Gate vor jedem Commit mit exakt der CI-Version. Wer die Hooks nicht nutzt:
 `pip install ruff==0.16.1`.
 
-Beide Stellen müssen zusammen gebumpt werden — Workflow und `rev`.
+Dieselbe Version ein drittes Mal in `pyproject.toml`
+(`[project.optional-dependencies].dev`, `ruff==0.16.1`), damit
+`uv pip install -e ".[dev]"` nicht eine andere Version zieht als das Gate.
 
-Befund:
-
-- `pyproject.toml` `[project.optional-dependencies].dev` deklariert
-  `ruff>=0.4.0,<1.0`. Ein `uv pip install -e ".[dev]"` zieht also eine andere
-  Version als das Gate; die CI überschreibt sie danach explizit mit `0.16.1`.
+**Alle drei Stellen zusammen bumpen** — Workflow, `rev` und dev-Extra. Nichts
+erzwingt das bisher; ein Abgleich in `scripts/check_version_sync.py` wäre die
+Stelle dafür.
 
 ### Gate-Befehle (wörtlich aus `ci.yml`)
 
