@@ -97,7 +97,6 @@ ALLOWED_EGRESS_HOSTS: frozenset[str] = frozenset(
         "geodesy.geo.admin.ch",
         "ckan.opendata.swiss",
         "lindas.admin.ch",
-        "www.bakom.admin.ch",
     }
 )
 
@@ -204,7 +203,6 @@ async def _shared_client(ctx: Context) -> AsyncIterator[httpx.AsyncClient]:
 # ---------------------------------------------------------------------------
 GEO_ADMIN_API = "https://api3.geo.admin.ch/rest/services/api/MapServer"
 OPENDATA_SWISS_API = "https://ckan.opendata.swiss/api/3/action"
-BAKOM_INFOMAILING = "https://www.bakom.admin.ch/de/bakom-infomailing"
 
 # LINDAS, der Linked-Data-Dienst des Bundes. Der in mancher Doku genannte
 # Pfad /sparql antwortet mit 404 — der Endpunkt ist /query (POST, Formularfeld

@@ -400,15 +400,46 @@ class TestEgressAllowlist:
     """Outbound-Calls duerfen nur an gelistete Hosts gehen."""
 
     def test_allowlist_includes_known_data_sources(self) -> None:
-        """Verifiziert, dass alle bestehenden Datenquellen in der Liste sind."""
+        """Verifiziert, dass alle bestehenden Datenquellen in der Liste sind.
+
+        Je Host der Aufrufer, damit ein Eintrag ohne Aufrufer auffaellt:
+        api3 (GEO_ADMIN_API), wms (WMS_GEO_ADMIN), geodesy (Reframe, als
+        Inline-URL), ckan (OPENDATA_SWISS_API), lindas (LINDAS_ENDPOINT).
+        """
         for host in (
             "api3.geo.admin.ch",
             "wms.geo.admin.ch",
             "geodesy.geo.admin.ch",
             "ckan.opendata.swiss",
-            "www.bakom.admin.ch",
+            "lindas.admin.ch",
         ):
             assert host in ALLOWED_EGRESS_HOSTS, f"missing: {host}"
+
+    def test_allowlist_has_no_entries_beyond_the_known_sources(self) -> None:
+        """Kein Host ohne Aufrufer.
+
+        Die Liste stand bis 3.0.0 auf www.bakom.admin.ch, obwohl kein Aufruf
+        dorthin ging: der Host kommt nur in Links vor, die der Server an
+        Nutzer weiterreicht. Ein solcher Eintrag erlaubt Egress, den niemand
+        braucht, und die Liste soll gerade das Gegenteil leisten.
+        """
+        assert ALLOWED_EGRESS_HOSTS == {
+            "api3.geo.admin.ch",
+            "wms.geo.admin.ch",
+            "geodesy.geo.admin.ch",
+            "ckan.opendata.swiss",
+            "lindas.admin.ch",
+        }
+
+    def test_allowlist_excludes_bakom_www(self) -> None:
+        """www.bakom.admin.ch wird verlinkt, nicht abgefragt.
+
+        Der Host taucht in Hinweistexten und Quellenangaben auf (etwa in
+        bakom_aktuell), aber kein client.get/post geht dorthin. Waere das
+        einmal anders, gehoert er zurueck in die Liste — zusammen mit dem
+        Aufruf, der ihn braucht.
+        """
+        assert "www.bakom.admin.ch" not in ALLOWED_EGRESS_HOSTS
 
     def test_allowlist_excludes_rtvdb(self) -> None:
         """rtvdb.ofcomnet.ch ist eine SPA ohne API — der Server ruft sie nicht auf.
