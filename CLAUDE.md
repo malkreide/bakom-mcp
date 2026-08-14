@@ -145,9 +145,32 @@ Was nie ein Netz berührt, gehört nicht hierher, sondern in `test_unit.py` — 
 dort prüft es die CI. `bakom_breitbandatlas_datensaetze` etwa ist ein statischer
 Katalog ohne API-Aufruf.
 
-Laufzeit als Plausibilitätsprüfung: `pytest -m live` braucht ~90–130 s für 75
-Tests. Meldet die Suite alles grün in unter 2 s, hat kein Aufruf die Quelle
-erreicht.
+Laufzeit als Plausibilitätsprüfung, aber **pro Umgebung**. Für dieselben 75
+Tests am 14.8.2026 gemessen:
+
+| Umgebung | Laufzeit |
+|---|---|
+| GitHub-Runner (`live-tests.yml`) | ~30 s |
+| Entwicklungs-Sandbox hinter Proxy | ~90–130 s |
+
+Der Faktor drei ist Netzabstand, kein Befund. Wer die Sandbox-Zahl als
+Massstab an die CI legt, hält einen gesunden Lauf für verdächtig — der Runner
+sitzt näher an `admin.ch`.
+
+Was die Zahl trotzdem taugt: eine Suite, die in **unter 2 s** alles grün
+meldet, hat keine Quelle erreicht. Bei Zweifeln nicht die Gesamtzeit lesen,
+sondern die Einzelzeiten im Log (`-v`): echte Aufrufe liegen bei 0,3–1,0 s pro
+Test, ein übersprungener Aufruf bei ~0.
+
+Der geplante Lauf installiert das **Repo**, nicht das Paket. Ein Wheel, dem
+eine Datei fehlt, bleibt für ihn unsichtbar. Nach einem Release einmal
+`pip install bakom-mcp==<version>` in ein frisches venv und die Suite dagegen
+fahren — vorher prüfen, dass der Import auf `site-packages` zeigt und nicht auf
+`src/`, sonst misst man wieder das Repo:
+
+```bash
+python -c "from bakom_mcp import server; print(server.__file__)"
+```
 
 Gegenprobe bei Änderungen an der Suite — in `server.py` kurz umbiegen:
 
