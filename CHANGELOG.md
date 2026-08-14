@@ -109,6 +109,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Paket-Metadaten (`importlib.metadata`, aus `pyproject.toml` erzeugt), der
   User-Agent wird daraus abgeleitet. Abgesichert durch `tests/test_version.py`.
 
+## [2.0.2] — nicht auf PyPI
+
+Der Tag `v2.0.2` existiert, das Paket liegt aber nicht auf PyPI und wird auch
+nicht nachgereicht. `pip install bakom-mcp==2.0.2` schlägt deshalb fehl;
+2.0.3 enthält denselben Stand.
+
+Zwei Ursachen, beide erst im August 2026 aufgeklärt: `publish.yml` hing damals
+an `release: published` und wurde von einem per `git push` gesetzten Tag nie
+gestartet — und der Upload wäre ohnehin abgewiesen worden, weil
+`[project.urls]` mit `"mcp-name" = "io.github.malkreide/bakom-mcp"` einen
+Nicht-URL-Wert in einem Feld führte, das PyPI als URL validiert. In 2.0.3 ist
+der Eintrag entfernt.
+
 ## [2.0.0] - 2026-05-09
 
 Audit-driven hardening release. After three full audit runs against

@@ -6,8 +6,9 @@ name: Publish to PyPI
 # Browser an, entsteht der Tag mit — beide Ereignisse feuern, alles lief. Kommt
 # der Tag dagegen per `git push`, erzeugt release.yml das Release mit
 # GITHUB_TOKEN, und ein von GITHUB_TOKEN erzeugtes Ereignis löst keine weiteren
-# Workflows aus. Der Publish blieb dann still aus: 2.0.2 ist deshalb nie auf
-# PyPI gelandet, 3.0.0 zunächst auch nicht.
+# Workflows aus. Der Publish blieb dann still aus — 3.0.0 lag deshalb zunächst
+# nicht auf PyPI. (2.0.2 fehlt dort ebenfalls, hat aber zusätzlich ungültige
+# Metadaten und ist nicht nachreichbar; siehe CLAUDE.md.)
 #
 # Der Tag-Push ist bei beiden Wegen vorhanden — auch die UI legt den Tag an.
 # Ein zusätzlicher `release:`-Trigger würde bei diesem Weg einen zweiten Lauf
