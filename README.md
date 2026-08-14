@@ -198,7 +198,7 @@ The image runs as **non-root** (UID 10001), uses a **read-only filesystem**, dro
 |------|-------------|
 | `bakom_rtv_suche` | Search BAKOM radio/TV datasets on opendata.swiss |
 | `bakom_medienstruktur_info` | Swiss media landscape datasets |
-| `bakom_aktuell` | Current BAKOM topics (5G, media, AI, postal) |
+| `bakom_aktuell` | Recently updated BAKOM datasets on a topic (catalogue, not press releases) |
 | `bakom_medien_statistik` | Market shares, reach and programme structure from the BAKOM cubes on LINDAS |
 
 ### Statistics & Catalogue

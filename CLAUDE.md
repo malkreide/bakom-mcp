@@ -99,7 +99,7 @@ Was nie ein Netz berührt, gehört nicht hierher, sondern in `test_unit.py` — 
 dort prüft es die CI. `bakom_breitbandatlas_datensaetze` etwa ist ein statischer
 Katalog ohne API-Aufruf.
 
-Laufzeit als Plausibilitätsprüfung: `pytest -m live` braucht ~80–130 s für 70
+Laufzeit als Plausibilitätsprüfung: `pytest -m live` braucht ~90–130 s für 75
 Tests. Meldet die Suite alles grün in unter 2 s, hat kein Aufruf die Quelle
 erreicht.
 
@@ -107,8 +107,8 @@ Gegenprobe bei Änderungen an der Suite — in `server.py` kurz umbiegen:
 
 | Konstante | Erwartung |
 |---|---|
-| `OPENDATA_SWISS_API` | 22 von 70 fallen |
-| `GEO_ADMIN_API` | 10 von 70 fallen |
+| `OPENDATA_SWISS_API` | 28 von 75 fallen |
+| `GEO_ADMIN_API` | 10 von 75 fallen |
 
 Vorher prüfen, ob die umgebogene Konstante überhaupt gelesen wird — sonst
 beweist die grüne Suite nichts. `GEO_ADMIN_IDENTIFY`, `GEO_ADMIN_FIND` und
@@ -126,6 +126,19 @@ während die Antwort weiter «BAKOM RTV-Datenbank» als Quelle nannte.
 `kanton` und `media_type` gehen als Suchwort in die Volltextsuche; der Katalog
 hat für beides keine Facette. Ein Test darf hier keine exakte Filterung
 behaupten — er würde grün bleiben, egal was die Parameter tun.
+
+### Was `bakom_aktuell` liefert
+
+Zuletzt geänderte BAKOM-Datensätze aus dem Katalog, **keine Medienmitteilungen**.
+Bis August 2026 lieferte das Tool einen im Quellcode gepflegten Highlights-Block
+als «aktuell», fiel bei unbekanntem Thema still auf die Medien-Einträge zurück
+und verschluckte CKAN-Fehler per `except Exception: pass` — deshalb überlebte es
+die Drift-Probe. Alles drei ist entfernt.
+
+Für die Nachrichtenlage gibt es keine bekannte maschinenlesbare Quelle:
+`news.admin.ch` und `admin.ch` antworten aus der CI mit 403, was kein Beleg für
+Abwesenheit ist. Ohne Verifikation von einem normalen Anschluss aus wird darauf
+nichts gebaut.
 
 ### LINDAS (`bakom_medien_statistik`)
 
