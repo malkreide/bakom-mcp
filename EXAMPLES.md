@@ -67,5 +67,5 @@ Warum nützlich: Demonstriert die Leistungsfähigkeit von MCP-Servern durch die 
 | nach lizenzierten Radio- und TV-Sendern suchen | `bakom_rtv_suche` | Nein |
 | Telekom- und Breitbandstatistiken explorieren | `bakom_telekomstatistik_uebersicht` | Nein |
 | Medienberichte und Strukturdaten abfragen | `bakom_medienstruktur_info` | Nein |
-| aktuelle Themen des BAKOM abrufen | `bakom_aktuell` | Nein |
+| zuletzt aktualisierte BAKOM-Datensätze zu einem Thema | `bakom_aktuell` | Nein |
 | alle Layer des Breitbandatlas anzeigen | `bakom_breitbandatlas_datensaetze` | Nein |

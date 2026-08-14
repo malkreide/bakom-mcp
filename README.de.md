@@ -198,7 +198,7 @@ Das Image läuft als **non-root** (UID 10001), nutzt ein **read-only-Dateisystem
 |------|--------------|
 | `bakom_rtv_suche` | BAKOM-Datensätze zu Radio/TV auf opendata.swiss suchen |
 | `bakom_medienstruktur_info` | Schweizer Medienlandschaft – Datensätze |
-| `bakom_aktuell` | Aktuelle BAKOM-Themen (5G, Medien, KI, Post) |
+| `bakom_aktuell` | Zuletzt aktualisierte BAKOM-Datensätze zu einem Thema (Katalog, keine Medienmitteilungen) |
 | `bakom_medien_statistik` | Marktanteile, Reichweite und Programmstruktur aus den BAKOM-Cubes auf LINDAS |
 
 ### Statistik & Katalog

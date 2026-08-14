@@ -636,22 +636,42 @@ async def test_medienstruktur(live_ctx, thema):
 # ---------------------------------------------------------------------------
 # BAKOM Aktuell
 # ---------------------------------------------------------------------------
-@pytest.mark.parametrize("thema", ["medien", "5g", "post", "ki", "frequenzen"])
+@pytest.mark.parametrize("thema", ["medien", "radio", "fernsehen", "breitband"])
 async def test_bakom_aktuell(live_ctx, thema):
-    """Jedes Nachrichtenthema liefert Highlights und den Homepage-Link."""
+    """Zuletzt geaenderte Datensaetze je Thema, absteigend nach Datum."""
     data = daten(
         await bakom_aktuell(
             TelekomStatInput(thema=thema, response_format=ResponseFormat.JSON), live_ctx
         )
     )
-    assert "highlights" in data
-    assert "bakom_homepage" in data
+    assert data["total"] >= 1
+    assert data["datenquelle"] == "opendata.swiss – Datensatzkatalog des BAKOM"
+    daten_reihe = [ds["aktualisiert"] for ds in data["datensaetze"] if ds["aktualisiert"]]
+    assert daten_reihe == sorted(daten_reihe, reverse=True), daten_reihe
+
+
+async def test_bakom_aktuell_unbekanntes_thema_erfindet_nichts(live_ctx):
+    """Frueher fiel ein unbekanntes Thema still auf die Medien-Highlights zurueck.
+
+    Die Antwort trug dann `thema: "quantenverschluesselung"` und darunter die
+    SRG-Initiative — eine Vorlage zum Konfabulieren.
+    """
+    data = daten(
+        await bakom_aktuell(
+            TelekomStatInput(thema="quantenverschluesselung", response_format=ResponseFormat.JSON),
+            live_ctx,
+        )
+    )
+    assert data["total"] == 0
+    assert data["datensaetze"] == []
+    assert "bakom.admin.ch" in data["hinweis"]
 
 
 async def test_bakom_aktuell_markdown(live_ctx):
-    """Markdown-Ausgabe zum Thema Medien."""
+    """Markdown nennt die Grenze: Datensaetze, keine Medienmitteilungen."""
     output = text(await bakom_aktuell(TelekomStatInput(thema="medien"), live_ctx))
-    assert "SRG" in output or "Medien" in output
+    assert "Datensätze" in output
+    assert "keine Medienmitteilungen" in output
 
 
 # ---------------------------------------------------------------------------

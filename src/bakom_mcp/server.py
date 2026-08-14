@@ -1551,7 +1551,7 @@ async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> s
 @mcp.tool(
     name="bakom_aktuell",
     annotations={
-        "title": "Aktuelle BAKOM-Medienmitteilungen und Themen",
+        "title": "Zuletzt aktualisierte BAKOM-Datensätze zu einem Thema",
         "readOnlyHint": True,
         "destructiveHint": False,
         "idempotentHint": False,
@@ -1560,87 +1560,40 @@ async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> s
 )
 @_log_tool_call
 async def bakom_aktuell(params: TelekomStatInput, ctx: Context) -> str:
-    """Aktuelle Themen, News und Regulierungen des BAKOM abrufen.
+    """Zuletzt aktualisierte BAKOM-Datensätze auf opendata.swiss zu einem Thema.
 
-    Gibt aktuelle Informationen zu BAKOM-Tätigkeitsbereichen zurück:
-    Telekommunikation, Frequenzvergabe, Medienregulierung, Post.
-    Nützlich für strategische Lageberichte und Regulierungsmonitoring.
+    Sortiert nach `metadata_modified` absteigend — zeigt also, woran das BAKOM
+    zuletzt gearbeitet hat, gemessen an seinen Datensätzen.
+
+    **Keine Medienmitteilungen.** Das BAKOM veröffentlicht News auf
+    https://www.bakom.admin.ch/de; dieser Server fragt sie nicht ab, weil dafür
+    keine maschinenlesbare Schnittstelle bekannt ist. Wer nach der aktuellen
+    Nachrichtenlage gefragt wird, verweist dorthin, statt sie aus
+    Datensatz-Titeln abzuleiten.
+
+    `thema` geht als Suchwort in die Volltextsuche des Katalogs. Der Katalog
+    hat keine Themen-Facette; ein unbekanntes Thema liefert deshalb keine
+    Ersatztreffer zu einem anderen Thema, sondern eine leere Liste mit Hinweis.
+
+    Weil nach Datum sortiert wird, stehen oben die **neuesten** Treffer, nicht
+    die passendsten — ein Treffer kann das Suchwort nur am Rand berühren.
 
     Args:
-        params (TelekomStatInput): Thema (z.B. 'ki', '5g', 'frequenz',
-            'medien', 'post', 'breitband') + Ausgabeformat.
+        params (TelekomStatInput): Thema und Ausgabeformat.
 
     Returns:
-        str: Aktuelle BAKOM-Informationen mit Links.
+        str: Datensätze mit Titel, Änderungsdatum und Link.
 
     Schema:
         {
           "thema": str,
-          "highlights": [{"titel": str, "datum": str, "url": str}],
-          "regulierungskalender": list[str],
-          "datenquelle": str
+          "datensaetze": [{"titel": str, "aktualisiert": str, "url": str}],
+          "total": int,
+          "sortierung": str,
+          "datenquelle": str,
+          "hinweis": str | None
         }
     """
-    # Statische Highlights aus dem aktuellen Wissensstand
-    highlights_db: dict[str, list[dict[str, str]]] = {
-        "5g": [
-            {
-                "titel": "Vergabe der Mobilfunkfrequenzen 2029",
-                "datum": "2025-10",
-                "beschreibung": "ComCom beauftragt BAKOM mit Vorbereitung der Frequenzvergabe für 800 MHz, 900 MHz, 1800 MHz, 2100 MHz und 2600 MHz (auslaufend Ende 2028).",
-                "url": "https://www.bakom.admin.ch/de/vergabe-der-mobilfunkfrequenzen",
-            },
-            {
-                "titel": "5G adaptive Antennen – Auf dem Weg zu 5G",
-                "datum": "2025-04",
-                "beschreibung": "Informationen zu adaptiven Antennen im 5G-Ausbau.",
-                "url": "https://www.bakom.admin.ch/de/5g-de",
-            },
-        ],
-        "ki": [
-            {
-                "titel": "KI-Gipfel 2027 in Genf",
-                "datum": "2026-02-19",
-                "beschreibung": "Die Schweiz richtet 2027 in Genf einen KI-Gipfel aus nach dem AI Impact Summit in Neu-Delhi.",
-                "url": "https://www.bakom.admin.ch/de/newnsb/YZYU1gmqW9vcPFMl2VroY",
-            },
-        ],
-        "medien": [
-            {
-                "titel": "Nein zur SRG-Initiative (März 2026)",
-                "datum": "2026-03-09",
-                "beschreibung": "61,9% Nein-Stimmen. Bundesrat beschliesst moderates Gegenprojekt zur Haushaltsentlastung.",
-                "url": "https://www.bakom.admin.ch/de/volksabstimmung-zur-srg-initiative",
-            },
-            {
-                "titel": "Medienstruktur-Bericht 2025",
-                "datum": "2025-12-08",
-                "beschreibung": "Analyse der Mediengattungen TV, Radio, Online und Print in der Schweiz.",
-                "url": "https://www.bakom.admin.ch/de/medien-strukturbericht",
-            },
-            {
-                "titel": "Förderung der Frühzustellung",
-                "datum": "2026-02-18",
-                "beschreibung": "25 Mio. CHF jährlich für vergünstigte Frühzustellung von Zeitungen/Zeitschriften (7 Jahre).",
-                "url": "https://www.bakom.admin.ch/de/newnsb/wphaV8KF6y4FXxR55NIlD",
-            },
-        ],
-        "post": [
-            {
-                "titel": "Presseförderung – Frühzustellung",
-                "datum": "2026-02-18",
-                "beschreibung": "Revision Postverordnung in Vernehmlassung – 25 Mio. CHF für Presseförderung.",
-                "url": "https://www.bakom.admin.ch/de/newnsb/wphaV8KF6y4FXxR55NIlD",
-            },
-        ],
-    }
-
-    # Thema-Mapping
-    thema_lower = params.thema.lower()
-    matched_key = next((k for k in highlights_db if k in thema_lower or thema_lower in k), None)
-    highlights = highlights_db.get(matched_key or "medien", [])
-
-    # Ergänzend: opendata.swiss-Suche
     try:
         async with _shared_client(ctx) as client:
             r = await client.get(
@@ -1648,55 +1601,74 @@ async def bakom_aktuell(params: TelekomStatInput, ctx: Context) -> str:
                 params={
                     "fq": "organization:bundesamt-fur-kommunikation-bakom",
                     "q": params.thema,
-                    "rows": 5,
+                    "rows": DEFAULT_LIMIT,
                     "sort": "metadata_modified desc",
                 },
                 timeout=TIMEOUT,
             )
             r.raise_for_status()
-            datasets = r.json().get("result", {}).get("results", [])
-            for ds in datasets:
+            treffer = r.json().get("result", {}).get("results", [])
+
+            datensaetze = []
+            for ds in treffer:
                 titel = ds.get("title", {})
                 titel_de = titel.get("de") if isinstance(titel, dict) else str(titel)
-                highlights.append(
+                beschreibung = ds.get("notes", {})
+                datensaetze.append(
                     {
-                        "titel": f"[Datensatz] {titel_de}",
-                        "datum": ds.get("metadata_modified", "")[:10],
-                        "beschreibung": "",
+                        "titel": titel_de or ds.get("name", ""),
+                        "aktualisiert": ds.get("metadata_modified", "")[:10],
+                        "beschreibung": (
+                            beschreibung.get("de", "") if isinstance(beschreibung, dict) else ""
+                        ),
                         "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
                     }
                 )
-    except Exception:
-        pass
 
-    output = {
-        "thema": params.thema,
-        "highlights": highlights,
-        "total": len(highlights),
-        "bakom_homepage": "https://www.bakom.admin.ch/de",
-        "opendata_swiss_bakom": "https://opendata.swiss/de/organization/bundesamt-fur-kommunikation-bakom",
-        "datenquelle": "BAKOM + opendata.swiss",
-    }
+            hinweis: str | None = None
+            if not datensaetze:
+                hinweis = (
+                    f"Kein BAKOM-Datensatz passt auf «{params.thema}». Der Katalog "
+                    "kennt keine Themen-Facette, das Wort muss also im Text vorkommen: "
+                    "kürzer fassen oder ein anderes wählen. Erst danach ist die Aussage "
+                    "zulässig, dass es dazu nichts gibt — und die Nachrichtenlage steht "
+                    "ohnehin auf https://www.bakom.admin.ch/de, nicht hier."
+                )
 
-    if params.response_format == ResponseFormat.JSON:
-        return json.dumps(output, indent=2, ensure_ascii=False)
+            output: dict[str, Any] = {
+                "thema": params.thema,
+                "datensaetze": datensaetze,
+                "total": len(datensaetze),
+                "sortierung": "zuletzt geändert zuerst (metadata_modified desc)",
+                "datenquelle": "opendata.swiss – Datensatzkatalog des BAKOM",
+                "bakom_homepage": "https://www.bakom.admin.ch/de",
+            }
+            if hinweis:
+                output["hinweis"] = hinweis
 
-    md = f"## BAKOM Aktuell – {params.thema.title()}\n\n"
-    md += f"**{len(highlights)} Einträge** gefunden.\n\n"
+            if params.response_format == ResponseFormat.JSON:
+                return json.dumps(output, indent=2, ensure_ascii=False)
 
-    for h in highlights:
-        md += f"### {h.get('titel', 'Thema')}\n"
-        if h.get("datum"):
-            md += f"*{h['datum']}*  \n"
-        if h.get("beschreibung"):
-            md += f"{h['beschreibung']}  \n"
-        if h.get("url"):
-            md += f"[Mehr erfahren]({h['url']})\n"
-        md += "\n"
+            md = f"## Zuletzt aktualisierte BAKOM-Datensätze – {params.thema}\n\n"
+            md += f"**{len(datensaetze)} Datensätze**, zuletzt geändert zuerst.\n\n"
+            if not datensaetze:
+                md += f"> **Hinweis:** {hinweis}\n"
+            else:
+                for ds in datensaetze:
+                    md += f"### {ds['titel']}\n"
+                    if ds["aktualisiert"]:
+                        md += f"*Aktualisiert: {ds['aktualisiert']}*  \n"
+                    if ds["beschreibung"]:
+                        md += f"{ds['beschreibung'][:200]}  \n"
+                    md += f"[Zum Datensatz]({ds['url']})\n\n"
+            md += (
+                "> Datensätze, keine Medienmitteilungen. Aktuelle Meldungen des BAKOM: "
+                "https://www.bakom.admin.ch/de\n"
+            )
+            return md + ATTRIBUTION_FOOTER_MD
 
-    md += "**BAKOM:** https://www.bakom.admin.ch/de  \n"
-    md += "**Open Data:** https://opendata.swiss/de/organization/bundesamt-fur-kommunikation-bakom"
-    return md + ATTRIBUTION_FOOTER_MD
+    except Exception as e:
+        _raise_api_error(e)
 
 
 # ===========================================================================

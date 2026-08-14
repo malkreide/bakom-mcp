@@ -40,6 +40,7 @@ from bakom_mcp.server import (
     _handle_api_error,
     _raise_api_error,
     bakom_breitbandatlas_datensaetze,
+    bakom_aktuell,
     bakom_broadband_coverage,
     bakom_medien_statistik,
     bakom_multi_standort_konnektivitaet,
@@ -863,6 +864,70 @@ class TestMedienStatistik:
 
         assert _sparql_literal('a"b') == 'a\\"b'
         assert "\n" not in _sparql_literal("a\nb")
+
+
+# ---------------------------------------------------------------------------
+# bakom_aktuell: nur noch Katalogdaten
+# ---------------------------------------------------------------------------
+class TestBakomAktuell:
+    """Der statische Highlights-Block ist raus — nichts wird mehr behauptet.
+
+    Vorher lieferte das Tool einen im Quellcode gepflegten Wissensstand als
+    «aktuell», fiel bei unbekanntem Thema still auf die Medien-Eintraege
+    zurueck und verschluckte CKAN-Fehler per `except Exception: pass`, waehrend
+    die Antwort weiter opendata.swiss als Quelle nannte.
+    """
+
+    @staticmethod
+    def _ckan(*datensaetze: dict) -> MagicMock:
+        resp = MagicMock(spec=httpx.Response)
+        resp.raise_for_status = MagicMock()
+        resp.json = MagicMock(return_value={"result": {"results": list(datensaetze)}})
+        return resp
+
+    @pytest.mark.asyncio
+    async def test_liefert_katalogeintraege(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(
+            return_value=self._ckan(
+                {
+                    "name": "publikumsbefragung",
+                    "title": {"de": "Publikumsbefragung elektronische Medien"},
+                    "notes": {"de": "Beschreibung"},
+                    "metadata_modified": "2026-08-04T10:00:00.000000",
+                }
+            )
+        )
+
+        params = TelekomStatInput(thema="medien", response_format=ResponseFormat.JSON)
+        data = json.loads(await bakom_aktuell(params, _ctx_with(client)))
+        assert data["total"] == 1
+        assert data["datensaetze"][0]["aktualisiert"] == "2026-08-04"
+        assert data["datenquelle"] == "opendata.swiss – Datensatzkatalog des BAKOM"
+
+    @pytest.mark.asyncio
+    async def test_unbekanntes_thema_liefert_nichts_statt_fremder_treffer(self) -> None:
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(return_value=self._ckan())
+
+        params = TelekomStatInput(
+            thema="quantenverschluesselung", response_format=ResponseFormat.JSON
+        )
+        data = json.loads(await bakom_aktuell(params, _ctx_with(client)))
+        assert data["datensaetze"] == []
+        assert "bakom.admin.ch" in data["hinweis"]
+        # Kein Eintrag aus einem anderen Thema
+        assert "SRG" not in json.dumps(data)
+
+    @pytest.mark.asyncio
+    async def test_fehler_wird_gemeldet_statt_verschluckt(self) -> None:
+        """Frueher fing `except Exception: pass` das ab und log den Rest weiter."""
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(side_effect=httpx.TimeoutException("read timeout"))
+
+        with pytest.raises(ToolError) as exc_info:
+            await bakom_aktuell(TelekomStatInput(thema="medien"), _ctx_with(client))
+        assert "Zeitüberschreitung" in str(exc_info.value)
 
 
 class TestNotFoundHeuristics:
