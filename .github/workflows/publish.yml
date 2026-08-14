@@ -1,11 +1,32 @@
 name: Publish to PyPI
 
+# Ausgelöst vom Tag-Push, nicht vom Release.
+#
+# Vorher hing dieser Workflow an `release: published`. Legt man das Release im
+# Browser an, entsteht der Tag mit — beide Ereignisse feuern, alles lief. Kommt
+# der Tag dagegen per `git push`, erzeugt release.yml das Release mit
+# GITHUB_TOKEN, und ein von GITHUB_TOKEN erzeugtes Ereignis löst keine weiteren
+# Workflows aus. Der Publish blieb dann still aus: 2.0.2 ist deshalb nie auf
+# PyPI gelandet, 3.0.0 zunächst auch nicht.
+#
+# Der Tag-Push ist bei beiden Wegen vorhanden — auch die UI legt den Tag an.
+# Ein zusätzlicher `release:`-Trigger würde bei diesem Weg einen zweiten Lauf
+# starten und am schon hochgeladenen Artefakt scheitern.
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag, der veröffentlicht werden soll (z. B. v3.0.0)"
+        required: true
+        type: string
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  # Bei workflow_dispatch steht der Tag im Input, beim Tag-Push in ref_name.
+  RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
 
 permissions:
   id-token: write  # Pflicht für Trusted Publisher
@@ -17,11 +38,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      # Ein Tag auf dem falschen Commit fällt sonst erst auf PyPI auf, und dort
+      # ist eine Version nicht wiederverwendbar.
+      - name: Tag und Paketversion vergleichen
+        run: |
+          TAG_VERSION="${RELEASE_TAG#v}"
+          PKG_VERSION=$(python -c "import tomllib, pathlib; print(tomllib.loads(pathlib.Path('pyproject.toml').read_text())['project']['version'])")
+          echo "Tag: $TAG_VERSION – pyproject: $PKG_VERSION"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag $RELEASE_TAG zeigt auf einen Commit mit Version $PKG_VERSION."
+            exit 1
+          fi
 
       - name: Install build tools
         run: pip install build
@@ -63,10 +98,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
 
       - name: Sync server.json version to the release tag
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${RELEASE_TAG#v}"
           jq --arg v "$VERSION" '.version = $v | .packages[0].version = $v' \
             server.json > server.tmp && mv server.tmp server.json
 

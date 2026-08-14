@@ -62,6 +62,35 @@ Dieselbe Version ein drittes Mal in `pyproject.toml`
 und fällt mit Datei und Zeilennummer, sobald eine abweicht oder das dev-Extra
 wieder einen Bereich statt eines Pins deklariert.
 
+### Release
+
+Ein Release entsteht aus dem Tag-Push, in dieser Reihenfolge: Version an allen
+vier Stellen bumpen und CHANGELOG-Abschnitt `## [X.Y.Z] - JJJJ-MM-TT` schreiben,
+das über einen PR nach `main` bringen, **danach** taggen. Ein Tag auf einem
+Commit, der die alte Version trägt, lässt sich nicht mehr geradeziehen: PyPI
+gibt eine Versionsnummer nicht wieder her.
+
+Vor dem Push prüfen, worauf der Tag zeigt — `git tag -a vX.Y.Z origin/main`
+nach einem frischen `git fetch origin main` nimmt den Server-Stand und ist
+gegen einen veralteten lokalen Klon immun.
+
+`release.yml` schneidet den Release-Text mit `awk` aus dem CHANGELOG. Findet es
+den Abschnitt nicht, schreibt es kommentarlos «No CHANGELOG entry found» ins
+Release. Vorher lokal gegenprüfen:
+
+```bash
+awk "/^## \[3.0.0\] -/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md | wc -l
+```
+
+**`publish.yml` hängt am Tag-Push, nicht am Release.** Bis August 2026 lief es
+auf `release: published`. Beim Anlegen im Browser entsteht der Tag mit, beide
+Ereignisse feuern, alles lief — bei einem per `git push` gesetzten Tag erzeugt
+`release.yml` das Release aber mit `GITHUB_TOKEN`, und daraus entsteht kein
+Ereignis. Der Publish blieb still aus: **2.0.2 fehlt deshalb bis heute auf
+PyPI**, ohne dass irgendwo etwas rot war. Ein grünes «Release on Tag» ist kein
+Beleg dafür, dass das Paket veröffentlicht wurde — das steht auf
+`pypi.org/pypi/bakom-mcp/json`.
+
 ### Gate-Befehle (wörtlich aus `ci.yml`)
 
 ```bash
