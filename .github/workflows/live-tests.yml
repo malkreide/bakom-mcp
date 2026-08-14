@@ -1,9 +1,15 @@
 name: Live Tests
 
-# Faengt Drift der externen Quellen (geo.admin.ch, opendata.swiss,
-# rtvdb.ofcomnet.ch) ab. Die CI schliesst diese Tests per `-m "not live"` aus;
-# ohne diesen geplanten Lauf faellt eine geaenderte Kopfzeile oder ein
-# umbenanntes Feld erst produktiv auf, waehrend alle Unit-Tests gruen bleiben.
+# Faengt Drift der externen Quellen ab: geo.admin.ch (api3/wms/geodesy),
+# ckan.opendata.swiss und lindas.admin.ch — die Hosts aus
+# ALLOWED_EGRESS_HOSTS in server.py. Die CI schliesst diese Tests per
+# `-m "not live"` aus; ohne diesen geplanten Lauf faellt eine geaenderte
+# Kopfzeile oder ein umbenanntes Feld erst produktiv auf, waehrend alle
+# Unit-Tests gruen bleiben.
+#
+# Der Lauf installiert das Repo (`uv pip install -e`), nicht das Paket von
+# PyPI. Ein unvollstaendiges Wheel sieht er deshalb nicht — dafuer nach einem
+# Release einmal gegen `pip install bakom-mcp==<version>` pruefen.
 on:
   schedule:
     # taeglich 05:17 UTC — nicht zur vollen Stunde, dort ist der Runner-Andrang
