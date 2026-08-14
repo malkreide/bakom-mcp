@@ -7,7 +7,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
+## [3.0.0] - 2026-08-14
+
+### Geändert / Changed — Breaking
+
+- **`bakom_aktuell` liefert keine Highlights mehr, sondern Datensätze.** Der
+  Antwortschlüssel `highlights` ist durch `datensaetze` ersetzt (`titel`,
+  `aktualisiert`, `beschreibung`, `url`). Der alte Name versprach eine
+  redaktionelle Auswahl, die es nie gab: die Einträge stammten aus einem im
+  Quellcode gepflegten Block, dessen jüngster Eintrag auf März 2026 datierte.
+  Geliefert werden jetzt BAKOM-Datensätze aus dem opendata.swiss-Katalog,
+  sortiert nach letzter Änderung.
+
+- **`bakom_rtv_suche` nennt opendata.swiss als Quelle.** Bisher trug jede
+  Antwort `"datenquelle": "BAKOM RTV-Datenbank"`, obwohl die Daten aus dem
+  CKAN-Katalog kamen. Der Schlüssel `rtv_datenbank` heisst jetzt
+  `hinweis_senderdaten`, und `suchanfrage.filterung` sagt, dass `kanton` und
+  `media_type` die Volltextsuche gewichten statt exakt zu filtern.
+
+- **Entfernte Modul-Konstanten:** `RTV_DB_API`, `GEO_ADMIN_IDENTIFY` und
+  `GEO_ADMIN_FIND`. Alle drei waren definiert und wurden nirgends gelesen.
+
+- **Egress-Allowlist:** `rtvdb.ofcomnet.ch` entfernt, `lindas.admin.ch`
+  aufgenommen.
+
+### Hinzugefügt / Added
+
+- **`bakom_medien_statistik`** — Marktanteile, Reichweiten, Programm- und
+  Ertragsstruktur aus den BAKOM-Cubes auf LINDAS (SPARQL, Architektur A).
+  Ohne `thema` listet das Tool die 73 veröffentlichten Auswertungen, bei
+  mehrdeutigem Thema die Kandidaten, bei exaktem Titel die Beobachtungen.
+  Die Abdeckungsgrenze steht in der Tool-Description: die Cubes decken die
+  untersuchten Programme ab, nicht den Bestand.
+
+- **Geplanter Live-Test-Workflow** (`live-tests.yml`, täglich 05:17 UTC).
+  Ein Fehlschlag wird einmal wiederholt; bleibt es rot, öffnet der Workflow
+  ein Issue mit Label `live-test-failure`.
+
+- **`.pre-commit-config.yaml`** mit derselben gepinnten ruff-Version wie die
+  CI, und `scripts/check_version_sync.py` erzwingt jetzt, dass alle vier
+  ruff-Stellen übereinstimmen.
+
+- **`CLAUDE.md`** mit den portfolio-weiten Konventionen und den
+  repo-spezifischen Befunden.
+
+### Behoben / Fixed
+
+- **Antennen-Distanzen waren immer `null`.** geo.admin.ch liefert
+  Punktgeometrien als `{"points": [[east, north]]}`; gelesen wurde die
+  Esri-Kurzform `{"x": …, "y": …}`. Damit hatte die Sortierung nach Distanz
+  nichts zu sortieren und die Markdown-Tabelle druckte für jede Anlage «–».
+
+- **Die Live-Test-Suite konnte nicht rot werden.** Vier Module aus
+  Skript-Zeiten fingen jede Exception ab und buchten sie auf einen
+  modulweiten Akkumulator; 66 von 78 Aufrufen scheiterten seit dem
+  Lifespan-Refactor an der Tool-Signatur, ohne dass pytest etwas sah. Die
+  Suite ist zu `tests/test_live.py` konsolidiert, prüft Antworten auf
+  Fehlertexte und erreicht die Quellen wieder.
+
+- **`bakom_aktuell` verschluckte CKAN-Fehler** (`except Exception: pass`) und
+  fiel bei unbekanntem Thema still auf die Medien-Einträge zurück — eine
+  Antwort zu «quantenverschluesselung» enthielt die SRG-Initiative. Beides
+  entfernt; Fehler laufen über `_raise_api_error`, ein unbekanntes Thema
+  ergibt eine leere Liste mit Hinweis.
 
 - **Streamable-HTTP wies unter jedem echten Hostnamen mit 421 ab (SEC-005).**
   Die App wurde mit `mcp.streamable_http_app()` ohne `host` gebaut. Unter mcp 2.x
