@@ -22,6 +22,11 @@ on:
         description: "Tag, der veröffentlicht werden soll (z. B. v3.0.0)"
         required: true
         type: string
+      registry:
+        description: "Auch an die MCP-Registry melden (bei alten Tags abwählen)"
+        required: false
+        default: true
+        type: boolean
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
@@ -91,6 +96,11 @@ jobs:
   publish-mcp:
     name: Publish to MCP Registry
     needs: publish
+    # Beim Tag-Push immer. Beim Dispatch abwählbar, weil ein nachgereichter
+    # alter Tag hier zwei Probleme hat: die Registry würde die ältere Version
+    # als neueste führen, und vor 2.0.3 gibt es im Repo noch keine server.json,
+    # an der der Sync-Schritt scheitern würde — nach dem geglückten Upload.
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.registry }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write   # required for MCP Registry Trusted Publishing (OIDC)
