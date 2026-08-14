@@ -57,9 +57,10 @@ Dieselbe Version ein drittes Mal in `pyproject.toml`
 (`[project.optional-dependencies].dev`, `ruff==0.16.1`), damit
 `uv pip install -e ".[dev]"` nicht eine andere Version zieht als das Gate.
 
-**Alle drei Stellen zusammen bumpen** — Workflow, `rev` und dev-Extra. Nichts
-erzwingt das bisher; ein Abgleich in `scripts/check_version_sync.py` wäre die
-Stelle dafür.
+**Alle Stellen zusammen bumpen** — beide Workflow-Jobs, `rev` und dev-Extra.
+`scripts/check_version_sync.py` erzwingt das: der Check vergleicht alle vier
+und fällt mit Datei und Zeilennummer, sobald eine abweicht oder das dev-Extra
+wieder einen Bereich statt eines Pins deklariert.
 
 ### Gate-Befehle (wörtlich aus `ci.yml`)
 

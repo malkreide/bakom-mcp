@@ -14,7 +14,11 @@ aus dem Tag-Namen — die *committete* Version wirkt also nie auf das
 publizierte Artefakt und fällt deshalb nicht auf, wenn sie veraltet. Die
 README-Badges erzwingt überhaupt nichts.
 
-Zweiter Teil: in `src/` darf keine Versionsnummer stehen. Der Laufzeit-Wert
+Zweiter Teil: die ruff-Version. Sie steht in beiden CI-Jobs, im
+pre-commit-Hook und im dev-Extra — vier Stellen, die dieselbe Nummer
+wiederholen und zwischen denen nichts vermittelt.
+
+Dritter Teil: in `src/` darf keine Versionsnummer stehen. Der Laufzeit-Wert
 kommt aus den Paket-Metadaten (`importlib.metadata.version()`); ein wieder
 eingefügtes Literal wäre der Beginn derselben Drift, die im ganzen Portfolio
 falsche User-Agents erzeugt hat.
@@ -43,6 +47,8 @@ ROOT = Path(__file__).resolve().parent.parent
 PYPROJECT = ROOT / "pyproject.toml"
 SERVER_JSON = ROOT / "server.json"
 SRC = ROOT / "src"
+WORKFLOWS = ROOT / ".github" / "workflows"
+PRECOMMIT = ROOT / ".pre-commit-config.yaml"
 
 # Shields.io-Badge: ![Version](https://img.shields.io/badge/version-X.Y.Z-blue)
 _BADGE = re.compile(r"img\.shields\.io/badge/[Vv]ersion-([^-\s)]+)-")
@@ -128,6 +134,71 @@ def find_hardcoded(dist: str) -> list[tuple[str, int, str]]:
     return hits
 
 
+# `pip install ruff==0.16.1` in einem Workflow-Schritt.
+_RUFF_PIN = re.compile(r"ruff==([0-9][0-9A-Za-z.+-]*)")
+# Der Hook-Block: rev gehoert zum Repo darueber, deshalb beide zusammen matchen.
+_RUFF_HOOK = re.compile(
+    r"repo:\s*\S*ruff-pre-commit\s*\n\s*rev:\s*v?([0-9][0-9A-Za-z.+-]*)", re.MULTILINE
+)
+# Ein ruff-Requirement im dev-Extra, gepinnt oder nicht.
+_RUFF_REQ = re.compile(r'"ruff(?P<spec>[^"]*)"')
+
+
+def collect_ruff_pins() -> list[tuple[str, str]]:
+    """Alle Stellen, die die ruff-Version festlegen — je (Bezeichnung, Wert).
+
+    Die Version steht dreifach im Repo: in beiden CI-Jobs, im pre-commit-Hook
+    und im dev-Extra. Laufen sie auseinander, meldet der lokale Lauf
+    Abweichungen, die niemand verursacht hat — der teuerste Zeitfresser, weil
+    der Diff nichts davon zeigt.
+
+    Ein nicht gepinntes ruff im dev-Extra wird als eigener Wert gemeldet,
+    nicht uebergangen: ein Bereich ist hier dieselbe Drift, nur langsamer.
+    """
+    found: list[tuple[str, str]] = []
+
+    if WORKFLOWS.is_dir():
+        for wf in sorted(WORKFLOWS.glob("*.yml")):
+            for lineno, line in enumerate(wf.read_text(encoding="utf-8").splitlines(), start=1):
+                for m in _RUFF_PIN.finditer(line):
+                    found.append((f".github/workflows/{wf.name}:{lineno}", m.group(1)))
+
+    if PRECOMMIT.exists():
+        for m in _RUFF_HOOK.finditer(PRECOMMIT.read_text(encoding="utf-8")):
+            found.append((f"{PRECOMMIT.name} → rev", m.group(1)))
+
+    text = PYPROJECT.read_text(encoding="utf-8")
+    section = re.search(r"^dev\s*=\s*\[(.*?)\]", text, re.MULTILINE | re.DOTALL)
+    if section:
+        for m in _RUFF_REQ.finditer(section.group(1)):
+            spec = m.group("spec").strip()
+            wert = spec[2:].strip() if spec.startswith("==") else f"nicht gepinnt ({spec})"
+            found.append(("pyproject.toml → dev-Extra", wert))
+
+    return found
+
+
+def check_ruff_pins() -> str:
+    """Prueft, dass alle ruff-Pins uebereinstimmen. Bei Abweichung: exit 1."""
+    pins = collect_ruff_pins()
+    if len(pins) < 2:
+        return "ruff-Pin: zu wenige Stellen zum Vergleichen"
+
+    werte = {wert for _, wert in pins}
+    if len(werte) > 1:
+        print("DRIFT: die ruff-Version weicht zwischen den Stellen ab:", file=sys.stderr)
+        for where, wert in pins:
+            print(f"  {where} = {wert!r}", file=sys.stderr)
+        print(
+            "\nAlle Stellen im selben Commit bumpen. Eine andere Version als das "
+            "Gate meldet lokal Abweichungen, die niemand verursacht hat.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    return f"ruff-Pin einheitlich ({pins[0][1]}, {len(pins)} Stellen)"
+
+
 def collect_declared(expected: str) -> list[tuple[str, str]]:
     """Alle Stellen, die die Version wiederholen — je (Bezeichnung, Wert)."""
     found: list[tuple[str, str]] = []
@@ -208,8 +279,11 @@ def main() -> None:
         )
         sys.exit(1)
 
+    ruff_status = check_ruff_pins()
+
     checked = ", ".join(where for where, _ in found) or "keine weiteren Stellen"
     print(f"Versions-Sync OK ({version}; geprüft: {checked}; keine hartkodierte Version in src/)")
+    print(ruff_status)
 
 
 if __name__ == "__main__":
