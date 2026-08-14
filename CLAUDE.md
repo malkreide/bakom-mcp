@@ -86,10 +86,27 @@ awk "/^## \[3.0.0\] -/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md | wc -l
 auf `release: published`. Beim Anlegen im Browser entsteht der Tag mit, beide
 Ereignisse feuern, alles lief — bei einem per `git push` gesetzten Tag erzeugt
 `release.yml` das Release aber mit `GITHUB_TOKEN`, und daraus entsteht kein
-Ereignis. Der Publish blieb still aus: **2.0.2 fehlt deshalb bis heute auf
-PyPI**, ohne dass irgendwo etwas rot war. Ein grünes «Release on Tag» ist kein
-Beleg dafür, dass das Paket veröffentlicht wurde — das steht auf
-`pypi.org/pypi/bakom-mcp/json`.
+Ereignis. Der Publish blieb still aus, ohne dass irgendwo etwas rot war. Ein
+grünes «Release on Tag» ist kein Beleg dafür, dass das Paket veröffentlicht
+wurde — das steht auf `pypi.org/pypi/bakom-mcp/json`.
+
+**2.0.2 fehlt auf PyPI und bleibt dort fehlen.** Die Reihe ist 1.0.0, 2.0.0,
+2.0.3, 2.0.4, 3.0.0. Zwei unabhängige Gründe, und der zweite fiel erst beim
+Nachreichversuch am 14.8.2026 auf:
+
+1. Der Workflow lief nie — der Trigger-Defekt oben.
+2. Selbst gelaufen wäre er gescheitert. In `v2.0.2` steht
+   `"mcp-name" = "io.github.malkreide/bakom-mcp"` unter `[project.urls]`, also
+   der Registry-Name in einem Feld, das PyPI als URL validiert. Der Upload
+   endet mit `400 … is not a valid url`. In `v2.0.3` ist der Eintrag weg.
+
+Nachträglich hochladen hiesse, den getaggten Stand zu ändern und unter 2.0.2
+ein Artefakt abzulegen, das nicht zu `v2.0.2` gehört. Bewusst unterlassen — wer
+2.0.2 sucht, nimmt 2.0.3.
+
+Die Lehre für neue Felder unter `[project.urls]`: PyPI validiert dort jeden
+Wert als URL, auch selbst erfundene Schlüssel. Was kein URL ist, gehört nicht
+dorthin.
 
 ### Gate-Befehle (wörtlich aus `ci.yml`)
 
