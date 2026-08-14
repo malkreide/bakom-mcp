@@ -44,7 +44,10 @@ dependencies = [
 dev = [
     "pytest>=8.0.0,<10.0",
     "pytest-asyncio>=0.23.0,<2.0",
-    "ruff>=0.4.0,<1.0",
+    # Exakt gepinnt, identisch zu .github/workflows/ci.yml und
+    # .pre-commit-config.yaml. Eine andere Version meldet Abweichungen, die
+    # niemand verursacht hat. Alle drei Stellen zusammen bumpen.
+    "ruff==0.16.1",
 ]
 
 [project.scripts]
