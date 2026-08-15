@@ -1,0 +1,45 @@
+{
+  "head": {
+    "vars": [
+      "pfad",
+      "dname"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "pfad": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "dname": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Jahr"
+        }
+      },
+      {
+        "pfad": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "dname": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Meinungsmacht"
+        }
+      },
+      {
+        "pfad": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "dname": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Konzern"
+        }
+      }
+    ]
+  }
+}

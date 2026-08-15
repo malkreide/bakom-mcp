@@ -14,6 +14,7 @@ in CI bei jedem PR.
 from __future__ import annotations
 
 import json
+import re
 from unittest.mock import AsyncMock, MagicMock
 
 import httpx
@@ -124,6 +125,22 @@ class TestInputValidation:
     def test_telekom_thema_max_length(self) -> None:
         with pytest.raises(ValidationError):
             TelekomStatInput(thema="X" * 51)
+
+    def test_die_themenliste_in_der_feldbeschreibung_bleibt_pruefbar(self) -> None:
+        """`test_jedes_dokumentierte_thema_liefert_datensaetze` liest diese Woerter.
+
+        Es parametrisiert ueber sie, damit Beschreibung und Pruefung nicht
+        auseinanderlaufen — und liefe ueber eine leere Liste gruen durch, ohne
+        etwas geprueft zu haben. Diese Zusicherung steht deshalb hier, wo die
+        CI sie sieht: der Live-Lauf ist woechentlich, dieser Test bei jedem PR.
+        Der Ausdruck ist bewusst derselbe wie dort; ein Import brauchte
+        `test_live` und damit dessen Modul-Marker.
+        """
+        beschreibung = TelekomStatInput.model_fields["thema"].description or ""
+        themen = re.findall(r"'([^']+)' \d+", beschreibung)
+        assert len(themen) >= 3, (
+            f"die Beschreibung von `thema` nennt keine belegten Woerter mehr: {beschreibung!r}"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -924,7 +941,10 @@ class TestBakomAktuell:
                 {
                     "name": "publikumsbefragung",
                     "title": {"de": "Publikumsbefragung elektronische Medien"},
-                    "notes": {"de": "Beschreibung"},
+                    # `description`, nicht `notes` — so nennt opendata.swiss das
+                    # Feld. Der Stub hiess frueher wie der Code und bestaetigte
+                    # damit nur dessen Annahme; siehe tests/fixtures/.
+                    "description": {"de": "Beschreibung"},
                     "metadata_modified": "2026-08-04T10:00:00.000000",
                 }
             )

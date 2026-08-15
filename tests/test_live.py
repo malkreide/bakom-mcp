@@ -18,6 +18,7 @@ CI sie auch wirklich prueft.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -677,19 +678,38 @@ async def test_bakom_aktuell_markdown(live_ctx):
 # ---------------------------------------------------------------------------
 # Telekomstatistik
 # ---------------------------------------------------------------------------
-@pytest.mark.parametrize(
-    "thema", ["breitband", "mobilfunk", "festnetz", "marktanteile", "haushaltszugang"]
-)
-async def test_telekomstatistik_json(live_ctx, thema):
-    """Jedes Thema liefert Datensaetze, Themen-Echo und Quellenangabe."""
+def _dokumentierte_themen() -> list[str]:
+    """Die Woerter, die die Feldbeschreibung von `thema` als ergiebig nennt.
+
+    Aus der Beschreibung gelesen und nicht daneben gepflegt, damit beide nicht
+    auseinanderlaufen koennen: wer ein Wort dazuschreibt, laesst es hier mit
+    pruefen.
+    """
+    beschreibung = TelekomStatInput.model_fields["thema"].description or ""
+    return re.findall(r"'([^']+)' \d+", beschreibung)
+
+
+@pytest.mark.parametrize("thema", _dokumentierte_themen())
+async def test_jedes_dokumentierte_thema_liefert_datensaetze(live_ctx, thema):
+    """Was die Feldbeschreibung als ergiebig nennt, muss ergiebig sein.
+
+    Diese Liste hiess frueher «Statistikthema: 'breitband', 'mobilfunk',
+    'festnetz', 'marktanteile', 'haushaltszugang'» — und der Test hier prueft
+    nur `"datensaetze" in data`, was auch bei null Treffern zutrifft. Zwei der
+    fuenf Woerter, 'mobilfunk' und 'haushaltszugang', lieferten am 15.08.2026
+    nichts: der Katalog zerlegt keine Komposita. Das Modell bekam daraufhin ein
+    glaubwuerdiges «dazu gibt es nichts» statt eines Treffers.
+    """
     data = daten(
         await bakom_telekomstatistik_uebersicht(
             TelekomStatInput(thema=thema, response_format=ResponseFormat.JSON), live_ctx
         )
     )
     assert data["thema"] == thema
-    assert "datensaetze" in data
     assert "datenquelle" in data
+    assert data["datensaetze"], f"«{thema}» steht als ergiebig in der Beschreibung, liefert aber 0"
+    ohne_text = [d["titel"] for d in data["datensaetze"] if not (d["beschreibung"] or "").strip()]
+    assert not ohne_text, f"Datensaetze ohne Beschreibung: {ohne_text}"
 
 
 async def test_telekomstatistik_markdown(live_ctx):

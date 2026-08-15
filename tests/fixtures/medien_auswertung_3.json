@@ -1,0 +1,784 @@
+{
+  "head": {
+    "vars": [
+      "o",
+      "p",
+      "v",
+      "vlabel"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_SRG"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://cube.link/Observation"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_SRG"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://cube.link/observedBy"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://ld.admin.ch/office/VII.1.6"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_SRG"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2024"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_SRG"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "28"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_SRG"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/conceptKonzern/konzern_SRG"
+        },
+        "vlabel": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "SRG"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_TXGroup"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://cube.link/Observation"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_TXGroup"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://cube.link/observedBy"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://ld.admin.ch/office/VII.1.6"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_TXGroup"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2024"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_TXGroup"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "14"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_TXGroup"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/conceptKonzern/konzern_TXGroup"
+        },
+        "vlabel": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "TX Group (ehem. Tamedia)"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Meta"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://cube.link/Observation"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Meta"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://cube.link/observedBy"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://ld.admin.ch/office/VII.1.6"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Meta"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2024"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Meta"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "9"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Meta"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/conceptKonzern/konzern_Meta"
+        },
+        "vlabel": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Meta Inc. (ehem. Facebook Inc.)"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_CHMedia"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://cube.link/Observation"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_CHMedia"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://cube.link/observedBy"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://ld.admin.ch/office/VII.1.6"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_CHMedia"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2024"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_CHMedia"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "10"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_CHMedia"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/conceptKonzern/konzern_CHMedia"
+        },
+        "vlabel": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "CH Media"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Ringier"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://cube.link/Observation"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Ringier"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://cube.link/observedBy"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://ld.admin.ch/office/VII.1.6"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Ringier"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2024"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Ringier"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "5"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Ringier"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/conceptKonzern/konzern_Ringier"
+        },
+        "vlabel": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Ringier"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_NZZ"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://cube.link/Observation"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_NZZ"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://cube.link/observedBy"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://ld.admin.ch/office/VII.1.6"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_NZZ"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2024"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_NZZ"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_NZZ"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/conceptKonzern/konzern_NZZ"
+        },
+        "vlabel": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "NZZ-Mediengruppe"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_AZM"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://cube.link/Observation"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_AZM"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://cube.link/observedBy"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://ld.admin.ch/office/VII.1.6"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_AZM"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2024"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_AZM"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "1"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_AZM"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/conceptKonzern/konzern_AZM"
+        },
+        "vlabel": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "AZ Medien"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_ESH"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://cube.link/Observation"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_ESH"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://cube.link/observedBy"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://ld.admin.ch/office/VII.1.6"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_ESH"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2024"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_ESH"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "1"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_ESH"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/conceptKonzern/konzern_ESH"
+        },
+        "vlabel": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "ESH Médias (ehem. Hersant)"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_gruppocorriere"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://cube.link/Observation"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_gruppocorriere"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://cube.link/observedBy"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://ld.admin.ch/office/VII.1.6"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_gruppocorriere"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2024"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_gruppocorriere"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "1"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_gruppocorriere"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/conceptKonzern/konzern_gruppocorriere"
+        },
+        "vlabel": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Gruppo Corriere del Ticino"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Somedia"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://cube.link/Observation"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Somedia"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://cube.link/observedBy"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://ld.admin.ch/office/VII.1.6"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Somedia"
+        },
+        "p": {
+          "type": "uri",
+          "value": "http://schema.org/observationDate"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2024"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Somedia"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/OpinionFormingPotential"
+        },
+        "v": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "1"
+        }
+      },
+      {
+        "o": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/observation/MMSOpinionFormingPotential/2024-konzern_Somedia"
+        },
+        "p": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/conceptkonzern"
+        },
+        "v": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6/conceptKonzern/konzern_Somedia"
+        },
+        "vlabel": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Somedia"
+        }
+      }
+    ]
+  }
+}

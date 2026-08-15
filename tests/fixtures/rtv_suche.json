@@ -1,0 +1,1220 @@
+{
+  "help": "https://ckan.opendata.swiss/api/3/action/help_show?name=package_search",
+  "success": true,
+  "result": {
+    "count": 48,
+    "facets": {},
+    "results": [
+      {
+        "accrual_periodicity": "",
+        "author": null,
+        "author_email": null,
+        "conforms_to": [],
+        "contact_points": [
+          {
+            "email": "m@bakom.admin.ch",
+            "name": "BAKOM | OFCOM | UFCOM"
+          }
+        ],
+        "creator_user_id": "af084126-f711-4016-a585-70354e997796",
+        "description": {
+          "de": "Dieser Datensatz enthält Informationen über die Angebotsstruktur der Radioprogramme in der Schweiz und umfasst Details zu den verschiedenen Programmtypen, ihrer Anzahl Programme und deren Veränderung im Laufe der Zeit. Die Daten basieren auf den Angaben aus den Meldeformularen, welche die Radioveranstalter beim BAKOM einreichen müssen.",
+          "fr": "Cet ensemble de données contient des informations sur la structure de l'offre des programmes radio en Suisse et comprend des détails sur les différents types de programmes, leur nombre et leur évolution dans le temps. Les données sont basées sur les informations fournies dans les formulaires d’annonce que les diffuseurs radio doivent remettre à l'OFCOM.",
+          "it": "Questo set di dati contiene informazioni sulla struttura dell'offerta dei programmi radiofonici in Svizzera e comprende dettagli sui diversi tipi di programmi, sul loro numero e sulle variazioni nel corso del tempo. I dati si basano sulle informazioni riportate nei moduli di notificazione che le emittenti radiofoniche devono presentare all'UFCOM.",
+          "en": "This data set contains information on the structure of radio programmes in Switzerland and includes details on the various types of programmes, their number, and changes over time. The data is based on information from the reporting forms that radio broadcasters are required to submit to OFCOM."
+        },
+        "display_name": {
+          "de": "Übersicht der Radioangebote in der Schweiz",
+          "fr": "Aperçu des offres radio en Suisse",
+          "it": "Panoramica delle offerte radiofoniche in Svizzera",
+          "en": "Overview of radio stations in Switzerland"
+        },
+        "documentation": [],
+        "id": "52e7bce7-8cac-46a0-abc0-11d18823a8e6",
+        "identifier": "radio_overview@bundesamt-fur-kommunikation-bakom",
+        "isopen": false,
+        "issued": "2024-04-18T00:00:00",
+        "keywords": {
+          "en": [
+            "media-structure-report",
+            "radio",
+            "services-and-organisations"
+          ],
+          "de": [
+            "medien-strukturbericht",
+            "angebote-und-organisationen"
+          ],
+          "fr": [
+            "radio",
+            "offres-et-organisations",
+            "rapport-sur-la-structure-des-medias"
+          ],
+          "it": [
+            "rapporto-sulla-struttura-dei-media",
+            "radio",
+            "offerte-e-organizzazioni"
+          ]
+        },
+        "language": [],
+        "license_id": null,
+        "license_title": null,
+        "maintainer": null,
+        "maintainer_email": null,
+        "metadata_created": "2025-11-14T02:12:07.339392",
+        "metadata_modified": "2026-07-29T08:03:20.593095",
+        "modified": "2025-12-17T13:21:06.608000+00:00",
+        "name": "ubersicht-der-radioangebote-in-der-schweiz",
+        "num_resources": 2,
+        "num_tags": 9,
+        "organization": {
+          "approval_status": "approved",
+          "created": "2016-01-21T17:23:47.744359",
+          "description": {
+            "fr": "Téléphoner, s’informer par les journaux, la radio ou la télévision, échanger des courriels ou des SMS, surfer sur Internet : autant d’activités quotidiennes qui dépendent d’une infrastructure de communication performante. L’OFCOM contribue à ce que la population et l’économie disposent de services de télécommunication appropriés et compétitifs.\r\nL’office veille à ce que les auditeurs et téléspectateurs puissent s’informer dans leur région, grâce aux diffuseurs régionaux, et au niveau national, par les programmes de la SSR. Il répartit équitablement le produit de la redevance radio et TV entre toutes les régions de Suisse. Dans le domaine postal, il permet aux journaux et périodiques de bénéficier de prix préférentiels.\r\nL’OFCOM gère les fréquences pour que les stations de radio, les téléphones mobiles et les appareils sans fil puissent communiquer sans perturbation.\r\nGrâce à ses activités de surveillance, il participe aussi à la protection des consommateurs : il vérifie que les dispositions légales sont respectées, par exemple en matière de publicité dans les programmes radio et TV, dans le domaine des services à valeur ajoutée proposés par téléphone sur des numéros 090x ou dans l’usage des fréquences.",
+            "en": "Every day we read the paper, pick up the phone, write and send emails and text messages, surf online, listen to the radio and watch TV. In order to be able to use all these services, there has to be a stable and powerful communications infrastructure in place. OFCOM helps to ensure that the population and businesses in all parts of the country have access to adequate and competitive tele-communications services. \r\nOFCOM makes it possible for radio and television users at local level to access regional stations and the SRG’s programmes at national level. It also distributes the revenues from television and radio licence fees fairly among all regions in Switzerland. In the postal sector, OFCOM makes sure that newspapers and magazines benefit from reduced postage rates. It also manages and allocates frequencies for radio stations, mobile and wireless devices to ensure interference-free communication. \r\nOFCOM’s oversight responsibilities include consumer protection. It monitors compliance with statutory provisions for radio and television advertising, value-added services which are offered with 090x numbers and for use of frequencies.",
+            "de": "Telefonieren, sich via Presse, Radio oder Fernsehen informieren, E-Mails oder SMS schreiben und empfangen, im Internet surfen – für diese alltäglichen Tätigkeiten braucht es eine leistungsfähige Kommunikationsinfrastruktur. Das BAKOM trägt dazu bei, dass die Bevölkerung und die Wirtschaft in allen Landesteilen über angemessene und kompetitive Telekommunikationsdienste verfügen. Das Amt ermöglicht, dass sich Radio-und Fernsehnutzer auf lokaler Ebene über regionale Sender und auf nationaler Ebene über die Programme der SRG informieren können. Es verteilt auch die Erträge aus den Radio-und Fernsehgebühren gerecht auf alle Regionen der Schweiz. Im Postbereich sorgt es dafür, dass Zeitungen und Zeitschriften von günstigen Versandkosten profitieren. \r\nWeiter gewährleistet es über die Frequenzverwaltung und -zuteilung für Radio, Mobilfunk und drahtlose Geräte eine störungsfreie Kommunikation. \r\nMit seiner Aufsichtstätigkeit trägt das BAKOM auch zum Schutz der Konsumentinnen und Konsumenten bei: Es überwacht das Einhalten der gesetzlichen Bestimmungen, sei es bei der Radio-und Fernsehwerbung, den Mehrwertdiensten, die über 090x-Nummern angeboten werden, oder bei der Frequenznutzung.",
+            "it": "Ogni giorno parliamo al telefono, ci teniamo informati attraverso la stampa, la radio e la televisione, scriviamo e-mail o SMS e navighiamo in Internet. Per svolgere tutte queste attività occorre un’infrastruttura di comunicazione performante. L’UFCOM contribuisce affinché la popolazione e l’economia dispongano di servizi di telecomunicazione adeguati e competitivi. \r\nL’Ufficio permette ai telespettatori e ai radioascoltatori di informarsi a livello locale, grazie alle emittenti regionali, e a livello nazionale, attraverso i programmi della SSR. Ripartisce equamente i proventi derivanti dai canoni radiotelevisivi tra le regioni della Svizzera. Nel settore postale, offre a giornali e periodici la possibilità di beneficiare di riduzioni sui prezzi di spedizione. \r\nL’UFCOM gestisce le frequenze affinché le stazioni radiofoniche, i telefoni cellulari e gli apparecchi senza fili possano comunicare senza interferenze. \r\nGrazie alla sua attività di vigilanza l’UFCOM contribuisce inoltre alla tutela dei consumatori, verificando il rispetto delle disposizioni legali vigenti, in ambiti quali la pubblicità nei programmi radiotelevisivi, i servizi a valore aggiunto offerti tramite i numeri telefonici 090x o l’utilizzazione delle frequenze."
+          },
+          "display_name": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "id": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+          "image_display_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "image_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "is_organization": true,
+          "name": "bundesamt-fur-kommunikation-bakom",
+          "num_followers": 0,
+          "package_count": 120,
+          "political_level": "confederation",
+          "state": "active",
+          "title": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "type": "organization",
+          "url": "",
+          "tags": [],
+          "groups": []
+        },
+        "owner_org": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+        "private": false,
+        "publisher": {
+          "url": "https://opendata.swiss/organization/bundesamt-fur-kommunikation-bakom",
+          "name": "RTV Datenbank (BAKOM)"
+        },
+        "qualified_relations": [],
+        "relations": [],
+        "see_alsos": [],
+        "spatial": "",
+        "state": "active",
+        "temporals": [
+          {
+            "end_date": "2024-12-31T23:59:59.999999",
+            "start_date": "2015-01-01T00:00:00"
+          }
+        ],
+        "title": {
+          "de": "Übersicht der Radioangebote in der Schweiz",
+          "fr": "Aperçu des offres radio en Suisse",
+          "it": "Panoramica delle offerte radiofoniche in Svizzera",
+          "en": "Overview of radio stations in Switzerland"
+        },
+        "title_for_slug": "ubersicht-der-radioangebote-in-der-schweiz",
+        "type": "dataset",
+        "url": "https://rtvdb.ofcomnet.ch/de",
+        "version": null,
+        "extras": [
+          {
+            "key": "guid",
+            "value": "radio_overview@bundesamt-fur-kommunikation-bakom"
+          },
+          {
+            "key": "uri",
+            "value": "https://communication.ld.admin.ch/ofcom/radio_overview/13"
+          },
+          {
+            "key": "harvest_object_id",
+            "value": "57bbaae6-4b60-4a34-ac16-0f38bd7d088f"
+          },
+          {
+            "key": "harvest_source_id",
+            "value": "38f48174-6f38-4f82-a182-dc85bb901637"
+          },
+          {
+            "key": "harvest_source_title",
+            "value": "LINDAS DCAT Harvester BAKOM"
+          }
+        ],
+        "groups": [
+          {
+            "description": {
+              "fr": "",
+              "de": "",
+              "en": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "Bildung, Kultur und Sport",
+              "en": "Education, culture and sport",
+              "fr": "Éducation, culture et sport",
+              "it": "Istruzione, cultura e sport"
+            },
+            "id": "b36d9b09-dc05-422c-997e-4e81b02afd6f",
+            "image_display_url": "",
+            "name": "educ",
+            "title": "{\"de\": \"Bildung, Kultur und Sport\", \"en\": \"Education, culture and sport\", \"fr\": \"Éducation, culture et sport\", \"it\": \"Istruzione, cultura e sport\"}"
+          }
+        ],
+        "resources": [
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2025-12-18T01:56:14.755951",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "SPARQL",
+            "hash": "",
+            "id": "277d9558-cb70-4c75-8d6e-28360e287939",
+            "issued": "2024-04-18T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "application/sparql-query",
+            "metadata_modified": "2026-07-29T08:03:20.602571",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "package_id": "52e7bce7-8cac-46a0-abc0-11d18823a8e6",
+            "position": 0,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "uri": "https://lindas.admin.ch/sparql#query=PREFIX+schema%3A+%3Chttp%3A%2F%2Fschema.org%2F%3E%0A%0ADESCRIBE+%3Fcube%0A%0AFROM+%3Chttps%3A%2F%2Flindas.admin.ch%2Fofcom%2Fcube%3E%0AWHERE+%7B%0A%0A++++++%3Chttps%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fradio_overview%3E+schema%3AhasPart+%3Fcube+.%0A++++++%3Fcube+schema%3Aversion+13+.%0A++++%0A%7D%0A%0A&endpoint=https%3A%2F%2Flindas.admin.ch%2Fquery",
+            "url": "https://lindas.admin.ch/sparql#query=PREFIX+schema%3A+%3Chttp%3A%2F%2Fschema.org%2F%3E%0A%0ADESCRIBE+%3Fcube%0A%0AFROM+%3Chttps%3A%2F%2Flindas.admin.ch%2Fofcom%2Fcube%3E%0AWHERE+%7B%0A%0A++++++%3Chttps%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fradio_overview%3E+schema%3AhasPart+%3Fcube+.%0A++++++%3Fcube+schema%3Aversion+13+.%0A++++%0A%7D%0A%0A&endpoint=https%3A%2F%2Flindas.admin.ch%2Fquery",
+            "url_type": null
+          },
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2025-11-14T02:12:07.356672",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "HTML",
+            "hash": "",
+            "id": "6f89d868-e92a-450f-8c2c-5fec59cd2a48",
+            "issued": "2024-04-18T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "text/html",
+            "metadata_modified": "2026-07-29T08:03:20.602693",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "package_id": "52e7bce7-8cac-46a0-abc0-11d18823a8e6",
+            "position": 1,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "uri": "https://visualize.admin.ch/en/browse?dataset=https%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fradio_overview",
+            "url": "https://visualize.admin.ch/en/browse?dataset=https%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fradio_overview",
+            "url_type": null
+          }
+        ],
+        "tags": [
+          {
+            "display_name": "angebote-und-organisationen",
+            "id": "89a8a2f0-6e8a-4801-ae6e-e4a213019170",
+            "name": "angebote-und-organisationen",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "media-structure-report",
+            "id": "0aba46c8-1e5b-4fcc-b749-dac44ebf914e",
+            "name": "media-structure-report",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "medien-strukturbericht",
+            "id": "cef7940d-1b7c-4b8b-9cef-bc8bec706db8",
+            "name": "medien-strukturbericht",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "offerte-e-organizzazioni",
+            "id": "36827408-1e58-4c29-88c7-5b33272328b6",
+            "name": "offerte-e-organizzazioni",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "offres-et-organisations",
+            "id": "2dd8922f-0ef5-4032-8331-66b849deea19",
+            "name": "offres-et-organisations",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "radio",
+            "id": "21231e31-bf76-4e5a-be29-f53415575c08",
+            "name": "radio",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "rapport-sur-la-structure-des-medias",
+            "id": "5322e9f8-ba6f-4e31-a7d3-98daa36dc8b7",
+            "name": "rapport-sur-la-structure-des-medias",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "rapporto-sulla-struttura-dei-media",
+            "id": "6b0504b8-24bc-40d0-a7aa-2c5ae9c1f839",
+            "name": "rapporto-sulla-struttura-dei-media",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "services-and-organisations",
+            "id": "28bd0720-f009-4c4f-92a0-23e3a8b2b10a",
+            "name": "services-and-organisations",
+            "state": "active",
+            "vocabulary_id": null
+          }
+        ],
+        "relationships_as_subject": [],
+        "relationships_as_object": []
+      },
+      {
+        "accrual_periodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+        "author": null,
+        "author_email": null,
+        "conforms_to": [],
+        "contact_points": [
+          {
+            "email": "marcel.regnotto@bakom.admin.ch",
+            "name": "Bundesamt für Kommunikation"
+          }
+        ],
+        "coverage": "",
+        "creator_user_id": "0594d621-c92a-4a32-809c-98e281dc7944",
+        "description": {
+          "de": "Suche und Darstellung von Radio- und TV-Sendestationen (UKW, DAB, TV, DVB-T). Anzeige mit Angabe der Standorte, der Sendeleistungen und der Programme/Frequenzen/Kanäle (für Radio/TV). Über die Zusammensetzung der \"Ensembles\" (DAB) und der \"Bouquets\" (DVB-T) geben die Konzessionsnehmerinnen Auskunft: SRG SSR - http://www.broadcast.ch, Tele Rätia - http://www.teleraetia.ch, Valaiscom - http://www.valaiscom.ch.",
+          "fr": "Localisation et visualisation des stations de radio et télévision (OUC, DAB+, TV, TNT). Affichage avec indication de la position, de la puissance d'émission ainsi que des programmes et fréquence/canal d'émission (pour la radio et la TV). Pour la composition des \"Ensembles\" (DAB+) et des \"Bouquets\" (TNT), se référer aux informations fournies par les détenteurs de concessions: SRG SSR - http://www.broadcast.ch, Tele Rätia - http://www.teleraetia.ch, Valaiscom - http://www.valaiscom.ch.",
+          "it": "Localizzazione e rappresentazione delle stazioni emittenti per la radiotelevisione (OUC, DAB, TV, TNT). Avviso con indicazione dell'ubicazione, della potenza di trasmissione e dei programmi per le rispettive frequenze/canali (radio e televisione). Per la compilazione dei pacchetti \"ensemble\" (DAB) e \"bouquet\" (DVB-T), si prega di fare riferimento alle informazioni fornite dai titolari delle concessioni: SSR - http://www.broadcast.ch, Tele Rätia - http://www.teleraetia.ch, Valaiscom - http://www.valaiscom.ch.",
+          "en": "Location and representation of radio and TV transmitter stations (VHF, DAB, TV, DVB-T). Indication with specification of transmitter power and stations/frequencies/channels (for radio/TV). The licensee provides information on the composition of the \"ensembles\" (DAB) and \"bouquets\" (DVB-T): SRG SSR - http://www.broadcast.ch, Tele Rätia - http://www.teleraetia.ch, Valaiscom - http://www.valaiscom.ch."
+        },
+        "display_name": {
+          "de": "Schweizerische Radio- und Fernsehsender",
+          "fr": "Emetteurs de radio et de télévision suisses",
+          "it": "Emittenti radiotelevisive svizzere",
+          "en": "Swiss radio and TV broadcasters"
+        },
+        "id": "4568d440-1608-42e8-834e-31a120042ee5",
+        "identifier": "b92fae28-d12b-4278-8535-1929807341cd@bundesamt-fur-kommunikation-bakom",
+        "isopen": false,
+        "issued": "2014-01-01T00:00:00",
+        "keywords": {
+          "en": [
+            "antenna",
+            "conservation-and-archiving-planning-aap---confederation",
+            "official-geodata",
+            "radio",
+            "television",
+            "utility-and-governmental-services",
+            "fsdi-federal-spatial-data-infrastructure"
+          ],
+          "de": [
+            "antenne",
+            "aufbewahrungs--und-archivierungsplanung-aap---bund",
+            "geobasisdaten",
+            "radio",
+            "fernsehen",
+            "versorgungswirtschaft-und-staatliche-dienste",
+            "bgdi-bundesgeodaten-infrastruktur"
+          ],
+          "fr": [
+            "antenne",
+            "planification-de-la-conservation-et-de-larchivage-aap---confederation",
+            "geodonnees-de-base",
+            "radio",
+            "television",
+            "services-dutilite-publique-et-services-publics",
+            "ifdg-linfrastructure-federale-de-donnees-geographiques"
+          ],
+          "it": [
+            "antenna",
+            "pianificazione-della-conservazione-e-dellarchiviazione-aap---confederazione",
+            "geodati-di-base",
+            "radio",
+            "televisione",
+            "servizi-di-pubblica-utilita-e-servizi-amministrativi",
+            "ifdg-infrastruttura-federale-dei-dati-geografici"
+          ]
+        },
+        "language": [
+          "en",
+          "de",
+          "fr",
+          "it"
+        ],
+        "license_id": null,
+        "license_title": null,
+        "maintainer": null,
+        "maintainer_email": null,
+        "metadata_created": "2019-03-14T14:44:49.789170",
+        "metadata_modified": "2026-07-29T00:51:00.475263",
+        "modified": "",
+        "name": "schweizerische-radio-und-fernsehsender",
+        "num_resources": 5,
+        "num_tags": 0,
+        "organization": {
+          "approval_status": "approved",
+          "created": "2016-01-21T17:23:47.744359",
+          "description": {
+            "fr": "Téléphoner, s’informer par les journaux, la radio ou la télévision, échanger des courriels ou des SMS, surfer sur Internet : autant d’activités quotidiennes qui dépendent d’une infrastructure de communication performante. L’OFCOM contribue à ce que la population et l’économie disposent de services de télécommunication appropriés et compétitifs.\r\nL’office veille à ce que les auditeurs et téléspectateurs puissent s’informer dans leur région, grâce aux diffuseurs régionaux, et au niveau national, par les programmes de la SSR. Il répartit équitablement le produit de la redevance radio et TV entre toutes les régions de Suisse. Dans le domaine postal, il permet aux journaux et périodiques de bénéficier de prix préférentiels.\r\nL’OFCOM gère les fréquences pour que les stations de radio, les téléphones mobiles et les appareils sans fil puissent communiquer sans perturbation.\r\nGrâce à ses activités de surveillance, il participe aussi à la protection des consommateurs : il vérifie que les dispositions légales sont respectées, par exemple en matière de publicité dans les programmes radio et TV, dans le domaine des services à valeur ajoutée proposés par téléphone sur des numéros 090x ou dans l’usage des fréquences.",
+            "en": "Every day we read the paper, pick up the phone, write and send emails and text messages, surf online, listen to the radio and watch TV. In order to be able to use all these services, there has to be a stable and powerful communications infrastructure in place. OFCOM helps to ensure that the population and businesses in all parts of the country have access to adequate and competitive tele-communications services. \r\nOFCOM makes it possible for radio and television users at local level to access regional stations and the SRG’s programmes at national level. It also distributes the revenues from television and radio licence fees fairly among all regions in Switzerland. In the postal sector, OFCOM makes sure that newspapers and magazines benefit from reduced postage rates. It also manages and allocates frequencies for radio stations, mobile and wireless devices to ensure interference-free communication. \r\nOFCOM’s oversight responsibilities include consumer protection. It monitors compliance with statutory provisions for radio and television advertising, value-added services which are offered with 090x numbers and for use of frequencies.",
+            "de": "Telefonieren, sich via Presse, Radio oder Fernsehen informieren, E-Mails oder SMS schreiben und empfangen, im Internet surfen – für diese alltäglichen Tätigkeiten braucht es eine leistungsfähige Kommunikationsinfrastruktur. Das BAKOM trägt dazu bei, dass die Bevölkerung und die Wirtschaft in allen Landesteilen über angemessene und kompetitive Telekommunikationsdienste verfügen. Das Amt ermöglicht, dass sich Radio-und Fernsehnutzer auf lokaler Ebene über regionale Sender und auf nationaler Ebene über die Programme der SRG informieren können. Es verteilt auch die Erträge aus den Radio-und Fernsehgebühren gerecht auf alle Regionen der Schweiz. Im Postbereich sorgt es dafür, dass Zeitungen und Zeitschriften von günstigen Versandkosten profitieren. \r\nWeiter gewährleistet es über die Frequenzverwaltung und -zuteilung für Radio, Mobilfunk und drahtlose Geräte eine störungsfreie Kommunikation. \r\nMit seiner Aufsichtstätigkeit trägt das BAKOM auch zum Schutz der Konsumentinnen und Konsumenten bei: Es überwacht das Einhalten der gesetzlichen Bestimmungen, sei es bei der Radio-und Fernsehwerbung, den Mehrwertdiensten, die über 090x-Nummern angeboten werden, oder bei der Frequenznutzung.",
+            "it": "Ogni giorno parliamo al telefono, ci teniamo informati attraverso la stampa, la radio e la televisione, scriviamo e-mail o SMS e navighiamo in Internet. Per svolgere tutte queste attività occorre un’infrastruttura di comunicazione performante. L’UFCOM contribuisce affinché la popolazione e l’economia dispongano di servizi di telecomunicazione adeguati e competitivi. \r\nL’Ufficio permette ai telespettatori e ai radioascoltatori di informarsi a livello locale, grazie alle emittenti regionali, e a livello nazionale, attraverso i programmi della SSR. Ripartisce equamente i proventi derivanti dai canoni radiotelevisivi tra le regioni della Svizzera. Nel settore postale, offre a giornali e periodici la possibilità di beneficiare di riduzioni sui prezzi di spedizione. \r\nL’UFCOM gestisce le frequenze affinché le stazioni radiofoniche, i telefoni cellulari e gli apparecchi senza fili possano comunicare senza interferenze. \r\nGrazie alla sua attività di vigilanza l’UFCOM contribuisce inoltre alla tutela dei consumatori, verificando il rispetto delle disposizioni legali vigenti, in ambiti quali la pubblicità nei programmi radiotelevisivi, i servizi a valore aggiunto offerti tramite i numeri telefonici 090x o l’utilizzazione delle frequenze."
+          },
+          "display_name": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "id": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+          "image_display_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "image_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "is_organization": true,
+          "name": "bundesamt-fur-kommunikation-bakom",
+          "num_followers": 0,
+          "package_count": 120,
+          "political_level": "confederation",
+          "state": "active",
+          "title": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "type": "organization",
+          "url": "",
+          "tags": [],
+          "groups": []
+        },
+        "owner_org": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+        "private": false,
+        "publisher": {
+          "name": {
+            "de": "Bundesamt für Kommunikation",
+            "fr": "Office Fédéral de la Communication",
+            "it": "Ufficio federale delle comunicaioni",
+            "en": "Federal Office of Communications"
+          },
+          "url": ""
+        },
+        "qualified_relations": [],
+        "relations": [
+          {
+            "label": {
+              "de": "geocat.ch Permalink",
+              "fr": "geocat.ch permalien",
+              "it": "geocat.ch link permanente",
+              "en": "geocat.ch permalink"
+            },
+            "url": "https://www.geocat.ch/datahub/dataset/b92fae28-d12b-4278-8535-1929807341cd"
+          }
+        ],
+        "see_alsos": [],
+        "spatial": "Schweiz",
+        "state": "active",
+        "temporals": [],
+        "title": {
+          "de": "Schweizerische Radio- und Fernsehsender",
+          "fr": "Emetteurs de radio et de télévision suisses",
+          "it": "Emittenti radiotelevisive svizzere",
+          "en": "Swiss radio and TV broadcasters"
+        },
+        "title_for_slug": "schweizerische-radio-und-fernsehsender",
+        "type": "dataset",
+        "url": "https://www.bakom.admin.ch/de/standorte-von-sendeanlagen",
+        "version": null,
+        "groups": [
+          {
+            "description": {
+              "fr": "",
+              "de": "",
+              "en": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "Bildung, Kultur und Sport",
+              "en": "Education, culture and sport",
+              "fr": "Éducation, culture et sport",
+              "it": "Istruzione, cultura e sport"
+            },
+            "id": "b36d9b09-dc05-422c-997e-4e81b02afd6f",
+            "image_display_url": "",
+            "name": "educ",
+            "title": "{\"de\": \"Bildung, Kultur und Sport\", \"en\": \"Education, culture and sport\", \"fr\": \"Éducation, culture et sport\", \"it\": \"Istruzione, cultura e sport\"}"
+          },
+          {
+            "description": {
+              "fr": "",
+              "de": "",
+              "en": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "Energie",
+              "en": "Energy",
+              "fr": "Énergie",
+              "it": "Energia"
+            },
+            "id": "f6a373cb-993f-4a8e-af25-65cdf81e1cab",
+            "image_display_url": "",
+            "name": "ener",
+            "title": "{\"de\": \"Energie\", \"en\": \"Energy\", \"fr\": \"Énergie\", \"it\": \"Energia\"}"
+          },
+          {
+            "description": {
+              "fr": "",
+              "de": "",
+              "en": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "Umwelt",
+              "en": "Environment",
+              "fr": "Environnement",
+              "it": "Ambiente"
+            },
+            "id": "ab2cc387-d129-4d76-b78d-517326d2a772",
+            "image_display_url": "",
+            "name": "envi",
+            "title": "{\"de\": \"Umwelt\", \"en\": \"Environment\", \"fr\": \"Environnement\", \"it\": \"Ambiente\"}"
+          }
+        ],
+        "resources": [
+          {
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2022-06-14T00:17:22.417616",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "de": "Vorschau map.geo.admin.ch",
+              "fr": "Aperçu map.geo.admin.ch",
+              "it": "Previsione map.geo.admin.ch",
+              "en": "Preview map.geo.admin.ch"
+            },
+            "display_name": {
+              "de": "Map (Preview) Vorschau map.geo.admin.ch",
+              "fr": "Map (Preview) Aperçu map.geo.admin.ch",
+              "it": "Map (Preview) Previsione map.geo.admin.ch",
+              "en": "Map (Preview) map.geo.admin.ch"
+            },
+            "format": "SERVICE",
+            "hash": "",
+            "id": "64ed0320-d434-4486-8f66-d462d88b8d1e",
+            "issued": "2014-01-01T00:00:00",
+            "language": [
+              "en",
+              "de",
+              "fr",
+              "it"
+            ],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "",
+            "metadata_modified": "2026-07-29T00:51:00.556815",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "modified": "",
+            "name": {
+              "de": "Map (Preview) Vorschau map.geo.admin.ch",
+              "fr": "Map (Preview) Aperçu map.geo.admin.ch",
+              "it": "Map (Preview) Previsione map.geo.admin.ch",
+              "en": "Map (Preview) map.geo.admin.ch"
+            },
+            "package_id": "4568d440-1608-42e8-834e-31a120042ee5",
+            "position": 0,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "title": {
+              "de": "Map (Preview) Vorschau map.geo.admin.ch",
+              "fr": "Map (Preview) Aperçu map.geo.admin.ch",
+              "it": "Map (Preview) Previsione map.geo.admin.ch",
+              "en": "Map (Preview) map.geo.admin.ch"
+            },
+            "url": "https://map.geo.admin.ch/?layers=ch.bakom.radio-fernsehsender",
+            "url_type": null
+          },
+          {
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2023-03-30T00:15:55.462985",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "de": "WMS-BGDI Dienst, Layer \"Radio- und Fernsehsender\"",
+              "fr": "Service WMS-IFDG, couche \"Emetteurs radio et télévision\"",
+              "it": "Servizio WMS-IFDG, strato \"Emittenti radiotelevisive\"",
+              "en": "WMS-FSDI service, layer \"Radio and TV broadcasters\""
+            },
+            "display_name": {
+              "de": "ch.bakom.radio-fernsehsender",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "format": "WMS",
+            "hash": "",
+            "id": "20fa98ec-0e1d-4055-85c4-9d7dec2d465c",
+            "issued": "2014-01-01T00:00:00",
+            "language": [
+              "en",
+              "de",
+              "fr",
+              "it"
+            ],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "",
+            "metadata_modified": "2026-07-29T00:51:00.556991",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "modified": "",
+            "name": {
+              "de": "ch.bakom.radio-fernsehsender",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "package_id": "4568d440-1608-42e8-834e-31a120042ee5",
+            "position": 1,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "title": {
+              "de": "ch.bakom.radio-fernsehsender",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "url": "https://wms.geo.admin.ch/?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities&lang=de",
+            "url_type": null
+          },
+          {
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-06-23T00:47:26.761125",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "de": "Link zu Detailbeschreibung",
+              "fr": "Lien vers la description détaillée des données",
+              "it": "Link per la descrizione dei dettagli",
+              "en": "Link to detailed description"
+            },
+            "display_name": {
+              "de": "",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "format": "HTML",
+            "hash": "",
+            "id": "1073a19f-a7bf-41d6-b71f-449602b1dc6d",
+            "issued": "2014-01-01T00:00:00",
+            "language": [
+              "en",
+              "de",
+              "fr",
+              "it"
+            ],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "text/html",
+            "metadata_modified": "2026-07-29T00:51:00.557068",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "modified": "",
+            "name": {
+              "de": "",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "package_id": "4568d440-1608-42e8-834e-31a120042ee5",
+            "position": 2,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "title": {
+              "de": "",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "url": "https://www.bakom.admin.ch/de/standorte-von-sendeanlagen",
+            "url_type": null
+          },
+          {
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2023-01-25T00:16:11.203849",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "de": "Download von data.geo.admin.ch",
+              "fr": "Serveur de téléchargement de geo.admin.ch",
+              "it": "Server di download di geo.admin.ch",
+              "en": "Download server from geo.admin.ch"
+            },
+            "display_name": {
+              "de": "",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "download_url": "https://data.geo.admin.ch/browser/index.html#/collections/ch.bakom.radio-fernsehsender",
+            "format": "HTML",
+            "hash": "",
+            "id": "0c237bc8-fb77-4a2f-9270-2067700116c3",
+            "issued": "2014-01-01T00:00:00",
+            "language": [
+              "en",
+              "de",
+              "fr",
+              "it"
+            ],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "text/html",
+            "metadata_modified": "2026-07-29T00:51:00.557138",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "modified": "",
+            "name": {
+              "de": "",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "package_id": "4568d440-1608-42e8-834e-31a120042ee5",
+            "position": 3,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "title": {
+              "de": "",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "url": "https://data.geo.admin.ch/browser/index.html#/collections/ch.bakom.radio-fernsehsender",
+            "url_type": null
+          },
+          {
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2022-06-14T00:17:22.417626",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "de": "RESTful API von geo.admin.ch",
+              "fr": "RESTful API de geo.admin.ch",
+              "it": "RESTful API da geo.admin.ch",
+              "en": "RESTful API from geo.admin.ch"
+            },
+            "display_name": {
+              "de": "RESTful API von geo.admin.ch",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "format": "API",
+            "hash": "",
+            "id": "b32e96f9-9c04-474f-a309-2de09819cd77",
+            "issued": "2014-01-01T00:00:00",
+            "language": [
+              "en",
+              "de",
+              "fr",
+              "it"
+            ],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "",
+            "metadata_modified": "2026-07-29T00:51:00.557207",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "modified": "",
+            "name": {
+              "de": "RESTful API von geo.admin.ch",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "package_id": "4568d440-1608-42e8-834e-31a120042ee5",
+            "position": 4,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "title": {
+              "de": "RESTful API von geo.admin.ch",
+              "fr": "",
+              "it": "",
+              "en": ""
+            },
+            "url": "https://api3.geo.admin.ch/rest/services/api/MapServer/ch.bakom.radio-fernsehsender",
+            "url_type": null
+          }
+        ],
+        "tags": [],
+        "relationships_as_subject": [],
+        "relationships_as_object": [],
+        "extras": [
+          {
+            "key": "harvest_object_id",
+            "value": "3a4779d1-dbc7-41ed-87d6-5c0b266418f8"
+          },
+          {
+            "key": "harvest_source_id",
+            "value": "86b822b0-b6cb-4268-8321-35f794d1b7c9"
+          },
+          {
+            "key": "harvest_source_title",
+            "value": "BAKOM - Geocat Harvester"
+          }
+        ]
+      },
+      {
+        "accrual_periodicity": "",
+        "author": null,
+        "author_email": null,
+        "conforms_to": [],
+        "contact_points": [
+          {
+            "email": "m@bakom.admin.ch",
+            "name": "BAKOM | OFCOM | UFCOM"
+          }
+        ],
+        "creator_user_id": "af084126-f711-4016-a585-70354e997796",
+        "description": {
+          "fr": "Cet ensemble de données contient des informations sur les thèmes principaux des programmes radio déclarés. Les données proviennent de la banque de données RTV gérée par l'OFCOM. Le thème principal a été déduit de la déclaration du programme et codé manuellement.",
+          "it": "Questo set di dati contiene informazioni sui temi principali dei programmi radiofonici segnalati. I dati provengono dalla banca dati RTV gestita dall'UFCOM. Il tema principale è stato ricavato dall'autodichiarazione della descrizione del programma e codificato manualmente.",
+          "en": "This data set contains information on the main topics of the reported radio programs. The data comes from the RTV database maintained by OFCOM. The main topic was derived from the self-declaration in the programme description and coded manually.",
+          "de": "Dieser Datensatz beinhaltet Angaben zu den Themenschwerpunkten der gemeldeten Radioprogrammen. Die Daten stammen aus der RTV Datenbank, geführt vom BAKOM. Der Themenschwerpunkt wurde aus der Selbstdeklaration des Programmbeschriebs abgeleitet und manuell codiert."
+        },
+        "display_name": {
+          "de": "Themenschwerpunkte meldepflichtiger Radioprogramme",
+          "fr": "Priorités thématiques des radios soumises à l'obligation d'annoncer",
+          "it": "Priorità tematiche dei programmi radiofonici soggetti all'obbligo di notifica",
+          "en": "Thematic focus of notifiable radio stations"
+        },
+        "documentation": [],
+        "id": "b8e93a1a-afd8-418a-ad33-68816988f5ac",
+        "identifier": "notified_radio_programs_thematic_orientation@bundesamt-fur-kommunikation-bakom",
+        "isopen": false,
+        "issued": "2024-09-30T00:00:00",
+        "keywords": {
+          "en": [
+            "media-structure-report",
+            "content",
+            "radio"
+          ],
+          "de": [
+            "medien-strukturbericht",
+            "inhalte",
+            "radio"
+          ],
+          "fr": [
+            "rapport-sur-la-structure-des-medias",
+            "contenus",
+            "radio"
+          ],
+          "it": [
+            "rapporto-sulla-struttura-dei-media",
+            "contenuti",
+            "radio"
+          ]
+        },
+        "language": [],
+        "license_id": null,
+        "license_title": null,
+        "maintainer": null,
+        "maintainer_email": null,
+        "metadata_created": "2025-11-20T02:18:14.594819",
+        "metadata_modified": "2026-07-29T08:04:04.895542",
+        "modified": "2026-01-20T08:01:09.450000+00:00",
+        "name": "themenschwerpunkte-meldepflichtiger-radioprogramme",
+        "num_resources": 2,
+        "num_tags": 9,
+        "organization": {
+          "approval_status": "approved",
+          "created": "2016-01-21T17:23:47.744359",
+          "description": {
+            "fr": "Téléphoner, s’informer par les journaux, la radio ou la télévision, échanger des courriels ou des SMS, surfer sur Internet : autant d’activités quotidiennes qui dépendent d’une infrastructure de communication performante. L’OFCOM contribue à ce que la population et l’économie disposent de services de télécommunication appropriés et compétitifs.\r\nL’office veille à ce que les auditeurs et téléspectateurs puissent s’informer dans leur région, grâce aux diffuseurs régionaux, et au niveau national, par les programmes de la SSR. Il répartit équitablement le produit de la redevance radio et TV entre toutes les régions de Suisse. Dans le domaine postal, il permet aux journaux et périodiques de bénéficier de prix préférentiels.\r\nL’OFCOM gère les fréquences pour que les stations de radio, les téléphones mobiles et les appareils sans fil puissent communiquer sans perturbation.\r\nGrâce à ses activités de surveillance, il participe aussi à la protection des consommateurs : il vérifie que les dispositions légales sont respectées, par exemple en matière de publicité dans les programmes radio et TV, dans le domaine des services à valeur ajoutée proposés par téléphone sur des numéros 090x ou dans l’usage des fréquences.",
+            "en": "Every day we read the paper, pick up the phone, write and send emails and text messages, surf online, listen to the radio and watch TV. In order to be able to use all these services, there has to be a stable and powerful communications infrastructure in place. OFCOM helps to ensure that the population and businesses in all parts of the country have access to adequate and competitive tele-communications services. \r\nOFCOM makes it possible for radio and television users at local level to access regional stations and the SRG’s programmes at national level. It also distributes the revenues from television and radio licence fees fairly among all regions in Switzerland. In the postal sector, OFCOM makes sure that newspapers and magazines benefit from reduced postage rates. It also manages and allocates frequencies for radio stations, mobile and wireless devices to ensure interference-free communication. \r\nOFCOM’s oversight responsibilities include consumer protection. It monitors compliance with statutory provisions for radio and television advertising, value-added services which are offered with 090x numbers and for use of frequencies.",
+            "de": "Telefonieren, sich via Presse, Radio oder Fernsehen informieren, E-Mails oder SMS schreiben und empfangen, im Internet surfen – für diese alltäglichen Tätigkeiten braucht es eine leistungsfähige Kommunikationsinfrastruktur. Das BAKOM trägt dazu bei, dass die Bevölkerung und die Wirtschaft in allen Landesteilen über angemessene und kompetitive Telekommunikationsdienste verfügen. Das Amt ermöglicht, dass sich Radio-und Fernsehnutzer auf lokaler Ebene über regionale Sender und auf nationaler Ebene über die Programme der SRG informieren können. Es verteilt auch die Erträge aus den Radio-und Fernsehgebühren gerecht auf alle Regionen der Schweiz. Im Postbereich sorgt es dafür, dass Zeitungen und Zeitschriften von günstigen Versandkosten profitieren. \r\nWeiter gewährleistet es über die Frequenzverwaltung und -zuteilung für Radio, Mobilfunk und drahtlose Geräte eine störungsfreie Kommunikation. \r\nMit seiner Aufsichtstätigkeit trägt das BAKOM auch zum Schutz der Konsumentinnen und Konsumenten bei: Es überwacht das Einhalten der gesetzlichen Bestimmungen, sei es bei der Radio-und Fernsehwerbung, den Mehrwertdiensten, die über 090x-Nummern angeboten werden, oder bei der Frequenznutzung.",
+            "it": "Ogni giorno parliamo al telefono, ci teniamo informati attraverso la stampa, la radio e la televisione, scriviamo e-mail o SMS e navighiamo in Internet. Per svolgere tutte queste attività occorre un’infrastruttura di comunicazione performante. L’UFCOM contribuisce affinché la popolazione e l’economia dispongano di servizi di telecomunicazione adeguati e competitivi. \r\nL’Ufficio permette ai telespettatori e ai radioascoltatori di informarsi a livello locale, grazie alle emittenti regionali, e a livello nazionale, attraverso i programmi della SSR. Ripartisce equamente i proventi derivanti dai canoni radiotelevisivi tra le regioni della Svizzera. Nel settore postale, offre a giornali e periodici la possibilità di beneficiare di riduzioni sui prezzi di spedizione. \r\nL’UFCOM gestisce le frequenze affinché le stazioni radiofoniche, i telefoni cellulari e gli apparecchi senza fili possano comunicare senza interferenze. \r\nGrazie alla sua attività di vigilanza l’UFCOM contribuisce inoltre alla tutela dei consumatori, verificando il rispetto delle disposizioni legali vigenti, in ambiti quali la pubblicità nei programmi radiotelevisivi, i servizi a valore aggiunto offerti tramite i numeri telefonici 090x o l’utilizzazione delle frequenze."
+          },
+          "display_name": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "id": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+          "image_display_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "image_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "is_organization": true,
+          "name": "bundesamt-fur-kommunikation-bakom",
+          "num_followers": 0,
+          "package_count": 120,
+          "political_level": "confederation",
+          "state": "active",
+          "title": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "type": "organization",
+          "url": "",
+          "tags": [],
+          "groups": []
+        },
+        "owner_org": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+        "private": false,
+        "publisher": {
+          "url": "https://opendata.swiss/organization/bundesamt-fur-kommunikation-bakom",
+          "name": "RTV Datenbank (BAKOM)"
+        },
+        "qualified_relations": [],
+        "relations": [],
+        "see_alsos": [],
+        "spatial": "",
+        "state": "active",
+        "temporals": [
+          {
+            "end_date": "2024-12-31T23:59:59.999999",
+            "start_date": "2015-01-01T00:00:00"
+          }
+        ],
+        "title": {
+          "de": "Themenschwerpunkte meldepflichtiger Radioprogramme",
+          "fr": "Priorités thématiques des radios soumises à l'obligation d'annoncer",
+          "it": "Priorità tematiche dei programmi radiofonici soggetti all'obbligo di notifica",
+          "en": "Thematic focus of notifiable radio stations"
+        },
+        "title_for_slug": "themenschwerpunkte-meldepflichtiger-radioprogramme",
+        "type": "dataset",
+        "url": "",
+        "version": null,
+        "extras": [
+          {
+            "key": "guid",
+            "value": "notified_radio_programs_thematic_orientation@bundesamt-fur-kommunikation-bakom"
+          },
+          {
+            "key": "uri",
+            "value": "https://communication.ld.admin.ch/ofcom/notified_radio_programs_thematic_orientation/6"
+          },
+          {
+            "key": "harvest_object_id",
+            "value": "64bb3ab9-d162-494e-b46b-f0a353645118"
+          },
+          {
+            "key": "harvest_source_id",
+            "value": "38f48174-6f38-4f82-a182-dc85bb901637"
+          },
+          {
+            "key": "harvest_source_title",
+            "value": "LINDAS DCAT Harvester BAKOM"
+          }
+        ],
+        "groups": [
+          {
+            "description": {
+              "fr": "",
+              "de": "",
+              "en": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "Bildung, Kultur und Sport",
+              "en": "Education, culture and sport",
+              "fr": "Éducation, culture et sport",
+              "it": "Istruzione, cultura e sport"
+            },
+            "id": "b36d9b09-dc05-422c-997e-4e81b02afd6f",
+            "image_display_url": "",
+            "name": "educ",
+            "title": "{\"de\": \"Bildung, Kultur und Sport\", \"en\": \"Education, culture and sport\", \"fr\": \"Éducation, culture et sport\", \"it\": \"Istruzione, cultura e sport\"}"
+          }
+        ],
+        "resources": [
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-01-20T09:21:34.155837",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "SPARQL",
+            "hash": "",
+            "id": "b271c1a5-925a-4a99-9b8a-910fba7e84f7",
+            "issued": "2024-09-30T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "application/sparql-query",
+            "metadata_modified": "2026-07-29T08:04:04.907127",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "package_id": "b8e93a1a-afd8-418a-ad33-68816988f5ac",
+            "position": 0,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "uri": "https://lindas.admin.ch/sparql#query=PREFIX+schema%3A+%3Chttp%3A%2F%2Fschema.org%2F%3E%0A%0ADESCRIBE+%3Fcube%0A%0AFROM+%3Chttps%3A%2F%2Flindas.admin.ch%2Fofcom%2Fcube%3E%0AWHERE+%7B%0A%0A++++++%3Chttps%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fnotified_radio_programs_thematic_orientation%3E+schema%3AhasPart+%3Fcube+.%0A++++++%3Fcube+schema%3Aversion+6+.%0A++++%0A%7D%0A%0A&endpoint=https%3A%2F%2Flindas.admin.ch%2Fquery",
+            "url": "https://lindas.admin.ch/sparql#query=PREFIX+schema%3A+%3Chttp%3A%2F%2Fschema.org%2F%3E%0A%0ADESCRIBE+%3Fcube%0A%0AFROM+%3Chttps%3A%2F%2Flindas.admin.ch%2Fofcom%2Fcube%3E%0AWHERE+%7B%0A%0A++++++%3Chttps%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fnotified_radio_programs_thematic_orientation%3E+schema%3AhasPart+%3Fcube+.%0A++++++%3Fcube+schema%3Aversion+6+.%0A++++%0A%7D%0A%0A&endpoint=https%3A%2F%2Flindas.admin.ch%2Fquery",
+            "url_type": null
+          },
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2025-11-20T02:18:14.614593",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "HTML",
+            "hash": "",
+            "id": "e4062332-bb79-400d-a230-88fe39af9266",
+            "issued": "2024-09-30T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "text/html",
+            "metadata_modified": "2026-07-29T08:04:04.907272",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "package_id": "b8e93a1a-afd8-418a-ad33-68816988f5ac",
+            "position": 1,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "uri": "https://visualize.admin.ch/en/browse?dataset=https%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fnotified_radio_programs_thematic_orientation",
+            "url": "https://visualize.admin.ch/en/browse?dataset=https%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fnotified_radio_programs_thematic_orientation",
+            "url_type": null
+          }
+        ],
+        "tags": [
+          {
+            "display_name": "content",
+            "id": "7a4f7c4b-ba51-4d5c-8c64-8d91e68f2de1",
+            "name": "content",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "contenus",
+            "id": "94bce6dc-4567-4379-80ca-f8abdabba85d",
+            "name": "contenus",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "contenuti",
+            "id": "f2e72b96-4526-4e03-ac1e-b48590fb60ab",
+            "name": "contenuti",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "inhalte",
+            "id": "f59fc0e5-72b4-4ee5-a0c3-adf62d2d0dcd",
+            "name": "inhalte",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "media-structure-report",
+            "id": "0aba46c8-1e5b-4fcc-b749-dac44ebf914e",
+            "name": "media-structure-report",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "medien-strukturbericht",
+            "id": "cef7940d-1b7c-4b8b-9cef-bc8bec706db8",
+            "name": "medien-strukturbericht",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "radio",
+            "id": "21231e31-bf76-4e5a-be29-f53415575c08",
+            "name": "radio",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "rapport-sur-la-structure-des-medias",
+            "id": "5322e9f8-ba6f-4e31-a7d3-98daa36dc8b7",
+            "name": "rapport-sur-la-structure-des-medias",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "rapporto-sulla-struttura-dei-media",
+            "id": "6b0504b8-24bc-40d0-a7aa-2c5ae9c1f839",
+            "name": "rapporto-sulla-struttura-dei-media",
+            "state": "active",
+            "vocabulary_id": null
+          }
+        ],
+        "relationships_as_subject": [],
+        "relationships_as_object": []
+      }
+    ],
+    "sort": "score desc, metadata_modified desc",
+    "search_facets": {}
+  }
+}

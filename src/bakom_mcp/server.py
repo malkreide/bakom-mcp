@@ -442,8 +442,12 @@ class TelekomStatInput(BaseModel):
     thema: str = Field(
         default="breitband",
         description=(
-            "Statistikthema: 'breitband', 'mobilfunk', 'festnetz', "
-            "'marktanteile', 'haushaltszugang'"
+            "Suchwort fuer die Volltextsuche im BAKOM-Datensatzkatalog. Der "
+            "Katalog kennt keine Themen-Facette und zerlegt keine Komposita: "
+            "'mobilfunk' findet nichts, 'mobilfunkanlagen' und '5g' schon. "
+            "Ergiebig sind (Treffer am 2026-08-15): 'medien' 61, '5g' 38, "
+            "'festnetz' 36, 'radio' 31, 'fernsehen' 26, 'marktanteile' 3, "
+            "'breitband' 1."
         ),
         max_length=50,
     )
@@ -557,6 +561,27 @@ async def _opendata_dataset_info(client: httpx.AsyncClient, dataset_id: str) -> 
     r = await client.get(url, params={"id": dataset_id}, timeout=TIMEOUT)
     r.raise_for_status()
     return r.json()
+
+
+def _ckan_de(wert: Any) -> str:
+    """Liest ein mehrsprachiges CKAN-Feld auf Deutsch.
+
+    opendata.swiss liefert Titel und Beschreibung als Sprach-Dict
+    ({"de": …, "fr": …, "it": …, "en": …}), nicht als Zeichenkette; einzelne
+    Sprachen koennen leer sein. Diese Funktion nimmt beide Formen entgegen und
+    gibt immer eine Zeichenkette zurueck.
+
+    Sie ist auch der Ort, an dem der Feldname steht. Der Katalog nennt die
+    Beschreibung `description`; das aus dem CKAN-Kern gewohnte `notes` gibt es
+    dort nicht. Vier Werkzeuge lasen `notes` und lieferten deshalb zu jedem
+    Datensatz eine leere Beschreibung — in allen aufgezeichneten Antworten vom
+    2026-08-15 kommt `notes` kein einziges Mal vor, `description` in jeder
+    Zeile. Die Suite blieb dabei gruen, weil die handgeschriebenen Stubs
+    denselben Namen annahmen wie der Code.
+    """
+    if isinstance(wert, dict):
+        return str(wert.get("de") or "")
+    return str(wert or "")
 
 
 def _point_to_envelope(east: float, north: float, tolerance: int = 100) -> str:
@@ -1356,9 +1381,9 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
             datasets = ckan_data.get("result", {}).get("results", [])
             resultate = [
                 {
-                    "name": ds.get("title", {}).get("de", ds.get("name", "")),
+                    "name": _ckan_de(ds.get("title")) or ds.get("name", ""),
                     "typ": "Datensatz",
-                    "beschreibung": ds.get("notes", {}).get("de", ""),
+                    "beschreibung": _ckan_de(ds.get("description")),
                     "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
                 }
                 for ds in datasets
@@ -1495,14 +1520,12 @@ async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> s
 
             datensaetze = []
             for ds in datasets:
-                titel = ds.get("title", {})
-                titel_de = titel.get("de") if isinstance(titel, dict) else str(titel)
-                notes = ds.get("notes", {})
-                notes_de = notes.get("de") if isinstance(notes, dict) else str(notes)
+                titel_de = _ckan_de(ds.get("title"))
+                notes_de = _ckan_de(ds.get("description"))
                 datensaetze.append(
                     {
                         "titel": titel_de or ds.get("name", ""),
-                        "beschreibung": (notes_de or "")[:200],
+                        "beschreibung": notes_de[:200],
                         "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
                         "aktualisiert": ds.get("metadata_modified", ""),
                     }
@@ -1609,16 +1632,12 @@ async def bakom_aktuell(params: TelekomStatInput, ctx: Context) -> str:
 
             datensaetze = []
             for ds in treffer:
-                titel = ds.get("title", {})
-                titel_de = titel.get("de") if isinstance(titel, dict) else str(titel)
-                beschreibung = ds.get("notes", {})
+                titel_de = _ckan_de(ds.get("title"))
                 datensaetze.append(
                     {
                         "titel": titel_de or ds.get("name", ""),
                         "aktualisiert": ds.get("metadata_modified", "")[:10],
-                        "beschreibung": (
-                            beschreibung.get("de", "") if isinstance(beschreibung, dict) else ""
-                        ),
+                        "beschreibung": _ckan_de(ds.get("description")),
                         "url": f"https://opendata.swiss/de/dataset/{ds.get('name', '')}",
                     }
                 )
@@ -1731,10 +1750,8 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput, ctx: Conte
 
             datensaetze = []
             for ds in datasets:
-                titel = ds.get("title", {})
-                titel_de = titel.get("de") if isinstance(titel, dict) else str(titel)
-                notes = ds.get("notes", {})
-                notes_de = notes.get("de") if isinstance(notes, dict) else str(notes)
+                titel_de = _ckan_de(ds.get("title"))
+                notes_de = _ckan_de(ds.get("description"))
 
                 # Ressourcen-URLs extrahieren
                 ressourcen = []
@@ -1742,9 +1759,7 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput, ctx: Conte
                     ressourcen.append(
                         {
                             "format": res.get("format", ""),
-                            "name": res.get("name", {}).get("de")
-                            if isinstance(res.get("name"), dict)
-                            else str(res.get("name", "")),
+                            "name": _ckan_de(res.get("name")),
                             "url": res.get("url", ""),
                         }
                     )
