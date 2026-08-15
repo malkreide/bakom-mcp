@@ -1,0 +1,1181 @@
+{
+  "head": {
+    "vars": [
+      "name",
+      "version",
+      "any"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Anteil der Abgabe am Ertrag der SRG"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "11"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/srg_revenue_structure/11"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Anteil der Abgabe am Ertrag der SRG SSR"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "8"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/srg_revenue_detailed/6"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Anzahl Beiträge nach Pressetyp"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "4"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/print_content_amount_articles/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Anzahl Minuten relevanter Regionalinformation der konzessionierten Regionalfernsehen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "9"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/licensed_tv_minutes_regional_information/5"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Anzahl Minuten relevanter Regionalinformation der konzessionierten kommerziellen Lokalradios"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "3"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/licensed_radio_minutes_regional_information_test/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Anzahl Radioprogramme nach Sendergruppe"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "15"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/radio_overview_broadcastinggroup/14"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Beitragslänge der Artikel nach Pressetyp"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "3"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/print_content_length_articles/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Dauer der Nutzung von Online-Angeboten nach Alter"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "5"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/online-media_usage_duration_age/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Durchschnittliche Einnahmen aus Werbung und Sponsoring von konzessionierten Lokalradios"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/commercial_radios_with_proportion_of_reception_fees_advertising_revenue/6"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Durchschnittliche Lesedauer pro Ausgabe nach Pressetyp"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/print_usage_reading-duration/5"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Durchschnittliche monatliche Reichweite von Online-Angeboten nach Alter"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "9"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/online-media_usage_reach_age/5"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Durchschnittlicher Verkaufspreis einer Ausgabe nach Pressetyp"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/press_retail_price/7"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Durchschnittlicher Zeitungsumfang nach Pressetyp"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "4"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/print_average_length/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Ertrag der Printmedien aus Werbung und Einzelverkauf"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/print_sales_advertising/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Ertrag der SRG"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "3"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/srg_revenue_detailed/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Ertragsstruktur der konzessionierten Lokalradios"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "4"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/licensed_local_radio_stations_revenue_structure/4"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Ertragsstruktur der konzessionierten Regionalfernsehen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "3"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/regionaltvrevenuestructure/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Fernsehprogramme der SRG: Nettoreichweite in der jeweiligen Sprachregion"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "10"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/tv_srg_reach_language_region/10"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Finanzierung durch Werbeeinnahmen von konzessionierten Regionalfernsehen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "4"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/commercial_tv_with_proportion_of_reception_fees_advertising_revenue/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Inhalte von Online-Medienangeboten"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "10"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/online-media_topic_structure/10"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Jährliche Nettowerbeeinnahmen publizistischer Medien"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "8"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/advertising_revenue_per_media_genre/5"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Marktanteile Fernsehmarkt nach Sendergruppe"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "5"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/tv_market_share_language_region/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Marktanteile Radiomarkt nach Sendergruppe"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/radio_market_share/4"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Marktanteile der Sendegruppen im Sprachregionsvergleich (2015-2022)"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/tv_market_share_language_region/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Marktanteile der Sendergruppen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/tv_market_share/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Marktanteile der Sendergruppen im Altersvergleich "
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/tv_market_share/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Meinungsmacht von Medienkonzernen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/6"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Monatliche Reichweite der zehn reichweitenstärksten Online-Angebote"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "4"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/online-media_website_reach_ranking/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Nettoreichweite des Mediums Fernsehen nach Alter"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/tv_reach_age/4"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Nettowerbeeinnahmen nach Pressetyp"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "9"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/advertising_revenue_press_types/5"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Nutzung von Fernsehangeboten in der Schweiz"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "8"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/tv_usage_switzerland/4"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Nutzung von Radioangeboten in der Schweiz"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "13"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/radio_usage_switzerland/8"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Online-Display-Werbeeinnahmen nach Publikationsart"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "10"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/online-media_display_advertising_revenue/10"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Progammstruktur von Fernsehprogrammen der SRG"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/srg_tv_program_structure/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Programmanalyse SRG Fernsehprogramme"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "12"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/programme_analysis_srg_tv/12"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Programmanalyse der Schweizer Privatradios mit Leistungsauftrag"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "11"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/programme_analysis_private_radios/9"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Programmanalyse der Schweizer Regionalfernsehen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/programme_analysis_regional_tv/5"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Programmanalysen SRG Online-Angebote"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/programme_analysis_srg_online/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Programmanalysen SRG-Radios"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "11"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/programme_analyses_SRG-SSR_radios/11"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Programmstruktur von Radioprogrammen der SRG"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "13"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/radio_srg_program_structure/11"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Programmstruktur von konzessionierten Lokalradios mit und ohne Abgabenanteil"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/commercial_radios_with_and_without_proportion_of_reception_fees_program_structure/7"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Programmstruktur von konzessionierten Regionalfernsehen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/commercial_tv_with_proportion_of_reception_fees_program_structure/4"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Publikumsbefragung elektronische Medien"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/public_survey_electronic_media_iakom/4"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Reichweite der Pressetypen nach Alter"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "8"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/print_usage_reach_age/6"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Reichweite der Radioprogramme der SRG nach Alter"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/radio_srg_reach/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Reichweite der Regionalfernsehen im Konzessionsgebiet"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "8"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/regional_tv_with_proportion_of_reception_fees_reach/8"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Reichweite der konzessionierten Lokalradios im Konzessionsgebiet nach Alter"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/commercial_radios_with_and_without_proportion_of_reception_fees_reach/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Reichweite der konzessionierten Lokalradios mit Abgabenanteil im Konzessionsgebiet nach Alter"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "10"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/commercial_radios_with_proportion_of_reception_fees_reach/10"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Reichweite der konzessionierten Lokalradios ohne Abgabenanteil im Konzessionsgebiet"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "8"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/commercial_radios_without_proportion_of_reception_fees_reach/5"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Reichweite der zehn reichweitenstärksten Printmedienangebote"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "4"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/print_reach_ranking/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Reichweite des Medium Radio nach Alter"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/radio_reach_age/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Reichweitenkonzentration nach Webseite-Kontrolleuren"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "4"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/online-media_website_reach_control/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "SRG: Ertragsstruktur"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/srg_revenue_structure/5"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Schätzung Werbeeinnahmen Plattformen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/estimation_advertising_revenue_online/5"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Struktur des publizistischen Angebots von SRG-Online"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/online-media_srg_topic_structure/6"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Themenschwerpunkte meldepflichtiger Fernsehprogramme"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "5"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/notified_tv_programs_thematic_orientation/4"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Themenschwerpunkte meldepflichtiger Radioprogramme"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/notified_radio_programs_thematic_orientation/4"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Themenstruktur der Berichterstattung nach Pressetyp"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "4"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/print_content_topics/3"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Themenstruktur der Informationsbeiträge von Fernsehprogrammen der SRG"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "4"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/srg_tv_topic_structure/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Themenstruktur der Informationsbeiträge von Radioprogrammen der SRG"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/radio_srg_topic_structure/7"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Themenstruktur der Informationsbeiträge von konzessionierten Lokalradios mit und ohne Abgabenanteil"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "8"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/commercial_radios_with_and_without_proportion_of_reception_fees_topic_structure/8"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Themenstruktur der Informationsbeiträge von konzessionierten Regionalfernsehen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/commercial_tv_with_proportion_of_reception_fees_topic_structure/6"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Typen der Online-Medienangebote"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "9"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/online-media_genre_offer/9"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Werbeeinnahmen Fernsehveranstalter"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "10"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/tv_programs_advertising_revenue/10"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Übersicht der Eigentumsverhältnisse nach Mediengattung"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "2"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/ownership_structure_all_media/2"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Übersicht der Eigentumsverhältnisse von Online-Medienangeboten"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/online_media_offerings_ownership_structure/7"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Übersicht der Eigentumsverhältnisse von Printmedienangeboten"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "8"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/print_ownership_structure/8"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Übersicht der Eigentumsverhältnisse von gemeldeten Fernsehprogrammen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "10"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/notified_tv_programs_ownership_structure/10"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Übersicht der Eigentumsverhältnisse von gemeldeten Radioprogrammen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "9"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/notified_tv_programs_ownership_structure/9"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Übersicht der Fernsehangebote in der Schweiz"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "12"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/tv_programs_switzerland/12"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Übersicht der Geschäftsmodelle von Online-Medienangeboten"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "7"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/online-media_business_model/7"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Übersicht der Printmedienangebote in der Schweiz"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "11"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/print_media_offerings/11"
+        }
+      },
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Übersicht der Radioangebote in der Schweiz"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "13"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/radio_overview/13"
+        }
+      }
+    ]
+  }
+}

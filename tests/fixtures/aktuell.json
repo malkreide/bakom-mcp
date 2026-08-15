@@ -1,0 +1,1199 @@
+{
+  "help": "https://ckan.opendata.swiss/api/3/action/help_show?name=package_search",
+  "success": true,
+  "result": {
+    "count": 61,
+    "facets": {},
+    "results": [
+      {
+        "accrual_periodicity": "",
+        "author": null,
+        "author_email": null,
+        "conforms_to": [],
+        "contact_points": [
+          {
+            "email": "m@bakom.admin.ch",
+            "name": "BAKOM | OFCOM | UFCOM"
+          }
+        ],
+        "creator_user_id": "af084126-f711-4016-a585-70354e997796",
+        "description": {
+          "de": "Dieses Datenpaket enthält Informationen zur Medienausstattung, Mediennutzung sowie zur Bewertung der Qualität elektronischer Medien durch die Schweizer Bevölkerung (Radio, Fernsehen und Online-Angebote).  Die Analyse basiert auf einer repräsentativen Erhebung, die jährlich durchgeführt wird und Vergleiche über mehrere Jahre hinweg ermöglicht. Untersucht werden sowohl strukturelle Aspekte wie Medienausstattung und Zugriffsmöglichkeiten als auch Verhaltensweisen der Mediennutzung sowie die Prioritäten bei der Informationssuche und die Bewertung der genutzten Medienangebote entlang zentraler Qualitätsdimensionen (u. a. Professionalität, Informationsgehalt, Ausgewogenheit und Glaubwürdigkeit).  Die vorliegenden Daten stellen eine Auswahl zentraler Indikatoren der Untersuchung dar. Die Studie wurde bis 2022 im Auftrag des Bundesamts für Kommunikation durch das Institut für angewandte Kommunikationsforschung (IaKom) in Zusammenarbeit mit DemoSCOPE durchgeführt.",
+          "fr": "Ce jeu de données contient des informations sur l’équipement médiatique, l’utilisation des médias ainsi que l’évaluation de la qualité des médias électroniques par la population suisse (radio, télévision et offres en ligne).  L’analyse repose sur une enquête représentative réalisée chaque année, permettant des comparaisons sur plusieurs années. Sont examinés tant les aspects structurels tels que l’équipement médiatique et les possibilités d’accès que les comportements d’utilisation des médias, ainsi que les priorités dans la recherche d’information et l’évaluation des offres médiatiques utilisées selon des dimensions de qualité centrales (notamment professionnalisme, contenu informatif, équilibre et crédibilité).  Les données présentées constituent une sélection d’indicateurs centraux de l’étude. L’étude a été réalisée jusqu’en 2022 pour le compte de l’Office fédéral de la communication par l’Institut für angewandte Kommunikationsforschung (IaKom) en collaboration avec DemoSCOPE.",
+          "it": "Questo dataset contiene informazioni sulla dotazione mediatica, sull’utilizzo dei media e sulla valutazione della qualità dei media elettronici da parte della popolazione svizzera (radio, televisione e offerte online).  L’analisi si basa su un’indagine rappresentativa condotta annualmente, che consente confronti su più anni. Vengono analizzati sia gli aspetti strutturali, come la dotazione mediatica e le possibilità di accesso, sia i comportamenti di utilizzo dei media, nonché le priorità nella ricerca di informazioni e la valutazione delle offerte mediatiche utilizzate secondo dimensioni centrali di qualità (tra cui professionalità, contenuto informativo, equilibrio e credibilità).  I dati presentati rappresentano una selezione di indicatori centrali dello studio. Lo studio è stato realizzato fino al 2022 su mandato dell’Ufficio federale delle comunicazioni dall’Istituto per la ricerca applicata sulla comunicazione (IaKom) in collaborazione con DemoSCOPE.",
+          "en": "This dataset contains information on media equipment, media use and the evaluation of the quality of electronic media by the Swiss population (radio, television and online services).  The analysis is based on a representative survey conducted annually, allowing comparisons over several years. Both structural aspects such as media equipment and access possibilities, as well as media usage behaviour, priorities in information seeking and the evaluation of media services used along key quality dimensions (including professionalism, informational content, balance and credibility), are examined.  The data presented represent a selection of key indicators of the study. The study was conducted until 2022 on behalf of the Federal Office of Communications by the Institute for Applied Communication Research (IaKom) in collaboration with DemoSCOPE."
+        },
+        "display_name": {
+          "de": "Publikumsbefragung elektronische Medien",
+          "fr": "Sondage auprès du public Médias électroniques",
+          "it": "Sondaggio sul pubblico dei media elettronici",
+          "en": "Public survey of electronic media"
+        },
+        "documentation": [],
+        "id": "56d86826-18d7-485e-b5e7-898210127241",
+        "identifier": "public_survey_electronic_media_iakom@bundesamt-fur-kommunikation-bakom",
+        "isopen": false,
+        "issued": "2026-06-09T00:00:00",
+        "keywords": {
+          "en": [],
+          "de": [],
+          "fr": [],
+          "it": []
+        },
+        "language": [],
+        "license_id": null,
+        "license_title": null,
+        "maintainer": null,
+        "maintainer_email": null,
+        "metadata_created": "2026-08-04T08:58:09.592086",
+        "metadata_modified": "2026-08-04T08:58:09.592094",
+        "modified": "2026-08-04T07:45:04.478000+00:00",
+        "name": "publikumsbefragung-elektronische-medien",
+        "num_resources": 6,
+        "num_tags": 0,
+        "organization": {
+          "approval_status": "approved",
+          "created": "2016-01-21T17:23:47.744359",
+          "description": {
+            "fr": "Téléphoner, s’informer par les journaux, la radio ou la télévision, échanger des courriels ou des SMS, surfer sur Internet : autant d’activités quotidiennes qui dépendent d’une infrastructure de communication performante. L’OFCOM contribue à ce que la population et l’économie disposent de services de télécommunication appropriés et compétitifs.\r\nL’office veille à ce que les auditeurs et téléspectateurs puissent s’informer dans leur région, grâce aux diffuseurs régionaux, et au niveau national, par les programmes de la SSR. Il répartit équitablement le produit de la redevance radio et TV entre toutes les régions de Suisse. Dans le domaine postal, il permet aux journaux et périodiques de bénéficier de prix préférentiels.\r\nL’OFCOM gère les fréquences pour que les stations de radio, les téléphones mobiles et les appareils sans fil puissent communiquer sans perturbation.\r\nGrâce à ses activités de surveillance, il participe aussi à la protection des consommateurs : il vérifie que les dispositions légales sont respectées, par exemple en matière de publicité dans les programmes radio et TV, dans le domaine des services à valeur ajoutée proposés par téléphone sur des numéros 090x ou dans l’usage des fréquences.",
+            "en": "Every day we read the paper, pick up the phone, write and send emails and text messages, surf online, listen to the radio and watch TV. In order to be able to use all these services, there has to be a stable and powerful communications infrastructure in place. OFCOM helps to ensure that the population and businesses in all parts of the country have access to adequate and competitive tele-communications services. \r\nOFCOM makes it possible for radio and television users at local level to access regional stations and the SRG’s programmes at national level. It also distributes the revenues from television and radio licence fees fairly among all regions in Switzerland. In the postal sector, OFCOM makes sure that newspapers and magazines benefit from reduced postage rates. It also manages and allocates frequencies for radio stations, mobile and wireless devices to ensure interference-free communication. \r\nOFCOM’s oversight responsibilities include consumer protection. It monitors compliance with statutory provisions for radio and television advertising, value-added services which are offered with 090x numbers and for use of frequencies.",
+            "de": "Telefonieren, sich via Presse, Radio oder Fernsehen informieren, E-Mails oder SMS schreiben und empfangen, im Internet surfen – für diese alltäglichen Tätigkeiten braucht es eine leistungsfähige Kommunikationsinfrastruktur. Das BAKOM trägt dazu bei, dass die Bevölkerung und die Wirtschaft in allen Landesteilen über angemessene und kompetitive Telekommunikationsdienste verfügen. Das Amt ermöglicht, dass sich Radio-und Fernsehnutzer auf lokaler Ebene über regionale Sender und auf nationaler Ebene über die Programme der SRG informieren können. Es verteilt auch die Erträge aus den Radio-und Fernsehgebühren gerecht auf alle Regionen der Schweiz. Im Postbereich sorgt es dafür, dass Zeitungen und Zeitschriften von günstigen Versandkosten profitieren. \r\nWeiter gewährleistet es über die Frequenzverwaltung und -zuteilung für Radio, Mobilfunk und drahtlose Geräte eine störungsfreie Kommunikation. \r\nMit seiner Aufsichtstätigkeit trägt das BAKOM auch zum Schutz der Konsumentinnen und Konsumenten bei: Es überwacht das Einhalten der gesetzlichen Bestimmungen, sei es bei der Radio-und Fernsehwerbung, den Mehrwertdiensten, die über 090x-Nummern angeboten werden, oder bei der Frequenznutzung.",
+            "it": "Ogni giorno parliamo al telefono, ci teniamo informati attraverso la stampa, la radio e la televisione, scriviamo e-mail o SMS e navighiamo in Internet. Per svolgere tutte queste attività occorre un’infrastruttura di comunicazione performante. L’UFCOM contribuisce affinché la popolazione e l’economia dispongano di servizi di telecomunicazione adeguati e competitivi. \r\nL’Ufficio permette ai telespettatori e ai radioascoltatori di informarsi a livello locale, grazie alle emittenti regionali, e a livello nazionale, attraverso i programmi della SSR. Ripartisce equamente i proventi derivanti dai canoni radiotelevisivi tra le regioni della Svizzera. Nel settore postale, offre a giornali e periodici la possibilità di beneficiare di riduzioni sui prezzi di spedizione. \r\nL’UFCOM gestisce le frequenze affinché le stazioni radiofoniche, i telefoni cellulari e gli apparecchi senza fili possano comunicare senza interferenze. \r\nGrazie alla sua attività di vigilanza l’UFCOM contribuisce inoltre alla tutela dei consumatori, verificando il rispetto delle disposizioni legali vigenti, in ambiti quali la pubblicità nei programmi radiotelevisivi, i servizi a valore aggiunto offerti tramite i numeri telefonici 090x o l’utilizzazione delle frequenze."
+          },
+          "display_name": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "id": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+          "image_display_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "image_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "is_organization": true,
+          "name": "bundesamt-fur-kommunikation-bakom",
+          "num_followers": 0,
+          "package_count": 121,
+          "political_level": "confederation",
+          "state": "active",
+          "title": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "type": "organization",
+          "url": "",
+          "tags": [],
+          "groups": []
+        },
+        "owner_org": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+        "private": false,
+        "publisher": {
+          "url": "https://opendata.swiss/organization/bundesamt-fur-kommunikation-bakom",
+          "name": "iaKom"
+        },
+        "qualified_relations": [],
+        "relations": [],
+        "see_alsos": [],
+        "spatial": "",
+        "state": "active",
+        "temporals": [],
+        "title": {
+          "de": "Publikumsbefragung elektronische Medien",
+          "fr": "Sondage auprès du public Médias électroniques",
+          "it": "Sondaggio sul pubblico dei media elettronici",
+          "en": "Public survey of electronic media"
+        },
+        "title_for_slug": "publikumsbefragung-elektronische-medien",
+        "type": "dataset",
+        "url": "https://www.bakom.admin.ch/de/aufsichtsforschung#Publikumsbefragung",
+        "version": null,
+        "extras": [
+          {
+            "key": "guid",
+            "value": "public_survey_electronic_media_iakom@bundesamt-fur-kommunikation-bakom"
+          },
+          {
+            "key": "uri",
+            "value": "https://communication.ld.admin.ch/ofcom/public_survey_electronic_media_iakom/6"
+          },
+          {
+            "key": "harvest_object_id",
+            "value": "48f113dc-f264-4c14-8820-db1026f1280a"
+          },
+          {
+            "key": "harvest_source_id",
+            "value": "38f48174-6f38-4f82-a182-dc85bb901637"
+          },
+          {
+            "key": "harvest_source_title",
+            "value": "LINDAS DCAT Harvester BAKOM"
+          }
+        ],
+        "groups": [
+          {
+            "description": {
+              "fr": "",
+              "de": "",
+              "en": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "Bildung, Kultur und Sport",
+              "en": "Education, culture and sport",
+              "fr": "Éducation, culture et sport",
+              "it": "Istruzione, cultura e sport"
+            },
+            "id": "b36d9b09-dc05-422c-997e-4e81b02afd6f",
+            "image_display_url": "",
+            "name": "educ",
+            "title": "{\"de\": \"Bildung, Kultur und Sport\", \"en\": \"Education, culture and sport\", \"fr\": \"Éducation, culture et sport\", \"it\": \"Istruzione, cultura e sport\"}"
+          }
+        ],
+        "resources": [
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-08-04T08:58:09.594945",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "SPARQL",
+            "hash": "",
+            "id": "eedfe4f1-3510-4b58-a67f-ea5a18008531",
+            "issued": "2026-06-09T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_by",
+            "media_type": "application/sparql-query",
+            "metadata_modified": "2026-08-04T08:58:09.584288",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "package_id": "56d86826-18d7-485e-b5e7-898210127241",
+            "position": 0,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_by",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "uri": "https://lindas.admin.ch/sparql#query=PREFIX+schema%3A+%3Chttp%3A%2F%2Fschema.org%2F%3E%0A%0ADESCRIBE+%3Fcube%0A%0AFROM+%3Chttp%3A%2F%2Fwww.ontotext.com%2Fdescribe%2Foutgoing%3E%0AFROM+%3Chttps%3A%2F%2Flindas.admin.ch%2Fofcom%2Fcube%3E%0AWHERE+%7B%0A%0A++++++%3Chttps%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fpublic_survey_electronic_media_iakom%3E+schema%3AhasPart+%3Fcube+.%0A++++++%3Fcube+schema%3Aversion+6+.%0A++++%0A%7D%0A%0A&endpoint=https%3A%2F%2Flindas.cz-aws.net%2Fquery",
+            "url": "https://lindas.admin.ch/sparql#query=PREFIX+schema%3A+%3Chttp%3A%2F%2Fschema.org%2F%3E%0A%0ADESCRIBE+%3Fcube%0A%0AFROM+%3Chttp%3A%2F%2Fwww.ontotext.com%2Fdescribe%2Foutgoing%3E%0AFROM+%3Chttps%3A%2F%2Flindas.admin.ch%2Fofcom%2Fcube%3E%0AWHERE+%7B%0A%0A++++++%3Chttps%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fpublic_survey_electronic_media_iakom%3E+schema%3AhasPart+%3Fcube+.%0A++++++%3Fcube+schema%3Aversion+6+.%0A++++%0A%7D%0A%0A&endpoint=https%3A%2F%2Flindas.cz-aws.net%2Fquery",
+            "url_type": null
+          },
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-08-04T08:58:09.594950",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "HTML",
+            "hash": "",
+            "id": "18a084cb-6fe4-4451-a6b6-55eafa385b53",
+            "issued": "2026-06-09T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_by",
+            "media_type": "text/html",
+            "metadata_modified": "2026-08-04T08:58:09.584592",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "package_id": "56d86826-18d7-485e-b5e7-898210127241",
+            "position": 1,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_by",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "uri": "https://visualize.admin.ch/en/browse?dataSource=Prod&dataset=https%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fpublic_survey_electronic_media_iakom",
+            "url": "https://visualize.admin.ch/en/browse?dataSource=Prod&dataset=https%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fpublic_survey_electronic_media_iakom",
+            "url_type": null
+          },
+          {
+            "access_services": [],
+            "byte_size": 10510000,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-08-04T08:58:09.594954",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "it": "iaKom (2023): Sondaggio sul pubblico dei media elettronici. Anno di rilevamento 2022",
+              "fr": "iaKom (2023): Sondage auprès du public Médias électroniques. Année de perception 2022",
+              "en": "iaKom (2023): Public survey of electronic media. Survey year 2022",
+              "de": "iaKom (2023): Publikumsbefragung elektronische Medien. Erhebungsjahr 2022"
+            },
+            "documentation": [],
+            "download_url": "https://www.bakom.admin.ch/dam/de/sd-web/Us5mQ4k7-BTt/publikumsbefragung-elektronische-medien-2022.pdf",
+            "format": "PDF",
+            "hash": "",
+            "id": "cdbce9d4-4d3c-4658-8f2f-d8b56c928693",
+            "issued": "2026-06-09T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_by",
+            "media_type": "application/pdf",
+            "metadata_modified": "2026-08-04T08:58:09.584808",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "modified": "2026-08-04T07:45:04.478000+00:00",
+            "name": {
+              "it": "iaKom (2023): Sondaggio sul pubblico dei media elettronici. Anno di rilevamento 2022",
+              "fr": "iaKom (2023): Sondage auprès du public Médias électroniques. Année de perception 2022",
+              "en": "iaKom (2023): Public survey of electronic media. Survey year 2022",
+              "de": "iaKom (2023): Publikumsbefragung elektronische Medien. Erhebungsjahr 2022"
+            },
+            "package_id": "56d86826-18d7-485e-b5e7-898210127241",
+            "position": 2,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_by",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "it": "iaKom (2023): Sondaggio sul pubblico dei media elettronici. Anno di rilevamento 2022",
+              "fr": "iaKom (2023): Sondage auprès du public Médias électroniques. Année de perception 2022",
+              "en": "iaKom (2023): Public survey of electronic media. Survey year 2022",
+              "de": "iaKom (2023): Publikumsbefragung elektronische Medien. Erhebungsjahr 2022"
+            },
+            "uri": "https://communication.ld.admin.ch/ofcom/public_survey_electronic_media_iakom/6/distribution/1",
+            "url": "https://www.bakom.admin.ch/dam/de/sd-web/Us5mQ4k7-BTt/publikumsbefragung-elektronische-medien-2022.pdf",
+            "url_type": null
+          },
+          {
+            "access_services": [],
+            "byte_size": 11680000,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-08-04T08:58:09.594957",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "en": "iaKom (2022): Public survey of electronic media. Survey year 2021",
+              "it": "iaKom (2022): Sondaggio sul pubblico dei media elettronici. Anno di rilevamento 2021",
+              "fr": "iaKom (2022): Sondage auprès du public Médias électroniques. Année de perception 2021",
+              "de": "iaKom (2022): Publikumsbefragung elektronische Medien. Erhebungsjahr 2021"
+            },
+            "documentation": [],
+            "download_url": "https://www.bakom.admin.ch/dam/de/sd-web/Frzo6DEwQG7C/publikumsbefragung-2021.pdf",
+            "format": "PDF",
+            "hash": "",
+            "id": "99d40e79-d526-4979-85c8-60f961160928",
+            "issued": "2026-06-09T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_by",
+            "media_type": "application/pdf",
+            "metadata_modified": "2026-08-04T08:58:09.585008",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "modified": "2026-08-04T07:45:04.478000+00:00",
+            "name": {
+              "en": "iaKom (2022): Public survey of electronic media. Survey year 2021",
+              "it": "iaKom (2022): Sondaggio sul pubblico dei media elettronici. Anno di rilevamento 2021",
+              "fr": "iaKom (2022): Sondage auprès du public Médias électroniques. Année de perception 2021",
+              "de": "iaKom (2022): Publikumsbefragung elektronische Medien. Erhebungsjahr 2021"
+            },
+            "package_id": "56d86826-18d7-485e-b5e7-898210127241",
+            "position": 3,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_by",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "en": "iaKom (2022): Public survey of electronic media. Survey year 2021",
+              "it": "iaKom (2022): Sondaggio sul pubblico dei media elettronici. Anno di rilevamento 2021",
+              "fr": "iaKom (2022): Sondage auprès du public Médias électroniques. Année de perception 2021",
+              "de": "iaKom (2022): Publikumsbefragung elektronische Medien. Erhebungsjahr 2021"
+            },
+            "uri": "https://communication.ld.admin.ch/ofcom/public_survey_electronic_media_iakom/6/distribution/2",
+            "url": "https://www.bakom.admin.ch/dam/de/sd-web/Frzo6DEwQG7C/publikumsbefragung-2021.pdf",
+            "url_type": null
+          },
+          {
+            "access_services": [],
+            "byte_size": 12070000,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-08-04T08:58:09.594960",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "en": "iaKom (2021): Public survey of electronic media. Survey year 2020",
+              "it": "iaKom (2021): Sondaggio sul pubblico dei media elettronici. Anno di rilevamento 2020",
+              "fr": "iaKom (2021): Sondage auprès du public Médias électroniques. Année de perception 2020",
+              "de": "iaKom (2021): Publikumsbefragung elektronische Medien. Erhebungsjahr 2020"
+            },
+            "documentation": [],
+            "download_url": "https://www.bakom.admin.ch/dam/de/sd-web/Cipxw5tyTUyF/publikumsbefragung_2020.pdf",
+            "format": "PDF",
+            "hash": "",
+            "id": "2a16faed-24c3-40ba-b36c-2735c3e2f0f4",
+            "issued": "2026-06-09T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_by",
+            "media_type": "application/pdf",
+            "metadata_modified": "2026-08-04T08:58:09.585248",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "modified": "2026-08-04T07:45:04.478000+00:00",
+            "name": {
+              "en": "iaKom (2021): Public survey of electronic media. Survey year 2020",
+              "it": "iaKom (2021): Sondaggio sul pubblico dei media elettronici. Anno di rilevamento 2020",
+              "fr": "iaKom (2021): Sondage auprès du public Médias électroniques. Année de perception 2020",
+              "de": "iaKom (2021): Publikumsbefragung elektronische Medien. Erhebungsjahr 2020"
+            },
+            "package_id": "56d86826-18d7-485e-b5e7-898210127241",
+            "position": 4,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_by",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "en": "iaKom (2021): Public survey of electronic media. Survey year 2020",
+              "it": "iaKom (2021): Sondaggio sul pubblico dei media elettronici. Anno di rilevamento 2020",
+              "fr": "iaKom (2021): Sondage auprès du public Médias électroniques. Année de perception 2020",
+              "de": "iaKom (2021): Publikumsbefragung elektronische Medien. Erhebungsjahr 2020"
+            },
+            "uri": "https://communication.ld.admin.ch/ofcom/public_survey_electronic_media_iakom/6/distribution/3",
+            "url": "https://www.bakom.admin.ch/dam/de/sd-web/Cipxw5tyTUyF/publikumsbefragung_2020.pdf",
+            "url_type": null
+          },
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-08-04T08:58:09.594964",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "Visualize Dashboard: Publikumsbefragung elektronische Medien",
+              "fr": "Visualize Dashboard: Sondage auprès du public Médias électroniques",
+              "it": "Visualize Dashboard: Sondaggio sul pubblico dei media elettronici",
+              "en": "Visualize Dashboard: Public survey of electronic media"
+            },
+            "documentation": [],
+            "format": "SERVICE",
+            "hash": "",
+            "id": "e590db3e-05db-484c-ac2d-b2d95cf9070d",
+            "issued": "2026-06-09T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_by",
+            "media_type": "",
+            "metadata_modified": "2026-08-04T08:58:09.585458",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "modified": "2026-08-04T07:45:04.478000+00:00",
+            "name": {
+              "de": "Visualize Dashboard: Publikumsbefragung elektronische Medien",
+              "fr": "Visualize Dashboard: Sondage auprès du public Médias électroniques",
+              "it": "Visualize Dashboard: Sondaggio sul pubblico dei media elettronici",
+              "en": "Visualize Dashboard: Public survey of electronic media"
+            },
+            "package_id": "56d86826-18d7-485e-b5e7-898210127241",
+            "position": 5,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_by",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "Visualize Dashboard: Publikumsbefragung elektronische Medien",
+              "fr": "Visualize Dashboard: Sondage auprès du public Médias électroniques",
+              "it": "Visualize Dashboard: Sondaggio sul pubblico dei media elettronici",
+              "en": "Visualize Dashboard: Public survey of electronic media"
+            },
+            "uri": "https://communication.ld.admin.ch/ofcom/public_survey_electronic_media_iakom/6/distribution/4",
+            "url": "https://visualize.admin.ch/de/v/tU_pjt5dxZSt",
+            "url_type": null
+          }
+        ],
+        "tags": [],
+        "relationships_as_subject": [],
+        "relationships_as_object": []
+      },
+      {
+        "accrual_periodicity": "",
+        "author": null,
+        "author_email": null,
+        "conforms_to": [],
+        "contact_points": [
+          {
+            "email": "m@bakom.admin.ch",
+            "name": "BAKOM | OFCOM | UFCOM"
+          }
+        ],
+        "creator_user_id": "af084126-f711-4016-a585-70354e997796",
+        "description": {
+          "de": "Dieser Datensatz beinhaltet Angaben zur Programmstruktur von Radioprogrammen der SRG. Datenbasis ist die Stichprobengrundgesamtheit, 05:00-23:00, berechnet wird der Anteil einer Programmstruktur an der Gesamtdauer in %. Erhoben wurden die Daten von YouGov.",
+          "fr": "Cet ensemble de données contient des informations sur la structure des programmes radio de la SSR. La base de données est l'échantillon total, de 5 h à 23 h. Le pourcentage de la structure d'un programme par rapport à la durée totale est calculé. Les données ont été collectées par YouGov.",
+          "it": "Questo set di dati contiene informazioni sulla struttura dei programmi radiofonici della SSR. La base dati è costituita dalla popolazione campionaria, dalle 05:00 alle 23:00, e viene calcolata la percentuale di una struttura di programma rispetto alla durata totale. I dati sono stati raccolti da YouGov.",
+          "en": "This data set contains information on the programme structure of SRG radio programmes. The data is based on a sample population, 5:00 a.m. to 11:00 p.m., and calculates the share of a programme structure in the total duration in %. The data was collected by YouGov."
+        },
+        "display_name": {
+          "de": "Programmstruktur von Radioprogrammen der SRG",
+          "fr": "Structure de programme des radios de la SSR",
+          "it": "Palinsesto dei programmi radiofonici della SSR",
+          "en": "Programme structure of SRG radio stations"
+        },
+        "documentation": [],
+        "id": "39111d7a-6d44-4a01-9a1b-2ce4594fff8d",
+        "identifier": "radio_srg_program_structure@bundesamt-fur-kommunikation-bakom",
+        "isopen": false,
+        "issued": "2024-05-08T00:00:00",
+        "keywords": {
+          "en": [
+            "media-structure-report",
+            "content",
+            "radio"
+          ],
+          "de": [
+            "medien-strukturbericht",
+            "inhalte",
+            "radio"
+          ],
+          "fr": [
+            "rapport-sur-la-structure-des-medias",
+            "contenus",
+            "radio"
+          ],
+          "it": [
+            "rapporto-sulla-struttura-dei-media",
+            "contenuti",
+            "radio"
+          ]
+        },
+        "language": [],
+        "license_id": null,
+        "license_title": null,
+        "maintainer": null,
+        "maintainer_email": null,
+        "metadata_created": "2025-11-20T02:18:17.002802",
+        "metadata_modified": "2026-07-29T08:06:21.870192",
+        "modified": "2026-07-07T06:52:14.888000+00:00",
+        "name": "programmstruktur-von-radioprogrammen-der-srg",
+        "num_resources": 2,
+        "num_tags": 9,
+        "organization": {
+          "approval_status": "approved",
+          "created": "2016-01-21T17:23:47.744359",
+          "description": {
+            "fr": "Téléphoner, s’informer par les journaux, la radio ou la télévision, échanger des courriels ou des SMS, surfer sur Internet : autant d’activités quotidiennes qui dépendent d’une infrastructure de communication performante. L’OFCOM contribue à ce que la population et l’économie disposent de services de télécommunication appropriés et compétitifs.\r\nL’office veille à ce que les auditeurs et téléspectateurs puissent s’informer dans leur région, grâce aux diffuseurs régionaux, et au niveau national, par les programmes de la SSR. Il répartit équitablement le produit de la redevance radio et TV entre toutes les régions de Suisse. Dans le domaine postal, il permet aux journaux et périodiques de bénéficier de prix préférentiels.\r\nL’OFCOM gère les fréquences pour que les stations de radio, les téléphones mobiles et les appareils sans fil puissent communiquer sans perturbation.\r\nGrâce à ses activités de surveillance, il participe aussi à la protection des consommateurs : il vérifie que les dispositions légales sont respectées, par exemple en matière de publicité dans les programmes radio et TV, dans le domaine des services à valeur ajoutée proposés par téléphone sur des numéros 090x ou dans l’usage des fréquences.",
+            "en": "Every day we read the paper, pick up the phone, write and send emails and text messages, surf online, listen to the radio and watch TV. In order to be able to use all these services, there has to be a stable and powerful communications infrastructure in place. OFCOM helps to ensure that the population and businesses in all parts of the country have access to adequate and competitive tele-communications services. \r\nOFCOM makes it possible for radio and television users at local level to access regional stations and the SRG’s programmes at national level. It also distributes the revenues from television and radio licence fees fairly among all regions in Switzerland. In the postal sector, OFCOM makes sure that newspapers and magazines benefit from reduced postage rates. It also manages and allocates frequencies for radio stations, mobile and wireless devices to ensure interference-free communication. \r\nOFCOM’s oversight responsibilities include consumer protection. It monitors compliance with statutory provisions for radio and television advertising, value-added services which are offered with 090x numbers and for use of frequencies.",
+            "de": "Telefonieren, sich via Presse, Radio oder Fernsehen informieren, E-Mails oder SMS schreiben und empfangen, im Internet surfen – für diese alltäglichen Tätigkeiten braucht es eine leistungsfähige Kommunikationsinfrastruktur. Das BAKOM trägt dazu bei, dass die Bevölkerung und die Wirtschaft in allen Landesteilen über angemessene und kompetitive Telekommunikationsdienste verfügen. Das Amt ermöglicht, dass sich Radio-und Fernsehnutzer auf lokaler Ebene über regionale Sender und auf nationaler Ebene über die Programme der SRG informieren können. Es verteilt auch die Erträge aus den Radio-und Fernsehgebühren gerecht auf alle Regionen der Schweiz. Im Postbereich sorgt es dafür, dass Zeitungen und Zeitschriften von günstigen Versandkosten profitieren. \r\nWeiter gewährleistet es über die Frequenzverwaltung und -zuteilung für Radio, Mobilfunk und drahtlose Geräte eine störungsfreie Kommunikation. \r\nMit seiner Aufsichtstätigkeit trägt das BAKOM auch zum Schutz der Konsumentinnen und Konsumenten bei: Es überwacht das Einhalten der gesetzlichen Bestimmungen, sei es bei der Radio-und Fernsehwerbung, den Mehrwertdiensten, die über 090x-Nummern angeboten werden, oder bei der Frequenznutzung.",
+            "it": "Ogni giorno parliamo al telefono, ci teniamo informati attraverso la stampa, la radio e la televisione, scriviamo e-mail o SMS e navighiamo in Internet. Per svolgere tutte queste attività occorre un’infrastruttura di comunicazione performante. L’UFCOM contribuisce affinché la popolazione e l’economia dispongano di servizi di telecomunicazione adeguati e competitivi. \r\nL’Ufficio permette ai telespettatori e ai radioascoltatori di informarsi a livello locale, grazie alle emittenti regionali, e a livello nazionale, attraverso i programmi della SSR. Ripartisce equamente i proventi derivanti dai canoni radiotelevisivi tra le regioni della Svizzera. Nel settore postale, offre a giornali e periodici la possibilità di beneficiare di riduzioni sui prezzi di spedizione. \r\nL’UFCOM gestisce le frequenze affinché le stazioni radiofoniche, i telefoni cellulari e gli apparecchi senza fili possano comunicare senza interferenze. \r\nGrazie alla sua attività di vigilanza l’UFCOM contribuisce inoltre alla tutela dei consumatori, verificando il rispetto delle disposizioni legali vigenti, in ambiti quali la pubblicità nei programmi radiotelevisivi, i servizi a valore aggiunto offerti tramite i numeri telefonici 090x o l’utilizzazione delle frequenze."
+          },
+          "display_name": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "id": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+          "image_display_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "image_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "is_organization": true,
+          "name": "bundesamt-fur-kommunikation-bakom",
+          "num_followers": 0,
+          "package_count": 120,
+          "political_level": "confederation",
+          "state": "active",
+          "title": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "type": "organization",
+          "url": "",
+          "tags": [],
+          "groups": []
+        },
+        "owner_org": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+        "private": false,
+        "publisher": {
+          "url": "https://opendata.swiss/organization/bundesamt-fur-kommunikation-bakom",
+          "name": "Programmanalysen (BAKOM)"
+        },
+        "qualified_relations": [],
+        "relations": [],
+        "see_alsos": [],
+        "spatial": "",
+        "state": "active",
+        "temporals": [
+          {
+            "end_date": "2024-12-31T23:59:59.999999",
+            "start_date": "2018-01-01T00:00:00"
+          }
+        ],
+        "title": {
+          "de": "Programmstruktur von Radioprogrammen der SRG",
+          "fr": "Structure de programme des radios de la SSR",
+          "it": "Palinsesto dei programmi radiofonici della SSR",
+          "en": "Programme structure of SRG radio stations"
+        },
+        "title_for_slug": "programmstruktur-von-radioprogrammen-der-srg",
+        "type": "dataset",
+        "url": "https://www.bakom.admin.ch/de/aufsichtsforschung",
+        "version": null,
+        "extras": [
+          {
+            "key": "guid",
+            "value": "radio_srg_program_structure@bundesamt-fur-kommunikation-bakom"
+          },
+          {
+            "key": "uri",
+            "value": "https://communication.ld.admin.ch/ofcom/radio_srg_program_structure/13"
+          },
+          {
+            "key": "harvest_object_id",
+            "value": "d2cea83d-f253-4bb5-8580-491a230e6b8e"
+          },
+          {
+            "key": "harvest_source_id",
+            "value": "38f48174-6f38-4f82-a182-dc85bb901637"
+          },
+          {
+            "key": "harvest_source_title",
+            "value": "LINDAS DCAT Harvester BAKOM"
+          }
+        ],
+        "groups": [
+          {
+            "description": {
+              "fr": "",
+              "de": "",
+              "en": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "Bildung, Kultur und Sport",
+              "en": "Education, culture and sport",
+              "fr": "Éducation, culture et sport",
+              "it": "Istruzione, cultura e sport"
+            },
+            "id": "b36d9b09-dc05-422c-997e-4e81b02afd6f",
+            "image_display_url": "",
+            "name": "educ",
+            "title": "{\"de\": \"Bildung, Kultur und Sport\", \"en\": \"Education, culture and sport\", \"fr\": \"Éducation, culture et sport\", \"it\": \"Istruzione, cultura e sport\"}"
+          }
+        ],
+        "resources": [
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-07-08T04:57:14.462728",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "SPARQL",
+            "hash": "",
+            "id": "3b0b44e3-a2c0-4027-8438-209af43f8b82",
+            "issued": "2024-05-08T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "application/sparql-query",
+            "metadata_modified": "2026-07-29T08:06:21.878532",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "package_id": "39111d7a-6d44-4a01-9a1b-2ce4594fff8d",
+            "position": 0,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "uri": "https://lindas.admin.ch/sparql#query=PREFIX+schema%3A+%3Chttp%3A%2F%2Fschema.org%2F%3E%0A%0ADESCRIBE+%3Fcube%0A%0AFROM+%3Chttp%3A%2F%2Fwww.ontotext.com%2Fdescribe%2Foutgoing%3E%0AFROM+%3Chttps%3A%2F%2Flindas.admin.ch%2Fofcom%2Fcube%3E%0AWHERE+%7B%0A%0A++++++%3Chttps%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fradio_srg_program_structure%3E+schema%3AhasPart+%3Fcube+.%0A++++++%3Fcube+schema%3Aversion+13+.%0A++++%0A%7D%0A%0A&endpoint=https%3A%2F%2Flindas.cz-aws.net%2Fquery",
+            "url": "https://lindas.admin.ch/sparql#query=PREFIX+schema%3A+%3Chttp%3A%2F%2Fschema.org%2F%3E%0A%0ADESCRIBE+%3Fcube%0A%0AFROM+%3Chttp%3A%2F%2Fwww.ontotext.com%2Fdescribe%2Foutgoing%3E%0AFROM+%3Chttps%3A%2F%2Flindas.admin.ch%2Fofcom%2Fcube%3E%0AWHERE+%7B%0A%0A++++++%3Chttps%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fradio_srg_program_structure%3E+schema%3AhasPart+%3Fcube+.%0A++++++%3Fcube+schema%3Aversion+13+.%0A++++%0A%7D%0A%0A&endpoint=https%3A%2F%2Flindas.cz-aws.net%2Fquery",
+            "url_type": null
+          },
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-03-26T05:13:16.769841",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "HTML",
+            "hash": "",
+            "id": "816acf2d-7db4-4810-babb-521709f78fc1",
+            "issued": "2024-05-08T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "text/html",
+            "metadata_modified": "2026-07-29T08:06:21.878653",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "package_id": "39111d7a-6d44-4a01-9a1b-2ce4594fff8d",
+            "position": 1,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "uri": "https://visualize.admin.ch/en/browse?dataSource=Prod&dataset=https%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fradio_srg_program_structure",
+            "url": "https://visualize.admin.ch/en/browse?dataSource=Prod&dataset=https%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fradio_srg_program_structure",
+            "url_type": null
+          }
+        ],
+        "tags": [
+          {
+            "display_name": "content",
+            "id": "7a4f7c4b-ba51-4d5c-8c64-8d91e68f2de1",
+            "name": "content",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "contenus",
+            "id": "94bce6dc-4567-4379-80ca-f8abdabba85d",
+            "name": "contenus",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "contenuti",
+            "id": "f2e72b96-4526-4e03-ac1e-b48590fb60ab",
+            "name": "contenuti",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "inhalte",
+            "id": "f59fc0e5-72b4-4ee5-a0c3-adf62d2d0dcd",
+            "name": "inhalte",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "media-structure-report",
+            "id": "0aba46c8-1e5b-4fcc-b749-dac44ebf914e",
+            "name": "media-structure-report",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "medien-strukturbericht",
+            "id": "cef7940d-1b7c-4b8b-9cef-bc8bec706db8",
+            "name": "medien-strukturbericht",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "radio",
+            "id": "21231e31-bf76-4e5a-be29-f53415575c08",
+            "name": "radio",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "rapport-sur-la-structure-des-medias",
+            "id": "5322e9f8-ba6f-4e31-a7d3-98daa36dc8b7",
+            "name": "rapport-sur-la-structure-des-medias",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "rapporto-sulla-struttura-dei-media",
+            "id": "6b0504b8-24bc-40d0-a7aa-2c5ae9c1f839",
+            "name": "rapporto-sulla-struttura-dei-media",
+            "state": "active",
+            "vocabulary_id": null
+          }
+        ],
+        "relationships_as_subject": [],
+        "relationships_as_object": []
+      },
+      {
+        "accrual_periodicity": "http://publications.europa.eu/resource/authority/frequency/UNKNOWN",
+        "author": null,
+        "author_email": null,
+        "conforms_to": [],
+        "contact_points": [
+          {
+            "email": "m@bakom.admin.ch",
+            "name": "BAKOM | OFCOM | UFCOM"
+          }
+        ],
+        "creator_user_id": "af084126-f711-4016-a585-70354e997796",
+        "description": {
+          "en": "This data set contains information on the SRG's share of funding. The data is published annually in the SRG's annual report.",
+          "de": "Dieser Datensatz beinhaltet Angaben zur Ertragsstruktur der SRG. Die Daten werden jährlich im Geschäftsbericht der SRG ausgewiesen.",
+          "fr": "Cet ensemble de données contient des informations sur les parts de financement de la SRG SSR. Les données sont publiées chaque année dans le rapport annuel de la SRG SSR.",
+          "it": "Questo set di dati contiene informazioni sulle quote di finanziamento della SRG SSR. I dati vengono pubblicati ogni anno nella relazione annuale della SRG SSR."
+        },
+        "display_name": {
+          "fr": "Part de la redevance dans les recettes de la SRG SSR",
+          "it": "Quota del canone sui ricavi della SRG SSR",
+          "de": "Anteil der Abgabe am Ertrag der SRG",
+          "en": "Share of licence fee in SRG total revenue"
+        },
+        "documentation": [],
+        "id": "dc730f19-2a10-4581-9098-4029ead58bce",
+        "identifier": "srg_revenue_structure@bundesamt-fur-kommunikation-bakom",
+        "isopen": false,
+        "issued": "2025-11-21T00:00:00",
+        "keywords": {
+          "en": [
+            "media-structure-report",
+            "financing",
+            "srg"
+          ],
+          "de": [
+            "finanzierung",
+            "medien-strukturbericht",
+            "srg"
+          ],
+          "fr": [
+            "rapport-sur-la-structure-des-medias",
+            "financement",
+            "ssr"
+          ],
+          "it": [
+            "rapporto-sulla-struttura-dei-media",
+            "finanziamento",
+            "ssr"
+          ]
+        },
+        "language": [],
+        "license_id": null,
+        "license_title": null,
+        "maintainer": null,
+        "maintainer_email": null,
+        "metadata_created": "2025-11-29T02:41:45.079011",
+        "metadata_modified": "2026-07-29T08:06:11.404074",
+        "modified": "2026-06-03T13:13:16.894000+00:00",
+        "name": "anteil-der-abgabe-am-ertrag-der-srg",
+        "num_resources": 2,
+        "num_tags": 10,
+        "organization": {
+          "approval_status": "approved",
+          "created": "2016-01-21T17:23:47.744359",
+          "description": {
+            "fr": "Téléphoner, s’informer par les journaux, la radio ou la télévision, échanger des courriels ou des SMS, surfer sur Internet : autant d’activités quotidiennes qui dépendent d’une infrastructure de communication performante. L’OFCOM contribue à ce que la population et l’économie disposent de services de télécommunication appropriés et compétitifs.\r\nL’office veille à ce que les auditeurs et téléspectateurs puissent s’informer dans leur région, grâce aux diffuseurs régionaux, et au niveau national, par les programmes de la SSR. Il répartit équitablement le produit de la redevance radio et TV entre toutes les régions de Suisse. Dans le domaine postal, il permet aux journaux et périodiques de bénéficier de prix préférentiels.\r\nL’OFCOM gère les fréquences pour que les stations de radio, les téléphones mobiles et les appareils sans fil puissent communiquer sans perturbation.\r\nGrâce à ses activités de surveillance, il participe aussi à la protection des consommateurs : il vérifie que les dispositions légales sont respectées, par exemple en matière de publicité dans les programmes radio et TV, dans le domaine des services à valeur ajoutée proposés par téléphone sur des numéros 090x ou dans l’usage des fréquences.",
+            "en": "Every day we read the paper, pick up the phone, write and send emails and text messages, surf online, listen to the radio and watch TV. In order to be able to use all these services, there has to be a stable and powerful communications infrastructure in place. OFCOM helps to ensure that the population and businesses in all parts of the country have access to adequate and competitive tele-communications services. \r\nOFCOM makes it possible for radio and television users at local level to access regional stations and the SRG’s programmes at national level. It also distributes the revenues from television and radio licence fees fairly among all regions in Switzerland. In the postal sector, OFCOM makes sure that newspapers and magazines benefit from reduced postage rates. It also manages and allocates frequencies for radio stations, mobile and wireless devices to ensure interference-free communication. \r\nOFCOM’s oversight responsibilities include consumer protection. It monitors compliance with statutory provisions for radio and television advertising, value-added services which are offered with 090x numbers and for use of frequencies.",
+            "de": "Telefonieren, sich via Presse, Radio oder Fernsehen informieren, E-Mails oder SMS schreiben und empfangen, im Internet surfen – für diese alltäglichen Tätigkeiten braucht es eine leistungsfähige Kommunikationsinfrastruktur. Das BAKOM trägt dazu bei, dass die Bevölkerung und die Wirtschaft in allen Landesteilen über angemessene und kompetitive Telekommunikationsdienste verfügen. Das Amt ermöglicht, dass sich Radio-und Fernsehnutzer auf lokaler Ebene über regionale Sender und auf nationaler Ebene über die Programme der SRG informieren können. Es verteilt auch die Erträge aus den Radio-und Fernsehgebühren gerecht auf alle Regionen der Schweiz. Im Postbereich sorgt es dafür, dass Zeitungen und Zeitschriften von günstigen Versandkosten profitieren. \r\nWeiter gewährleistet es über die Frequenzverwaltung und -zuteilung für Radio, Mobilfunk und drahtlose Geräte eine störungsfreie Kommunikation. \r\nMit seiner Aufsichtstätigkeit trägt das BAKOM auch zum Schutz der Konsumentinnen und Konsumenten bei: Es überwacht das Einhalten der gesetzlichen Bestimmungen, sei es bei der Radio-und Fernsehwerbung, den Mehrwertdiensten, die über 090x-Nummern angeboten werden, oder bei der Frequenznutzung.",
+            "it": "Ogni giorno parliamo al telefono, ci teniamo informati attraverso la stampa, la radio e la televisione, scriviamo e-mail o SMS e navighiamo in Internet. Per svolgere tutte queste attività occorre un’infrastruttura di comunicazione performante. L’UFCOM contribuisce affinché la popolazione e l’economia dispongano di servizi di telecomunicazione adeguati e competitivi. \r\nL’Ufficio permette ai telespettatori e ai radioascoltatori di informarsi a livello locale, grazie alle emittenti regionali, e a livello nazionale, attraverso i programmi della SSR. Ripartisce equamente i proventi derivanti dai canoni radiotelevisivi tra le regioni della Svizzera. Nel settore postale, offre a giornali e periodici la possibilità di beneficiare di riduzioni sui prezzi di spedizione. \r\nL’UFCOM gestisce le frequenze affinché le stazioni radiofoniche, i telefoni cellulari e gli apparecchi senza fili possano comunicare senza interferenze. \r\nGrazie alla sua attività di vigilanza l’UFCOM contribuisce inoltre alla tutela dei consumatori, verificando il rispetto delle disposizioni legali vigenti, in ambiti quali la pubblicità nei programmi radiotelevisivi, i servizi a valore aggiunto offerti tramite i numeri telefonici 090x o l’utilizzazione delle frequenze."
+          },
+          "display_name": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "id": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+          "image_display_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "image_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "is_organization": true,
+          "name": "bundesamt-fur-kommunikation-bakom",
+          "num_followers": 0,
+          "package_count": 120,
+          "political_level": "confederation",
+          "state": "active",
+          "title": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "type": "organization",
+          "url": "",
+          "tags": [],
+          "groups": []
+        },
+        "owner_org": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+        "private": false,
+        "publisher": {
+          "url": "https://opendata.swiss/organization/bundesamt-fur-kommunikation-bakom",
+          "name": "SRG SSR"
+        },
+        "qualified_relations": [],
+        "relations": [],
+        "see_alsos": [],
+        "spatial": "",
+        "state": "active",
+        "temporals": [
+          {
+            "end_date": "2024-12-31T23:59:59.999999",
+            "start_date": "2015-01-01T00:00:00"
+          }
+        ],
+        "title": {
+          "fr": "Part de la redevance dans les recettes de la SRG SSR",
+          "it": "Quota del canone sui ricavi della SRG SSR",
+          "de": "Anteil der Abgabe am Ertrag der SRG",
+          "en": "Share of licence fee in SRG total revenue"
+        },
+        "title_for_slug": "anteil-der-abgabe-am-ertrag-der-srg",
+        "type": "dataset",
+        "url": "https://gb.srgssr.ch/de/2024/",
+        "version": null,
+        "extras": [
+          {
+            "key": "guid",
+            "value": "srg_revenue_structure@bundesamt-fur-kommunikation-bakom"
+          },
+          {
+            "key": "uri",
+            "value": "https://communication.ld.admin.ch/ofcom/srg_revenue_structure/11"
+          },
+          {
+            "key": "harvest_object_id",
+            "value": "ad903cb3-f0c4-4b8c-bec0-d139645bb9d8"
+          },
+          {
+            "key": "harvest_source_id",
+            "value": "38f48174-6f38-4f82-a182-dc85bb901637"
+          },
+          {
+            "key": "harvest_source_title",
+            "value": "LINDAS DCAT Harvester BAKOM"
+          }
+        ],
+        "groups": [
+          {
+            "description": {
+              "fr": "",
+              "de": "",
+              "en": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "Bildung, Kultur und Sport",
+              "en": "Education, culture and sport",
+              "fr": "Éducation, culture et sport",
+              "it": "Istruzione, cultura e sport"
+            },
+            "id": "b36d9b09-dc05-422c-997e-4e81b02afd6f",
+            "image_display_url": "",
+            "name": "educ",
+            "title": "{\"de\": \"Bildung, Kultur und Sport\", \"en\": \"Education, culture and sport\", \"fr\": \"Éducation, culture et sport\", \"it\": \"Istruzione, cultura e sport\"}"
+          }
+        ],
+        "resources": [
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-06-04T04:39:10.952112",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "SPARQL",
+            "hash": "",
+            "id": "7919b03d-1840-474c-b187-21d35cf59158",
+            "issued": "2025-11-21T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "application/sparql-query",
+            "metadata_modified": "2026-07-29T08:06:11.412887",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "package_id": "dc730f19-2a10-4581-9098-4029ead58bce",
+            "position": 0,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "SPARQL Endpoint mit Vorauswahl des Graph",
+              "en": "SPARQL Endpoint with graph preselection",
+              "fr": "SPARQL Endpoint avec présélection du graphe",
+              "it": ""
+            },
+            "uri": "https://lindas.admin.ch/sparql#query=PREFIX+schema%3A+%3Chttp%3A%2F%2Fschema.org%2F%3E%0A%0ADESCRIBE+%3Fcube%0A%0AFROM+%3Chttp%3A%2F%2Fwww.ontotext.com%2Fdescribe%2Foutgoing%3E%0AFROM+%3Chttps%3A%2F%2Flindas.admin.ch%2Fofcom%2Fcube%3E%0AWHERE+%7B%0A%0A++++++%3Chttps%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fsrg_revenue_structure%3E+schema%3AhasPart+%3Fcube+.%0A++++++%3Fcube+schema%3Aversion+11+.%0A++++%0A%7D%0A%0A&endpoint=https%3A%2F%2Flindas.cz-aws.net%2Fquery",
+            "url": "https://lindas.admin.ch/sparql#query=PREFIX+schema%3A+%3Chttp%3A%2F%2Fschema.org%2F%3E%0A%0ADESCRIBE+%3Fcube%0A%0AFROM+%3Chttp%3A%2F%2Fwww.ontotext.com%2Fdescribe%2Foutgoing%3E%0AFROM+%3Chttps%3A%2F%2Flindas.admin.ch%2Fofcom%2Fcube%3E%0AWHERE+%7B%0A%0A++++++%3Chttps%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fsrg_revenue_structure%3E+schema%3AhasPart+%3Fcube+.%0A++++++%3Fcube+schema%3Aversion+11+.%0A++++%0A%7D%0A%0A&endpoint=https%3A%2F%2Flindas.cz-aws.net%2Fquery",
+            "url_type": null
+          },
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-06-04T04:39:10.952118",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "HTML",
+            "hash": "",
+            "id": "0574375c-d3a5-4b6e-b4cd-b7fbfef4fe0b",
+            "issued": "2025-11-21T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_open",
+            "media_type": "text/html",
+            "metadata_modified": "2026-07-29T08:06:11.413002",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "package_id": "dc730f19-2a10-4581-9098-4029ead58bce",
+            "position": 1,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_open",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "de": "visualize.admin.ch",
+              "en": "",
+              "fr": "",
+              "it": ""
+            },
+            "uri": "https://visualize.admin.ch/en/browse?dataSource=Prod&dataset=https%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fsrg_revenue_structure",
+            "url": "https://visualize.admin.ch/en/browse?dataSource=Prod&dataset=https%3A%2F%2Fcommunication.ld.admin.ch%2Fofcom%2Fsrg_revenue_structure",
+            "url_type": null
+          }
+        ],
+        "tags": [
+          {
+            "display_name": "financement",
+            "id": "97189651-0270-428b-bd01-d921b8c5b292",
+            "name": "financement",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "financing",
+            "id": "678e8d62-f13c-4a6f-bec2-1385675cbe7a",
+            "name": "financing",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "finanziamento",
+            "id": "4422d135-98c6-4e5b-94eb-f3f11bc6605b",
+            "name": "finanziamento",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "finanzierung",
+            "id": "ccc016b4-6d26-4d03-984c-6517982889c0",
+            "name": "finanzierung",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "media-structure-report",
+            "id": "0aba46c8-1e5b-4fcc-b749-dac44ebf914e",
+            "name": "media-structure-report",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "medien-strukturbericht",
+            "id": "cef7940d-1b7c-4b8b-9cef-bc8bec706db8",
+            "name": "medien-strukturbericht",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "rapport-sur-la-structure-des-medias",
+            "id": "5322e9f8-ba6f-4e31-a7d3-98daa36dc8b7",
+            "name": "rapport-sur-la-structure-des-medias",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "rapporto-sulla-struttura-dei-media",
+            "id": "6b0504b8-24bc-40d0-a7aa-2c5ae9c1f839",
+            "name": "rapporto-sulla-struttura-dei-media",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "srg",
+            "id": "0091be9b-01ff-4e20-9251-78c06b06851a",
+            "name": "srg",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "ssr",
+            "id": "adfe78bc-a726-4fb1-af49-cee7b69c369f",
+            "name": "ssr",
+            "state": "active",
+            "vocabulary_id": null
+          }
+        ],
+        "relationships_as_subject": [],
+        "relationships_as_object": []
+      }
+    ],
+    "sort": "metadata_modified desc",
+    "search_facets": {}
+  }
+}

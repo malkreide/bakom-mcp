@@ -183,6 +183,40 @@ Vorher prüfen, ob die umgebogene Konstante überhaupt gelesen wird — sonst
 beweist die grüne Suite nichts. `GEO_ADMIN_IDENTIFY`, `GEO_ADMIN_FIND` und
 `RTV_DB_API` waren solche Fälle und sind alle drei entfernt.
 
+### Fixtures: aufgezeichnet
+
+`tests/fixtures/` hält 17 echte Antworten. Nicht eine je Endpunkt, sondern **eine
+je Abfrage**, die ein Werkzeug abschickt: vier Hosts, aber ein Dutzend
+Abfrageformen — die Regel «eine Antwort je externem Endpunkt» wäre mit vier
+Dateien erfüllt und trüge fast nichts. Herkunft, Datum, Auswahlregel und SHA-256
+je Datei stehen in `tests/fixtures/PROVENANCE.md`; neu aufzeichnen mit
+`PYTHONPATH=src python scripts/record_fixtures.py`, geladen wird über
+`tests/fixture_data.py`.
+
+Der Recorder greift die Antwort über einen httpx-Response-Hook auf dem echten
+Lifespan-Client ab, statt die Anfrage nachzubauen — so tragen Aufzeichnung und
+Betrieb dieselben Header, dasselbe Timeout und dieselbe Egress-Allowlist.
+Gekürzt wird nur die **Zahl** der Trefferzeilen, nie ein Feld; `count` bleibt
+stehen, weil CKAN dort die Gesamtzahl meldet und `bakom_telekomstatistik_uebersicht`
+genau die liest. Fehlerpfade bleiben handgeschrieben.
+
+Die erste Aufzeichnung deckte auf, dass opendata.swiss die Beschreibung
+`description` nennt und nicht `notes` wie der CKAN-Kern: vier Werkzeuge lieferten
+zu jedem Datensatz einen leeren Text, und die Suite blieb grün, weil der
+handgeschriebene Stub denselben Feldnamen annahm wie der Code. Erfolgs-Payloads
+deshalb nicht mehr von Hand schreiben.
+
+Zwei Aufzeichnungen sind zwischen zwei Läufen nicht bitgleich:
+`medien_katalog.json` und `medien_auswertung_1.json` tragen aus `SAMPLE(?cube)`
+eine beliebige Cube-Version in `any`. Der Server liest die Variable nicht — das
+ist Rauschen, kein Drift.
+
+`UP017` schlägt hier zu, `target-version = "py311"`: ruff **verlangt**
+`datetime.UTC` und lehnt `timezone.utc` ab. In `lindas-mcp` (py310) ist es
+umgekehrt — dort ist `datetime.UTC` ein Laufzeitfehler auf Python 3.10, und ruff
+sagt dazu nichts. Recorder-Code nie zwischen den Repos kopieren, ohne die
+`target-version` zu prüfen.
+
 ### Was `bakom_rtv_suche` liefert
 
 Datensätze aus dem BAKOM-Katalog auf opendata.swiss, **keine einzelnen Sender**.

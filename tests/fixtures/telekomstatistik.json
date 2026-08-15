@@ -1,0 +1,283 @@
+{
+  "help": "https://ckan.opendata.swiss/api/3/action/help_show?name=package_search",
+  "success": true,
+  "result": {
+    "count": 1,
+    "facets": {},
+    "results": [
+      {
+        "accrual_periodicity": "",
+        "author": null,
+        "author_email": null,
+        "conforms_to": [],
+        "contact_points": [
+          {
+            "email": "atlas@bakom.admin.ch",
+            "name": "Bundesamt für Kommunikation"
+          }
+        ],
+        "creator_user_id": "af084126-f711-4016-a585-70354e997796",
+        "description": {
+          "de": "Dieses Datenset zeigt den Anteil von Gebäuden mit Breitbandzugang in Schweizer Gemeinden basierend auf dem Breitband-Atlas des BAKOM.",
+          "en": "This dataset shows the proportion of buildings with broadband access in Swiss municipalities based on the OFCOM Broadband Atlas.",
+          "fr": "Ce jeu de données présente la proportion de bâtiments ayant accès au haut débit dans chaque commune suisse selon l’Atlas de l’OFCOM.",
+          "it": "Questo dataset mostra la percentuale di edifici con accesso alla banda larga nei comuni svizzeri secondo l’Atlante OFCOM."
+        },
+        "display_name": {
+          "de": "Abdeckungsgrad der Gebäude mit Breitbanddiensten nach Gemeinde",
+          "en": "Broadband coverage of buildings by municipality",
+          "fr": "Couverture des bâtiments par les services à large bande selon la commune",
+          "it": "Copertura degli edifici con servizi a banda larga per comune"
+        },
+        "documentation": [],
+        "id": "4b8c9377-11b7-44f5-9877-2c2aa4373539",
+        "identifier": "NGA_GDE@bundesamt-fur-kommunikation-bakom",
+        "isopen": false,
+        "issued": "2026-06-01T00:00:00",
+        "keywords": {
+          "en": [
+            "telecommunications"
+          ],
+          "de": [
+            "telekommunikation"
+          ],
+          "fr": [
+            "telecommunications"
+          ],
+          "it": [
+            "telecomunicazioni"
+          ]
+        },
+        "language": [],
+        "license_id": null,
+        "license_title": null,
+        "maintainer": null,
+        "maintainer_email": null,
+        "metadata_created": "2026-06-16T05:12:25.209385",
+        "metadata_modified": "2026-07-29T08:06:13.991130",
+        "name": "abdeckungsgrad-der-gebaude-mit-breitbanddiensten-nach-gemeinde",
+        "num_resources": 2,
+        "num_tags": 3,
+        "organization": {
+          "approval_status": "approved",
+          "created": "2016-01-21T17:23:47.744359",
+          "description": {
+            "fr": "Téléphoner, s’informer par les journaux, la radio ou la télévision, échanger des courriels ou des SMS, surfer sur Internet : autant d’activités quotidiennes qui dépendent d’une infrastructure de communication performante. L’OFCOM contribue à ce que la population et l’économie disposent de services de télécommunication appropriés et compétitifs.\r\nL’office veille à ce que les auditeurs et téléspectateurs puissent s’informer dans leur région, grâce aux diffuseurs régionaux, et au niveau national, par les programmes de la SSR. Il répartit équitablement le produit de la redevance radio et TV entre toutes les régions de Suisse. Dans le domaine postal, il permet aux journaux et périodiques de bénéficier de prix préférentiels.\r\nL’OFCOM gère les fréquences pour que les stations de radio, les téléphones mobiles et les appareils sans fil puissent communiquer sans perturbation.\r\nGrâce à ses activités de surveillance, il participe aussi à la protection des consommateurs : il vérifie que les dispositions légales sont respectées, par exemple en matière de publicité dans les programmes radio et TV, dans le domaine des services à valeur ajoutée proposés par téléphone sur des numéros 090x ou dans l’usage des fréquences.",
+            "en": "Every day we read the paper, pick up the phone, write and send emails and text messages, surf online, listen to the radio and watch TV. In order to be able to use all these services, there has to be a stable and powerful communications infrastructure in place. OFCOM helps to ensure that the population and businesses in all parts of the country have access to adequate and competitive tele-communications services. \r\nOFCOM makes it possible for radio and television users at local level to access regional stations and the SRG’s programmes at national level. It also distributes the revenues from television and radio licence fees fairly among all regions in Switzerland. In the postal sector, OFCOM makes sure that newspapers and magazines benefit from reduced postage rates. It also manages and allocates frequencies for radio stations, mobile and wireless devices to ensure interference-free communication. \r\nOFCOM’s oversight responsibilities include consumer protection. It monitors compliance with statutory provisions for radio and television advertising, value-added services which are offered with 090x numbers and for use of frequencies.",
+            "de": "Telefonieren, sich via Presse, Radio oder Fernsehen informieren, E-Mails oder SMS schreiben und empfangen, im Internet surfen – für diese alltäglichen Tätigkeiten braucht es eine leistungsfähige Kommunikationsinfrastruktur. Das BAKOM trägt dazu bei, dass die Bevölkerung und die Wirtschaft in allen Landesteilen über angemessene und kompetitive Telekommunikationsdienste verfügen. Das Amt ermöglicht, dass sich Radio-und Fernsehnutzer auf lokaler Ebene über regionale Sender und auf nationaler Ebene über die Programme der SRG informieren können. Es verteilt auch die Erträge aus den Radio-und Fernsehgebühren gerecht auf alle Regionen der Schweiz. Im Postbereich sorgt es dafür, dass Zeitungen und Zeitschriften von günstigen Versandkosten profitieren. \r\nWeiter gewährleistet es über die Frequenzverwaltung und -zuteilung für Radio, Mobilfunk und drahtlose Geräte eine störungsfreie Kommunikation. \r\nMit seiner Aufsichtstätigkeit trägt das BAKOM auch zum Schutz der Konsumentinnen und Konsumenten bei: Es überwacht das Einhalten der gesetzlichen Bestimmungen, sei es bei der Radio-und Fernsehwerbung, den Mehrwertdiensten, die über 090x-Nummern angeboten werden, oder bei der Frequenznutzung.",
+            "it": "Ogni giorno parliamo al telefono, ci teniamo informati attraverso la stampa, la radio e la televisione, scriviamo e-mail o SMS e navighiamo in Internet. Per svolgere tutte queste attività occorre un’infrastruttura di comunicazione performante. L’UFCOM contribuisce affinché la popolazione e l’economia dispongano di servizi di telecomunicazione adeguati e competitivi. \r\nL’Ufficio permette ai telespettatori e ai radioascoltatori di informarsi a livello locale, grazie alle emittenti regionali, e a livello nazionale, attraverso i programmi della SSR. Ripartisce equamente i proventi derivanti dai canoni radiotelevisivi tra le regioni della Svizzera. Nel settore postale, offre a giornali e periodici la possibilità di beneficiare di riduzioni sui prezzi di spedizione. \r\nL’UFCOM gestisce le frequenze affinché le stazioni radiofoniche, i telefoni cellulari e gli apparecchi senza fili possano comunicare senza interferenze. \r\nGrazie alla sua attività di vigilanza l’UFCOM contribuisce inoltre alla tutela dei consumatori, verificando il rispetto delle disposizioni legali vigenti, in ambiti quali la pubblicità nei programmi radiotelevisivi, i servizi a valore aggiunto offerti tramite i numeri telefonici 090x o l’utilizzazione delle frequenze."
+          },
+          "display_name": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "id": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+          "image_display_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "image_url": "https://ckan.opendata.swiss/uploads/group/test-hd.jpg",
+          "is_organization": true,
+          "name": "bundesamt-fur-kommunikation-bakom",
+          "num_followers": 0,
+          "package_count": 120,
+          "political_level": "confederation",
+          "state": "active",
+          "title": {
+            "de": "Bundesamt für Kommunikation BAKOM",
+            "en": "Federal Office of Communications OFCOM",
+            "fr": "Office fédéral de la communication OFCOM",
+            "it": "Ufficio federale delle comunicazioni UFCOM"
+          },
+          "type": "organization",
+          "url": "",
+          "tags": [],
+          "groups": []
+        },
+        "owner_org": "93b4f26a-3c80-46bb-8708-f28edd70ee8f",
+        "private": false,
+        "publisher": {
+          "url": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-kommunikation-bakom",
+          "name": "Office fédéral de la communication OFCOM"
+        },
+        "qualified_relations": [],
+        "relations": [],
+        "see_alsos": [],
+        "spatial": "",
+        "state": "active",
+        "temporals": [],
+        "title": {
+          "de": "Abdeckungsgrad der Gebäude mit Breitbanddiensten nach Gemeinde",
+          "en": "Broadband coverage of buildings by municipality",
+          "fr": "Couverture des bâtiments par les services à large bande selon la commune",
+          "it": "Copertura degli edifici con servizi a banda larga per comune"
+        },
+        "title_for_slug": "abdeckungsgrad-der-gebaude-mit-breitbanddiensten-nach-gemeinde",
+        "type": "dataset",
+        "url": "https://www.bakom.admin.ch/de/breitbandatlas",
+        "version": null,
+        "extras": [
+          {
+            "key": "guid",
+            "value": "NGA_GDE@bundesamt-fur-kommunikation-bakom"
+          },
+          {
+            "key": "uri",
+            "value": "https://communication.ld.admin.ch/ofcom/nga/NGA_GDE@bundesamt-fur-kommunikation-bakom/1"
+          },
+          {
+            "key": "harvest_object_id",
+            "value": "5e4d8dbd-a533-469f-b5ad-0961b6894f6e"
+          },
+          {
+            "key": "harvest_source_id",
+            "value": "38f48174-6f38-4f82-a182-dc85bb901637"
+          },
+          {
+            "key": "harvest_source_title",
+            "value": "LINDAS DCAT Harvester BAKOM"
+          }
+        ],
+        "resources": [
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-06-16T05:12:25.227848",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "en": "SPARQL Endpoint",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "SPARQL",
+            "hash": "",
+            "id": "3f428cbf-8039-454b-a1c8-9a1f0276ee88",
+            "issued": "2026-06-01T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_by",
+            "media_type": "application/sparql-query",
+            "metadata_modified": "2026-07-29T08:06:14.000126",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "en": "SPARQL Endpoint",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "package_id": "4b8c9377-11b7-44f5-9877-2c2aa4373539",
+            "position": 0,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_by",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "en": "SPARQL Endpoint",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "uri": "https://communication.ld.admin.ch/ofcom/nga/NGA_GDE@bundesamt-fur-kommunikation-bakom/1/distribution/1",
+            "url": "https://lindas.admin.ch/sparql",
+            "url_type": null
+          },
+          {
+            "access_services": [],
+            "byte_size": 0,
+            "cache_last_updated": null,
+            "cache_url": null,
+            "created": "2026-06-16T05:12:25.227852",
+            "datastore_active": false,
+            "datastore_contains_all_records_of_source_file": false,
+            "description": {
+              "en": "",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "display_name": {
+              "en": "visualize.admin.ch",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "documentation": [],
+            "format": "HTML",
+            "hash": "",
+            "id": "8c821603-bb9c-416a-8ac1-d3e8f3e3dd5b",
+            "issued": "2026-06-01T00:00:00",
+            "language": [],
+            "last_modified": null,
+            "license": "https://opendata.swiss/terms-of-use#terms_by",
+            "media_type": "text/html",
+            "metadata_modified": "2026-07-29T08:06:14.000249",
+            "mimetype": null,
+            "mimetype_inner": null,
+            "name": {
+              "en": "visualize.admin.ch",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "package_id": "4b8c9377-11b7-44f5-9877-2c2aa4373539",
+            "position": 1,
+            "resource_type": null,
+            "rights": "https://opendata.swiss/terms-of-use#terms_by",
+            "size": null,
+            "state": "active",
+            "temporal_resolution": "",
+            "title": {
+              "en": "visualize.admin.ch",
+              "de": "",
+              "fr": "",
+              "it": ""
+            },
+            "uri": "https://communication.ld.admin.ch/ofcom/nga/NGA_GDE@bundesamt-fur-kommunikation-bakom/1/distribution/2",
+            "url": "https://visualize.admin.ch/browse?dataset=https://communication.ld.admin.ch/ofcom/nga/NGA_GDE@bundesamt-fur-kommunikation-bakom/1",
+            "url_type": null
+          }
+        ],
+        "tags": [
+          {
+            "display_name": "telecommunications",
+            "id": "77a48f1c-adc5-44e4-a544-44e2507b87f1",
+            "name": "telecommunications",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "telecomunicazioni",
+            "id": "c3c28d00-5ead-455d-bd4d-5ba458b38f59",
+            "name": "telecomunicazioni",
+            "state": "active",
+            "vocabulary_id": null
+          },
+          {
+            "display_name": "telekommunikation",
+            "id": "ba04632a-7c18-468d-a75b-94886d084b1a",
+            "name": "telekommunikation",
+            "state": "active",
+            "vocabulary_id": null
+          }
+        ],
+        "groups": [],
+        "relationships_as_subject": [],
+        "relationships_as_object": []
+      }
+    ],
+    "sort": "score desc, metadata_modified desc",
+    "search_facets": {}
+  }
+}

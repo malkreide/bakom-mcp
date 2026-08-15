@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "layerBodId": "ch.bakom.radio-fernsehsender",
+      "layerName": "Radio- und Fernsehsender",
+      "featureId": 66,
+      "id": 66,
+      "attributes": {
+        "name": "ZUERICH ZUERICHBERG",
+        "code": "NHASSRG",
+        "power": "17 kW",
+        "service": "DAB+,DAB+,DAB+,RADIO,RADIO,RADIO",
+        "program": "SMC  D02,SMC  D03,SRG  D01,Radio TOP,Radio Zürisee,Radio 1",
+        "freqchan": "7D,7A,12C,104.5 MHz,100.4 MHz,94.2 MHz",
+        "bgdi_created": "14.08.2026",
+        "label": "NHASSRG"
+      }
+    }
+  ]
+}

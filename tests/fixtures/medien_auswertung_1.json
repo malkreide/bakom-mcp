@@ -1,0 +1,29 @@
+{
+  "head": {
+    "vars": [
+      "name",
+      "version",
+      "any"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "name": {
+          "xml:lang": "de",
+          "type": "literal",
+          "value": "Meinungsmacht von Medienkonzernen"
+        },
+        "version": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "6"
+        },
+        "any": {
+          "type": "uri",
+          "value": "https://communication.ld.admin.ch/ofcom/mms_opinion_forming/5"
+        }
+      }
+    ]
+  }
+}

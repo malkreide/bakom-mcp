@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Behoben / Fixed
+
+- **Jede Datensatz-Beschreibung war leer.** `bakom_rtv_suche`,
+  `bakom_medienstruktur_info`, `bakom_aktuell` und
+  `bakom_telekomstatistik_uebersicht` lasen `notes` — den Feldnamen aus dem
+  CKAN-Kern. opendata.swiss liefert das Feld unter `description`. In allen
+  aufgezeichneten Antworten kommt `notes` kein einziges Mal vor. Vier Werkzeuge
+  gaben also zu jedem Datensatz einen leeren Text aus, während die Suite grün
+  blieb: der handgeschriebene Stub in `test_unit.py` nannte das Feld genauso wie
+  der Code und bestätigte damit nur dessen Annahme. Gelesen wird jetzt über
+  `_ckan_de()`, das auch den Sprach-Dict-Fall (`{"de": …, "fr": …}`) an einer
+  Stelle behandelt statt an vier.
+
+- **Die Feldbeschreibung von `thema` nannte tote Suchwörter.** Sie empfahl
+  `'breitband', 'mobilfunk', 'festnetz', 'marktanteile', 'haushaltszugang'`;
+  davon liefern `mobilfunk` und `haushaltszugang` null Datensätze und
+  `breitband` genau einen von 121 (gemessen am 15.08.2026). Der Katalog zerlegt
+  keine Komposita — `mobilfunkanlagen` und `5g` finden etwas, `mobilfunk`
+  nicht. Das Modell bekam daraufhin ein glaubwürdiges «dazu gibt es nichts».
+  Die Beschreibung nennt jetzt belegte Wörter mit ihrer Trefferzahl und die
+  Eigenheit des Index. Der Live-Test dazu prüfte bisher nur `"datensaetze" in
+  data` — wahr auch bei null Treffern; er liest die Wörter jetzt aus der
+  Beschreibung und verlangt Treffer mit Text.
+
+### Hinzugefügt / Added
+
+- **Aufgezeichnete Fixtures** in `tests/fixtures/` — 17 echte Antworten, eine je
+  Abfrage, die ein Werkzeug abschickt (nicht je Endpunkt: vier Hosts, aber ein
+  Dutzend Abfrageformen). Herkunft, Datum, Auswahlregel und SHA-256 je Datei in
+  `tests/fixtures/PROVENANCE.md`, neu aufzeichnen mit
+  `scripts/record_fixtures.py`, geladen über `tests/fixture_data.py`. Gekürzt
+  ist nur die Zahl der Trefferzeilen, nie ein Feld; `count` bleibt stehen, weil
+  CKAN dort die Gesamtzahl meldet und der Server genau die liest.
+  Portfolio-Konvention, gleich wie in `meteoswiss-mcp` und
+  `swiss-statistics-mcp`.
+
+- **`tests/test_recorded_fixtures.py`** — 38 Zusicherungen, die jedes Werkzeug
+  aus seiner eigenen Aufzeichnung fahren. Darunter: die Beschreibung muss beim
+  Modell ankommen, ein leerer WMS-Layer wird zu «nein» und nicht zu einem
+  Fehler, und die Cube-Version geht als Zahl in die zweite SPARQL-Abfrage (die
+  Quelle liefert sie als Zeichenkette, `schema:version "6"` träfe nichts).
+
 ## [3.0.0] - 2026-08-14
 
 ### Geändert / Changed — Breaking

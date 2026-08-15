@@ -1,0 +1,38 @@
+{
+  "type": "FeatureCollection",
+  "name": "ch.bakom.anschlussart-glasfaser",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::2056"
+    }
+  },
+  "xy_coordinate_resolution": 0.001,
+  "bbox": [
+    2683374.235,
+    1247873.446,
+    2683374.235,
+    1247873.446
+  ],
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "value_0": "4"
+      },
+      "bbox": [
+        2683374.235,
+        1247873.446,
+        2683374.235,
+        1247873.446
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2683374.235,
+          1247873.446
+        ]
+      }
+    }
+  ]
+}
