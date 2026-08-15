@@ -172,3 +172,17 @@ If you want to add a tool that requires authentication, please open a feature re
 ---
 
 *Questions? Open an issue or start a discussion on GitHub.*
+
+## The live suite: when it runs, and who sees a red result
+
+**Cadence:** daily at 05:17 UTC, plus on demand via *Actions → Live Tests → Run
+workflow*. See [`.github/workflows/live-tests.yml`](.github/workflows/live-tests.yml).
+
+**Who sees it:** A red run opens an issue labelled `live-test-failure` (title: “Live-Tests rot — externe Quelle prüfen”). A second red run recognises the open issue **by its label**, not by its title, and appends to that same thread. Remove the label by hand and the next red run opens a second issue. A green run does **not** close the issue by itself — once the failure is fixed it needs closing by hand, otherwise the next reader mistakes the old failure for the new one.
+
+**A red live run does not necessarily mean *our* bug.** It means the contract
+with the source has changed, or the source is down. Both belong seen; only the
+first belongs fixed. Please read the run before disabling the job — that is how
+this check dies, and it is the only one in the repository that can contradict a
+wrong assumption about opendata.swiss / lindas.admin.ch. Every other test asserts against a fixture, and
+the fixture was written from the same assumption as the code.
