@@ -75,6 +75,9 @@ Installation. An seiner Stelle steht jetzt `pip install -e ".[dev]"`, und
 dieser Schritt ist nicht redundant — ohne ihn hat der Job überhaupt kein ruff
 (`ruff: command not found`). Er sieht nur so aus wie der Install im `test`-Job.
 
+Vor dem Lauf `ruff --version` prüfen: ein älteres ruff früher im `PATH`
+schlägt den Pin, ohne dass der Install etwas meldet.
+
 Lokal einmalig `pre-commit install`, dann läuft das Lint-Gate vor jedem
 Commit mit exakt der Gate-Version (Scope `^(src|tests|scripts)/`).
 
