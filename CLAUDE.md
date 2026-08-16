@@ -135,9 +135,19 @@ PYTHONPATH=src pytest tests/ -m "not live"
 python scripts/check_version_sync.py
 ```
 
-Matrix: Python 3.11 / 3.12 / 3.13. Weitere Workflows: `docker.yml`
-(Build + Non-root-/Smoke-Test), `secret-scan.yml` (gitleaks), `release.yml`,
-`publish.yml`.
+Matrix: Python 3.11 / 3.12 / 3.13 — aber nicht für alles: Die zwei ruff-Gates
+laufen zusätzlich im Job `lint`, und der hat keine Matrix, sondern läuft auf
+3.11. Weitere Workflows: `docker.yml` (Build + Non-root-/Smoke-Test),
+`secret-scan.yml` (gitleaks), `release.yml`, `publish.yml`.
+
+**`check_version_sync.py` prüft mehr, als sein CI-Schritt verspricht.** Der
+heisst «(pyproject ↔ server.json / README / src)», das Skript hält aber
+zusätzlich den **ruff-Pin über beide Stellen** zusammen — `pyproject.toml`
+und `rev:` in `.pre-commit-config.yaml` — und verbietet einen eigenen
+ruff-Install in einem Workflow. Es meldet das im Klartext:
+`ruff-Pin einig auf 0.16.1 (2 Stellen)`. Wer die zwei Pins von Hand
+vergleicht, tut Arbeit, die ein Gate schon leistet; wer nur einen davon
+anhebt, macht diesen Gate rot — nicht etwa ein Lint.
 
 ### Live-Tests
 
