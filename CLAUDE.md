@@ -45,22 +45,24 @@ Ein Codex-Review auf einem PR wird beantwortet oder behoben, nie ignoriert.
 
 ## Teil 2 — Repo-spezifisch (bakom-mcp)
 
-### ruff
+**ruff: eine Quelle.** Der Pin `0.16.1` steht in `pyproject.toml` und `.pre-
+commit-config.yaml` — und **nicht** mehr als eigener Install-Schritt in der
+CI.
 
-Gepinnt in `.github/workflows/ci.yml`: **`ruff==0.16.1`** (beide Jobs, `test` und `lint`).
-Dieselbe Version in `.pre-commit-config.yaml` (`rev: v0.16.1`, Scope
-`^(src|tests|scripts)/`). Lokal einmalig `pre-commit install`, dann läuft das
-Lint-Gate vor jedem Commit mit exakt der CI-Version. Wer die Hooks nicht nutzt:
-`pip install ruff==0.16.1`.
+Im `test`-Job lief der entfernte CI-Schritt nach dem Install der
+Abhängigkeiten und überschrieb sie. Eine Abweichung im Pin konnte deshalb in
+der CI gar nicht auffallen, sondern nur lokal — wo niemand sie erwartet. Ein
+manuelles Nachinstallieren von ruff vor den Gates ist damit nicht mehr nötig
+und wäre schädlich: Es würde eine spätere Anhebung hier stillschweigend
+überstimmen.
 
-Dieselbe Version ein drittes Mal in `pyproject.toml`
-(`[project.optional-dependencies].dev`, `ruff==0.16.1`), damit
-`uv pip install -e ".[dev]"` nicht eine andere Version zieht als das Gate.
+Im `lint`-Job lag der Fall anders: Dort war der ruff-Pin die **einzige**
+Installation. An seiner Stelle steht jetzt `pip install -e ".[dev]"`, und
+dieser Schritt ist nicht redundant — ohne ihn hat der Job überhaupt kein ruff
+(`ruff: command not found`). Er sieht nur so aus wie der Install im `test`-Job.
 
-**Alle Stellen zusammen bumpen** — beide Workflow-Jobs, `rev` und dev-Extra.
-`scripts/check_version_sync.py` erzwingt das: der Check vergleicht alle vier
-und fällt mit Datei und Zeilennummer, sobald eine abweicht oder das dev-Extra
-wieder einen Bereich statt eines Pins deklariert.
+Lokal einmalig `pre-commit install`, dann läuft das Lint-Gate vor jedem
+Commit mit exakt der Gate-Version (Scope `^(src|tests|scripts)/`).
 
 ### Release
 
