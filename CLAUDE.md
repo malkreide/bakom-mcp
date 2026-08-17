@@ -299,3 +299,19 @@ Fundstücke der Live-Probe (13.08.2026):
   ist ein Aggregat in der Senderdimension, ein Label beginnt mit Leerzeichen.
 - Die Dimension heisst in 18 Cubes `Konzessionierungsart` und in 13 weiteren
   `Konzessonierungsart` — Tippfehler in der Quelle.
+
+**`pin_audit.py` steht an drei Stellen.** `swiss-electricity-mcp`, `bakom-mcp`
+und `register-mcp` halten byteweise dieselbe `scripts/pin_audit.py` samt
+`tests/test_pin_audit.py`. Wer eine ändert, ändert alle drei im selben Commit —
+sonst misst der eine Server anders als der andere, und das ist genau die Drift,
+gegen die das Werkzeug gebaut ist. Kein Gate erzwingt das, es gibt nur diesen
+Absatz. Aus dem Verzeichnis, in dem die Server nebeneinander liegen:
+
+```bash
+sha256sum */scripts/pin_audit.py */tests/test_pin_audit.py |
+  awk '{print $1}' | sort | uniq -c
+```
+
+Erwartet: **zwei** Zeilen mit je **3**. Die Anzahl mitlesen, nicht nur die Zahl
+der Zeilen — findet der Glob nur ein Repo, stehen dort auch zwei Zeilen, und
+«einig» hiesse dann bloss, dass nichts verglichen wurde.
