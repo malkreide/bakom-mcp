@@ -130,6 +130,7 @@ dorthin.
 ### Gate-Befehle (wörtlich aus `ci.yml`)
 
 ```bash
+python scripts/check_ruff_pin.py
 ruff check src/ tests/ scripts/
 ruff format --check src/ tests/ scripts/
 python -m py_compile src/bakom_mcp/server.py
