@@ -1,74 +1,58 @@
-# SessionStart-Hook: Klon-Aktualität
+# SessionStart-Hook: Klon-Aktualitaet
 
-`session-start.sh` meldet beim Sessionstart, wie viele Commits der
+`check-clone-freshness.sh` meldet beim Sessionstart, wie viele Commits der
 ausgecheckte Stand hinter `origin/<Standard-Branch>` liegt. Liegt er nicht
-zurück, sagt er nichts.
+zurueck, sagt er nichts.
 
 ## Warum
 
-Ein veralteter Klon hat am 3.8.2026 zweimal eine rote CI erzeugt, deren
-Ursache nicht im Diff stand — die fehlenden Commits waren jeweils genau die,
-die das Gate einführten, an dem der Branch scheiterte. Wer die Ursache im
-eigenen Diff sucht, sucht in den falschen Dateien; im Diff steht sie nicht,
-weil sie nicht dort liegt. Die Prüfung kostet eine Sekunde und ersetzt diese
-Fehlersuche.
+Ein veralteter Klon hat am 3.8.2026 zweimal eine rote CI erzeugt, deren Ursache
+nicht im Diff stand — die fehlenden Commits waren jeweils genau die, die das
+Gate einfuehrten, an dem der Branch scheiterte. Die Pruefung kostet eine
+Sekunde und ersetzt eine Fehlersuche in den falschen Dateien.
 
-`CLAUDE.md` schreibt dieselbe Prüfung unter «Vor der Arbeit» vor. Dieser Hook
-führt sie aus, statt sich darauf zu verlassen, dass jemand daran denkt.
+`CLAUDE.md` schreibt dieselbe Pruefung als Handgriff «vor der Arbeit» vor. Ein
+Handgriff, an den man sich erinnern muss, wird genau dann vergessen, wenn er
+noetig gewesen waere; der Hook macht daraus einen Automatismus.
 
-## Verhalten
+## Entwurfsregeln, in dieser Reihenfolge
 
-Ausgabe nur bei echtem Rückstand:
+1. **Der Hook blockiert nie.** Kein Netz, kein Remote, detached HEAD,
+   flatterndes DNS, fehlendes `timeout`, kaputte Credentials — jeder Fall
+   endet still mit Exit 0. Ein Hook, der bei Netzproblemen die Arbeit anhaelt,
+   wird nach dem zweiten Mal abgeschaltet und schuetzt danach gar nichts.
+   Garantiert wird das durch `trap 'exit 0' EXIT`; deshalb steht im Skript
+   bewusst kein `set -euo pipefail` (unter `-e` beendet der erste
+   fehlschlagende git-Aufruf das Skript mit dessen Exit-Code).
+2. **Zeitlimit auf jeden Netzaufruf.** `CLAUDE_FRESHNESS_TIMEOUT` (Vorgabe: 5
+   Sekunden) gilt je fuer `ls-remote` und `fetch`. Zusaetzlich laeuft git
+   strikt nicht-interaktiv (`GIT_TERMINAL_PROMPT=0`, `BatchMode=yes`): ein
+   privates Remote ohne Credentials fragt sonst nach einem Passwort und
+   wartet — was ein Zeitlimit zwar beendet, aber erst nach voller Wartezeit.
+3. **Ausgabe nur bei fehlenden Commits.** Bei 0 schweigt er.
+4. **Der Standard-Branch wird ermittelt, nicht angenommen.** Drei Server im
+   Portfolio heissen ihren Standard-Branch `master`. Ein fest verdrahtetes
+   `main` scheitert dort mit «couldn't find remote ref main», geht als
+   Netzproblem durch — und der Branch wurde 15 Commits alt.
 
-```
-⚠️  Veralteter Klon: HEAD liegt 15 Commits hinter origin/main.
-```
+## Was er anfasst
 
-Bei 0 fehlenden Commits: keine Ausgabe.
+`git fetch --no-tags origin <Standard-Branch>` aktualisiert `FETCH_HEAD` und
+`refs/remotes/origin/<Branch>`. Arbeitsverzeichnis, Index und lokale Branches
+bleiben unberuehrt.
 
-## Die drei Regeln, nach denen er gebaut ist
+## Stellschrauben
 
-**1. Er blockiert die Session nie.** Kein `set -e`, jeder Pfad endet mit
-`exit 0`. Still durch gehen: kein Git-Repo, kein Remote `origin`, kein Netz,
-flatterndes DNS, ein Auth- oder Host-Key-Prompt, detached HEAD, HEAD ohne
-Commit, ein nicht ermittelbarer Standard-Branch. Ein Hook, der bei
-Netzproblemen die Arbeit anhält, wird nach dem zweiten Mal abgeschaltet und
-schützt danach gar nichts — deshalb ist «nie blockieren» wichtiger als
-«immer melden».
+| Variable | Vorgabe | Wirkung |
+| --- | --- | --- |
+| `CLAUDE_FRESHNESS_TIMEOUT` | `5` | Sekunden je Netzaufruf |
+| `CLAUDE_FRESHNESS_REMOTE` | `origin` | zu pruefendes Remote |
 
-Die Prompts sind der unterschätzte Fall: `GIT_TERMINAL_PROMPT=0`,
-`GIT_ASKPASS`, `SSH_ASKPASS_REQUIRE=never` und `BatchMode=yes` stehen im
-Skript, weil ein Credential-Prompt ohne Terminal nicht scheitert, sondern
-wartet — und ein Timeout auf dem Fetch hilft nicht gegen etwas, das vor dem
-Fetch fragt.
-
-**2. Kurzes Netz-Budget.** 5 Sekunden (`CLAUDE_STALENESS_TIMEOUT`
-überschreibt), durchgesetzt über `timeout(1)`. Fehlt `timeout` — macOS ohne
-coreutils —, greifen zusätzlich `http.lowSpeedLimit`/`http.lowSpeedTime` und
-`ConnectTimeout` für SSH. Darüber liegt als letzte Sicherung `"timeout": 15`
-in `settings.json`: was der Harness nach 15 s noch laufen sieht, killt er.
-
-**3. Der Standard-Branch wird ermittelt, nicht angenommen.** Drei Server im
-Portfolio (`openlex-mcp`, `swiss-courts-mcp`, `swisstopo-mcp`) heissen ihren
-Standard-Branch `master`. Ein fest verdrahtetes `origin/main` scheitert dort
-mit «couldn't find remote ref main» — und weil dieser Hook still scheitert,
-prüfte er dann nie etwas, ohne dass es auffiele. Genau diese Annahme hat
-schon einmal einen Branch 15 Commits alt werden lassen.
-
-Ermittelt wird zuerst lokal über `refs/remotes/origin/HEAD` (kostet kein
-Netz), und nur wenn die Referenz fehlt, über
-`git ls-remote --symref origin HEAD`.
-
-## Gegenprobe
-
-Der Hook lässt sich direkt aufrufen; das Verhalten ist dasselbe wie beim
-Sessionstart:
+## Von Hand pruefen
 
 ```bash
-.claude/hooks/session-start.sh                  # aktuell → keine Ausgabe
-git checkout HEAD~3 && .claude/hooks/session-start.sh   # → meldet 3 Commits
-CLAUDE_STALENESS_TIMEOUT=0 .claude/hooks/session-start.sh  # Netz tot → still, rc 0
+.claude/hooks/check-clone-freshness.sh; echo "exit=$?"
 ```
 
-Nach jedem Lauf `echo $?` mitlesen: alles ausser `0` wäre ein Fehler im Hook
-selbst.
+Erwartet: Exit 0 — immer. Ausgabe nur, wenn der Klon wirklich zurueckliegt.
+Die automatisierte Gegenprobe steht in `tests/test_session_start_hook.py`.
