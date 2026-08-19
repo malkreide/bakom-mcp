@@ -33,14 +33,19 @@ git rev-parse --git-dir      >/dev/null 2>&1 || exit 0  # kein Git-Repo
 git remote get-url origin    >/dev/null 2>&1 || exit 0  # kein Remote «origin»
 git rev-parse --verify --quiet HEAD >/dev/null 2>&1 || exit 0  # HEAD ohne Commit
 
-# `timeout` fehlt auf manchen Systemen (macOS ohne coreutils).  Fällt es aus,
-# bremsen zusätzlich die http.lowSpeed*-Optionen weiter unten.
+# `timeout` fehlt auf manchen Systemen (macOS ohne coreutils).  Fehlt es, wird
+# gar nicht erst ins Netz gegangen: lieber keine Pruefung als eine haengende
+# Session.  Die http.lowSpeed*-Optionen weiter unten reichen dafuer NICHT --
+# sie greifen nur bei einer tröpfelnden Uebertragung, nicht wenn die Gegenstelle
+# die Verbindung annimmt und dann schweigt.  Gemessen lief der Hook in genau
+# diesem Fall unbegrenzt weiter (>25s, extern gekappt), und damit war die
+# oberste Regel dieses Skripts verletzt.
 if command -v timeout >/dev/null 2>&1; then
   run_limited() { timeout "$FETCH_TIMEOUT" "$@"; }
 elif command -v gtimeout >/dev/null 2>&1; then
   run_limited() { gtimeout "$FETCH_TIMEOUT" "$@"; }
 else
-  run_limited() { "$@"; }
+  run_limited() { return 1; }
 fi
 
 # Standard-Branch ERMITTELN, nicht «main» annehmen: drei Server im Portfolio
