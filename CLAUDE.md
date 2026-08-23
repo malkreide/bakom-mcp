@@ -144,6 +144,20 @@ search_pull_requests: user:malkreide commenter:chatgpt-codex-connector[bot] upda
 Findet nur, wo er *kommentiert* hat. Repos ohne PR-Aktivität tauchen nicht auf
 — das ist kein Beleg, dass dort geprüft wurde.
 
+Die Gegenprobe fragt nach Review-Objekten statt nach Kommentaren:
+
+```
+search_pull_requests: user:malkreide type:pr reviewed-by:chatgpt-codex-connector[bot]
+```
+
+Am 23.8.2026 über die 41 Server-Repos: **25** mit mindestens einem
+Review-Objekt, 16 ohne eines. Belastbar ist davon nur die 25 — die 16 nicht.
+Ein befundloser Review hinterlässt bloss die 👍-Reaktion, und die findet diese
+Abfrage nicht. «Kein Review-Objekt» heisst also «kein Befund gemeldet», nicht
+«nicht geprüft»; die Zahl ist eine Untergrenze für Geprüftes, keine Aufteilung
+in geprüft und ungeprüft. Und sie gilt für den Abfragetag: Ein Review vom 16.8.
+sagt über den heutigen Stand nichts.
+
 Zweiter Weg, den Prüfer zu verlieren, ganz ohne Kontingentproblem: zu schnell
 mergen. Am 21./22.8. lagen zwischen «ready for review» und Merge mehrfach drei
 bis fünf Sekunden. Codex wird beim Umschalten von Draft auf ready ausgelöst und
