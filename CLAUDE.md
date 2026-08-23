@@ -101,6 +101,9 @@ ohne dass jemand hineingesehen hat, und am 22.8. noch einmal 43.
   To use Codex here, create an environment for this repo.
   ```
 
+  Von den vieren ist dieser der unzuverlässigste: Die Meldung kann auch
+  neben einem gelaufenen Review stehen — siehe unten.
+
 Der vierte kam erst zum Vorschein, als der dritte wegfiel, und das ist kein
 Zufall: Die Prüfungen liegen hintereinander. Dass es diese Reihenfolge ist und
 nicht die umgekehrte, lässt sich an einem einzigen Repo ablesen — in
@@ -109,6 +112,43 @@ und PR #56 am 23.8. um 08:22:20 die Environment-Meldung. Läge die
 Environment-Prüfung vorn, hätte #54 sie schon am Vortag gesehen; die Environment
 fehlte ja bereits. Zwei Meldungen aus demselben Repo schlagen hier jede
 Vermutung über die Reihenfolge.
+
+Nur trägt der vierte Grund nicht so weit, wie die Liste ihn stellt: Die
+Environment-Meldung schliesst einen Review nicht aus. In `swiss-culture-mcp`
+bekam PR #25 am 16.8. um 11:44:33 ein Review-Objekt **mit** Befund — und um
+12:06:59, elf Sekunden nach einem Kommentar, der mit `@codex` begann, zusätzlich
+die Environment-Meldung. Beides echt, 22 Minuten auseinander, auf demselben PR.
+
+Der Hinweistext im Review-Objekt nennt selbst zwei Wege. Ein **Review** wird
+ausgelöst, wenn ein PR zum Review geöffnet wird, ein Draft auf ready springt
+oder jemand «@codex review» schreibt. Daneben kann Codex «answer questions or
+update the PR» — und dieser zweite Weg braucht die Environment, der erste
+offenbar nicht. Die Zahlen passen dazu: `swiss-culture-mcp` hat drei PRs mit
+Review-Objekt (#17, #25, #48), `swiss-public-data-mcp` keinen einzigen — und
+beide haben die Environment-Meldung gesehen.
+
+Ausgelöst wird der zweite Weg von der Erwähnung — und die zählt auch im
+**PR-Text**, nicht nur im Kommentar. Sechs Beobachtungen, keine Ausnahme:
+
+| PR | Erwähnung im Text | Environment-Meldung |
+|---|---|---|
+| `swiss-culture-mcp#25` | ja, im Kommentar | ja, 11 s danach |
+| `swiss-public-data-mcp#56` | ja, im PR-Text | ja, 12 s nach dem Anlegen |
+| `bakom-mcp#85` | ja, im PR-Text | ja, 14 s nach dem Anlegen |
+| `bakom-mcp#84` | nein | nein |
+| `bakom-mcp#81` | nein | nein |
+| `swiss-culture-mcp#46` | nein | nein |
+
+Drei der Treffer sind Drafts, und die Meldung kam trotzdem: Der Mention-Weg
+schert sich nicht um die Draft-Regel, die für Reviews gilt. Backticks schützen
+nicht — in #56 stand die Erwähnung in einem Code-Span und wirkte doch.
+
+Wer über Codex schreibt, ruft ihn also. Das ist kein Schaden, sondern ein
+Kommentar; man sollte ihn nur nicht für eine Aussage über den Review halten.
+
+Für die Praxis bleibt: «Environment fehlt» belegt nicht, dass in diesem Repo
+keine Reviews laufen. Ob geprüft wurde, sagt weiterhin nur die Form der
+Antwort.
 
 Praktisch heisst das: **Eine verschwundene Limit-Meldung ist keine Entwarnung.**
 Sie kann bedeuten, dass das Kontingent wieder da ist — und dass jetzt etwas
