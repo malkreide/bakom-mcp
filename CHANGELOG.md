@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Behoben
+
+- **`allow_headers` stand auf `["*"]`.** Starlette schaltet damit auf
+  `allow_all_headers` und spiegelt im Preflight zurück, was der Browser
+  ankündigt — jeder erlaubte Origin durfte also jeden beliebigen Header senden.
+  Die Liste nennt jetzt `Content-Type`, die drei Routing-Header der Spec
+  `2026-07-28`, `Mcp-Session-Id` und `Last-Event-ID`. Letzterer setzt einen
+  abgerissenen SSE-Strom fort und war unter der Wildcard nie geprüft: eine
+  Wildcard kann nicht falsch werden, und deshalb sagt sie auch nichts darüber,
+  ob die Header, die das Protokoll braucht, tatsächlich freigegeben sind.
+
 ### Hinzugefügt
 
 - **Frischehinweise auf den auflistenden Methoden** (SEP-2549, Spec
