@@ -101,6 +101,9 @@ ohne dass jemand hineingesehen hat, und am 22.8. noch einmal 43.
   To use Codex here, create an environment for this repo.
   ```
 
+  Von den vieren ist dieser der unzuverlässigste: Die Meldung kann auch
+  neben einem gelaufenen Review stehen — siehe unten.
+
 Der vierte kam erst zum Vorschein, als der dritte wegfiel, und das ist kein
 Zufall: Die Prüfungen liegen hintereinander. Dass es diese Reihenfolge ist und
 nicht die umgekehrte, lässt sich an einem einzigen Repo ablesen — in
@@ -109,6 +112,29 @@ und PR #56 am 23.8. um 08:22:20 die Environment-Meldung. Läge die
 Environment-Prüfung vorn, hätte #54 sie schon am Vortag gesehen; die Environment
 fehlte ja bereits. Zwei Meldungen aus demselben Repo schlagen hier jede
 Vermutung über die Reihenfolge.
+
+Nur trägt der vierte Grund nicht so weit, wie die Liste ihn stellt: Die
+Environment-Meldung schliesst einen Review nicht aus. In `swiss-culture-mcp`
+bekam PR #25 am 16.8. um 11:44:33 ein Review-Objekt **mit** Befund — und um
+12:06:59, elf Sekunden nach einem Kommentar, der mit `@codex` begann, zusätzlich
+die Environment-Meldung. Beides echt, 22 Minuten auseinander, auf demselben PR.
+
+Der Hinweistext im Review-Objekt nennt selbst zwei Wege. Ein **Review** wird
+ausgelöst, wenn ein PR zum Review geöffnet wird, ein Draft auf ready springt
+oder jemand «@codex review» schreibt. Daneben kann Codex «answer questions or
+update the PR» — und dieser zweite Weg braucht die Environment, der erste
+offenbar nicht. Die Zahlen passen dazu: `swiss-culture-mcp` hat drei PRs mit
+Review-Objekt (#17, #25, #48), `swiss-public-data-mcp` keinen einzigen — und
+beide haben die Environment-Meldung gesehen.
+
+Was damit **nicht** erklärt ist: In `swiss-public-data-mcp` kam die Meldung auf
+#56 ohne jede `@codex`-Erwähnung, zwölf Sekunden nach dem Anlegen, und der PR
+war zu dem Zeitpunkt ein Draft. Sie trifft dort also weder den Mention-Weg noch
+die Draft-Regel. Der Auslöser ist offen und wird hier nicht geraten.
+
+Für die Praxis bleibt: «Environment fehlt» belegt nicht, dass in diesem Repo
+keine Reviews laufen. Ob geprüft wurde, sagt weiterhin nur die Form der
+Antwort.
 
 Praktisch heisst das: **Eine verschwundene Limit-Meldung ist keine Entwarnung.**
 Sie kann bedeuten, dass das Kontingent wieder da ist — und dass jetzt etwas
