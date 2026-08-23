@@ -127,10 +127,24 @@ offenbar nicht. Die Zahlen passen dazu: `swiss-culture-mcp` hat drei PRs mit
 Review-Objekt (#17, #25, #48), `swiss-public-data-mcp` keinen einzigen — und
 beide haben die Environment-Meldung gesehen.
 
-Was damit **nicht** erklärt ist: In `swiss-public-data-mcp` kam die Meldung auf
-#56 ohne jede `@codex`-Erwähnung, zwölf Sekunden nach dem Anlegen, und der PR
-war zu dem Zeitpunkt ein Draft. Sie trifft dort also weder den Mention-Weg noch
-die Draft-Regel. Der Auslöser ist offen und wird hier nicht geraten.
+Ausgelöst wird der zweite Weg von der Erwähnung — und die zählt auch im
+**PR-Text**, nicht nur im Kommentar. Sechs Beobachtungen, keine Ausnahme:
+
+| PR | Erwähnung im Text | Environment-Meldung |
+|---|---|---|
+| `swiss-culture-mcp#25` | ja, im Kommentar | ja, 11 s danach |
+| `swiss-public-data-mcp#56` | ja, im PR-Text | ja, 12 s nach dem Anlegen |
+| `bakom-mcp#85` | ja, im PR-Text | ja, 14 s nach dem Anlegen |
+| `bakom-mcp#84` | nein | nein |
+| `bakom-mcp#81` | nein | nein |
+| `swiss-culture-mcp#46` | nein | nein |
+
+Drei der Treffer sind Drafts, und die Meldung kam trotzdem: Der Mention-Weg
+schert sich nicht um die Draft-Regel, die für Reviews gilt. Backticks schützen
+nicht — in #56 stand die Erwähnung in einem Code-Span und wirkte doch.
+
+Wer über Codex schreibt, ruft ihn also. Das ist kein Schaden, sondern ein
+Kommentar; man sollte ihn nur nicht für eine Aussage über den Review halten.
 
 Für die Praxis bleibt: «Environment fehlt» belegt nicht, dass in diesem Repo
 keine Reviews laufen. Ob geprüft wurde, sagt weiterhin nur die Form der
