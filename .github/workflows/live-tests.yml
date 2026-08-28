@@ -42,27 +42,54 @@ jobs:
       - name: Abhängigkeiten installieren
         run: uv pip install -e ".[dev]" --system
 
+      # `continue-on-error`, damit die Einordnung in jedem Fall laeuft. Rot
+      # wird der Job weiter unten, aus dem eingeordneten Ergebnis.
       - name: Live-Tests
         id: live
+        continue-on-error: true
         env:
           PYTHONPATH: src
         run: |
           set +e
-          run_tests() { pytest tests/ -m live -v --tb=short 2>&1 | tee live-output.txt; return "${PIPESTATUS[0]}"; }
+          run_tests() {
+            pytest tests/ -m live -v --tb=short \
+              --junitxml=live-report.xml 2>&1 | tee live-output.txt
+            return "${PIPESTATUS[0]}"
+          }
           run_tests
           STATUS=$?
           # Eine einzelne Wiederholung trennt echten Drift von einem
-          # Netzwerk-Aussetzer. Bleibt es rot, ist es die Quelle.
+          # Netzwerk-Aussetzer. Bleibt es rot, ist es die Quelle. Der zweite
+          # Lauf ueberschreibt den Bericht — eingeordnet wird der Lauf, der
+          # zaehlt.
           if [ "$STATUS" -ne 0 ]; then
             echo "::warning::Erster Lauf fehlgeschlagen (exit $STATUS) — Wiederholung in 60s."
             sleep 60
             run_tests
             STATUS=$?
           fi
-          exit "$STATUS"
+          echo "pytest_exit=$STATUS" >> "$GITHUB_OUTPUT"
+
+      # `if: failure()` kennt rot und nicht rot. Ein Live-Lauf hat drei
+      # Antworten, und die dritte zaehlt: Ein gescheitertes `uv pip install`,
+      # ein Timeout oder eine umbenannte Marke sind NICHT dasselbe wie ein
+      # gebrochener Vertrag mit der Quelle — aber unter `failure()` sehen sie
+      # gleich aus, und das Issue behauptete dann einen Drift, den niemand
+      # gemessen hat. Und ein Lauf, in dem jeder Test uebersprungen wurde,
+      # sieht unter jedem Exit-Code-Check aus wie Erfolg.
+      - name: Ergebnis einordnen
+        id: verdict
+        run: |
+          args=(live-report.xml)
+          if [ -n "$PYTEST_EXIT" ]; then
+            args+=(--pytest-exit "$PYTEST_EXIT")
+          fi
+          python scripts/classify_live_run.py "${args[@]}"
+        env:
+          PYTEST_EXIT: ${{ steps.live.outputs.pytest_exit }}
 
       - name: Bei Fehlschlag Issue eröffnen oder kommentieren
-        if: failure() && steps.live.outcome == 'failure'
+        if: steps.verdict.outputs.state == 'finding'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -111,3 +138,20 @@ jobs:
           path: live-output.txt
           if-no-files-found: ignore
           retention-days: 30
+
+      # Erst hier wird der Job rot. `clear` ist gruen; `finding` und `unknown`
+      # sind beide rot, aber nur `finding` hat oben ein Issue erzeugt — der
+      # Unterschied steht im Log, nicht im Exit-Code.
+      #
+      # Ueber `env`, nicht ueber `${{ }}` im Skript: Der Grund kann eine
+      # Parser-Meldung ueber eine fremde Datei enthalten, und `${{ }}` setzt sie
+      # vor dem Start woertlich in die Shell ein.
+      - name: Ergebnis durchreichen
+        if: steps.verdict.outputs.state != 'clear'
+        env:
+          LIVE_STATE: ${{ steps.verdict.outputs.state }}
+          LIVE_REASON: ${{ steps.verdict.outputs.reason }}
+        run: |
+          echo "Live-Suite: $LIVE_STATE"
+          echo "$LIVE_REASON"
+          exit 1
