@@ -4,7 +4,7 @@
 # Stage 1: Build — installiert Dependencies in ein virtuelles env
 # Stage 2: Runtime — distroless-naehe slim-bullseye ohne Build-Toolchain.
 
-FROM python:3.11-slim-bullseye AS builder
+FROM python:3.13-slim-bullseye AS builder
 
 WORKDIR /build
 
@@ -21,7 +21,7 @@ RUN uv venv /opt/venv && \
 
 # ---------------------------------------------------------------------------
 
-FROM python:3.11-slim-bullseye AS runtime
+FROM python:3.13-slim-bullseye AS runtime
 
 # Non-root user (UID 10001 — ausserhalb klassischer Reservierungen)
 RUN groupadd --system --gid 10001 bakom && \
