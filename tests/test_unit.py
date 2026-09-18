@@ -132,7 +132,7 @@ class TestInputValidation:
         Es parametrisiert ueber sie, damit Beschreibung und Pruefung nicht
         auseinanderlaufen — und liefe ueber eine leere Liste gruen durch, ohne
         etwas geprueft zu haben. Diese Zusicherung steht deshalb hier, wo die
-        CI sie sieht: der Live-Lauf ist woechentlich, dieser Test bei jedem PR.
+        CI sie sieht: der Live-Lauf ist taeglich, dieser Test bei jedem PR.
         Der Ausdruck ist bewusst derselbe wie dort; ein Import brauchte
         `test_live` und damit dessen Modul-Marker.
         """
