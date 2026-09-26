@@ -284,9 +284,10 @@ wie der Code: Nichts ist rot, weil nichts geprüft wird, worauf es ankommt.
 
 ## Teil 2 — Repo-spezifisch (bakom-mcp)
 
-**ruff: eine Quelle.** Der Pin `0.16.3` steht in `pyproject.toml` und `.pre-
-commit-config.yaml` — und **nicht** mehr als eigener Install-Schritt in der
-CI.
+**ruff: eine Quelle.** Der Pin steht in `pyproject.toml` und `.pre-
+commit-config.yaml`, beide Male exakt — und **nicht** mehr als eigener
+Install-Schritt in der CI. Die Version steht bewusst nicht hier;
+`tests/test_ruff_pin_doku.py` hält sie draussen.
 
 Im `test`-Job lief der entfernte CI-Schritt nach dem Install der
 Abhängigkeiten und überschrieb sie. Eine Abweichung im Pin konnte deshalb in
@@ -374,7 +375,7 @@ heisst «(pyproject ↔ server.json / README / src)», das Skript hält aber
 zusätzlich den **ruff-Pin über beide Stellen** zusammen — `pyproject.toml`
 und `rev:` in `.pre-commit-config.yaml` — und verbietet einen eigenen
 ruff-Install in einem Workflow. Es meldet das im Klartext:
-`ruff-Pin einig auf 0.16.3 (2 Stellen)`. Wer die zwei Pins von Hand
+`ruff-Pin einig auf <Version> (2 Stellen)`. Wer die zwei Pins von Hand
 vergleicht, tut Arbeit, die ein Gate schon leistet; wer nur einen davon
 anhebt, macht diesen Gate rot — nicht etwa ein Lint.
 
