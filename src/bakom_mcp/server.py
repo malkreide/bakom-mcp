@@ -701,6 +701,29 @@ mcp = MCPServer(
     lifespan=lifespan,
 )
 
+# `subscriptions/listen` abmelden. Unter Spec 2026-07-28 leitet das SDK
+# `resources.subscribe` und alle drei `listChanged` allein daraus ab, ob dieser
+# Handler registriert ist — und `MCPServer` registriert ihn immer. Der Server
+# meldete 2026-Clients also «ich sage Bescheid, wenn sich etwas ändert», obwohl
+# sich zur Laufzeit nichts ändert: Tools, Ressourcen und Prompts stehen per
+# Dekorator beim Import fest, und nichts ruft `ctx.notify_*`. Ein Client, der
+# lauscht, hielte einen Strom offen, auf dem nie etwas ankommt. Die
+# Handshake-Ära meldete schon vorher `false`.
+#
+# Einen öffentlichen Schalter hat das SDK dafür nicht, daher der Griff an zwei
+# private Attribute. Bewusst ohne Ausnahme bei fehlendem Schlüssel: bricht ein
+# SDK-Bump die Stelle, soll der Build rot werden (`test_capabilities.py`),
+# nicht der Start beim Anwender. Sobald ein Tool eine Liste zur Laufzeit ändert,
+# muss diese Zeile im selben Commit weg.
+mcp._lowlevel_server._request_handlers.pop("subscriptions/listen", None)
+
+# Jedes Tool trägt `structured_output=False`. Aus `-> str` leitet das SDK sonst
+# ein `outputSchema {"result": string}` ab und legt denselben Text ein zweites
+# Mal als `structuredContent` bei. Das Schema verspricht eine Struktur, die es
+# nicht gibt: je nach `response_format` kommt Markdown oder ein JSON-Text, und
+# beides steht vollständig im `content`. Fehler betrifft das nicht — die laufen
+# über `ToolError` und kommen als `isError: true`.
+
 
 # ===========================================================================
 # KATEGORIE 1: BREITBAND & KONNEKTIVITÄT
@@ -708,6 +731,7 @@ mcp = MCPServer(
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_broadband_coverage",
     annotations={
         "title": "Breitbandversorgung für einen Standort",
@@ -791,6 +815,7 @@ async def bakom_broadband_coverage(params: BroadbandCoverageInput, ctx: Context)
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_glasfaser_verfuegbarkeit",
     annotations={
         "title": "Glasfasernetz-Verfügbarkeit (FTTB/FTTH)",
@@ -857,6 +882,7 @@ async def bakom_glasfaser_verfuegbarkeit(params: CoordinateInput, ctx: Context) 
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_multi_standort_konnektivitaet",
     annotations={
         "title": "Konnektivitätsvergleich mehrerer Standorte",
@@ -1005,6 +1031,7 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput, ctx: C
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_mobilfunk_abdeckung",
     annotations={
         "title": "Mobilfunkabdeckung für einen Standort",
@@ -1080,6 +1107,7 @@ async def bakom_mobilfunk_abdeckung(params: MobileCoverageInput, ctx: Context) -
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_sendeanlagen_suche",
     annotations={
         "title": "Mobilfunkanlagen und Sendeanlagen in der Nähe",
@@ -1238,6 +1266,7 @@ async def bakom_sendeanlagen_suche(params: AntennaSearchInput, ctx: Context) -> 
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_frequenzdaten",
     annotations={
         "title": "Frequenzdaten und Sendeanlagen-Standorte",
@@ -1353,6 +1382,7 @@ async def bakom_frequenzdaten(params: CoordinateInput, ctx: Context) -> str:
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_rtv_suche",
     annotations={
         "title": "BAKOM-Datensätze zu Radio und Fernsehen durchsuchen",
@@ -1510,6 +1540,7 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_medienstruktur_info",
     annotations={
         "title": "Schweizer Medienlandschaft – Strukturberichte und Statistiken",
@@ -1612,6 +1643,7 @@ async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> s
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_aktuell",
     annotations={
         "title": "Zuletzt aktualisierte BAKOM-Datensätze zu einem Thema",
@@ -1736,6 +1768,7 @@ async def bakom_aktuell(params: TelekomStatInput, ctx: Context) -> str:
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_telekomstatistik_uebersicht",
     annotations={
         "title": "Schweizer Telekommunikationsstatistik – Übersicht",
@@ -1857,6 +1890,7 @@ def _sparql_literal(text: str) -> str:
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_medien_statistik",
     annotations={
         "title": "Medienstatistik des BAKOM (Marktanteile, Reichweite, Programmstruktur)",
@@ -2055,6 +2089,7 @@ async def bakom_medien_statistik(params: MedienStatistikInput, ctx: Context) -> 
 
 
 @mcp.tool(
+    structured_output=False,
     name="bakom_breitbandatlas_datensaetze",
     annotations={
         "title": "Alle Breitbandatlas-Datensätze auflisten",
