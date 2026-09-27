@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-09-27
+
 ### Geändert
 
 - **Nativ auf Spec `2026-07-28`.** `bakom_multi_standort_konnektivitaet`
@@ -24,22 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `ctx.log/debug/info/warning/error` im ausgelieferten Code, weil eine
   Deprecation-Warnung nur auf dem Pfad feuert, der gerade lief. Die Suite wertet
   jede `MCPDeprecationWarning` als Fehler (`filterwarnings` in `pyproject.toml`).
-
-### Behoben
-
-- **`serverInfo.version` war leer.** `MCPServer` bekam kein `version=`, das SDK
-  meldet dann `""` — bei `initialize` ebenso wie bei `server/discover`, während
-  der User-Agent desselben Prozesses die echte Nummer trug. Jetzt
-  `__version__`; dazu `website_url`.
-
-- **`allow_headers` stand auf `["*"]`.** Starlette schaltet damit auf
-  `allow_all_headers` und spiegelt im Preflight zurück, was der Browser
-  ankündigt — jeder erlaubte Origin durfte also jeden beliebigen Header senden.
-  Die Liste nennt jetzt `Content-Type`, die drei Routing-Header der Spec
-  `2026-07-28`, `Mcp-Session-Id` und `Last-Event-ID`. Letzterer setzt einen
-  abgerissenen SSE-Strom fort und war unter der Wildcard nie geprüft: eine
-  Wildcard kann nicht falsch werden, und deshalb sagt sie auch nichts darüber,
-  ob die Header, die das Protokoll braucht, tatsächlich freigegeben sind.
 
 ### Hinzugefügt
 
@@ -70,7 +56,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   dagegen — im Portfolio sind EN und DE desselben Repos schon dreimal
   auseinandergelaufen, weil nur eine Fassung nachgezogen wurde.
 
-### Behoben / Fixed
+- **Aufgezeichnete Fixtures** in `tests/fixtures/` — 17 echte Antworten, eine je
+  Abfrage, die ein Werkzeug abschickt (nicht je Endpunkt: vier Hosts, aber ein
+  Dutzend Abfrageformen). Herkunft, Datum, Auswahlregel und SHA-256 je Datei in
+  `tests/fixtures/PROVENANCE.md`, neu aufzeichnen mit
+  `scripts/record_fixtures.py`, geladen über `tests/fixture_data.py`. Gekürzt
+  ist nur die Zahl der Trefferzeilen, nie ein Feld; `count` bleibt stehen, weil
+  CKAN dort die Gesamtzahl meldet und der Server genau die liest.
+  Portfolio-Konvention, gleich wie in `meteoswiss-mcp` und
+  `swiss-statistics-mcp`.
+
+- **`tests/test_recorded_fixtures.py`** — 38 Zusicherungen, die jedes Werkzeug
+  aus seiner eigenen Aufzeichnung fahren. Darunter: die Beschreibung muss beim
+  Modell ankommen, ein leerer WMS-Layer wird zu «nein» und nicht zu einem
+  Fehler, und die Cube-Version geht als Zahl in die zweite SPARQL-Abfrage (die
+  Quelle liefert sie als Zeichenkette, `schema:version "6"` träfe nichts).
+
+### Behoben
+
+- **`serverInfo.version` war leer.** `MCPServer` bekam kein `version=`, das SDK
+  meldet dann `""` — bei `initialize` ebenso wie bei `server/discover`, während
+  der User-Agent desselben Prozesses die echte Nummer trug. Jetzt
+  `__version__`; dazu `website_url`.
+
+- **`allow_headers` stand auf `["*"]`.** Starlette schaltet damit auf
+  `allow_all_headers` und spiegelt im Preflight zurück, was der Browser
+  ankündigt — jeder erlaubte Origin durfte also jeden beliebigen Header senden.
+  Die Liste nennt jetzt `Content-Type`, die drei Routing-Header der Spec
+  `2026-07-28`, `Mcp-Session-Id` und `Last-Event-ID`. Letzterer setzt einen
+  abgerissenen SSE-Strom fort und war unter der Wildcard nie geprüft: eine
+  Wildcard kann nicht falsch werden, und deshalb sagt sie auch nichts darüber,
+  ob die Header, die das Protokoll braucht, tatsächlich freigegeben sind.
 
 - **Die Pruefsummen im Fixture-Nachweis waren Zierde.** `PROVENANCE.md` fuehrt
   je Datei einen SHA-256 — um genau einen Fall zu fangen: eine Aufzeichnung,
@@ -101,24 +117,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Eigenheit des Index. Der Live-Test dazu prüfte bisher nur `"datensaetze" in
   data` — wahr auch bei null Treffern; er liest die Wörter jetzt aus der
   Beschreibung und verlangt Treffer mit Text.
-
-### Hinzugefügt / Added
-
-- **Aufgezeichnete Fixtures** in `tests/fixtures/` — 17 echte Antworten, eine je
-  Abfrage, die ein Werkzeug abschickt (nicht je Endpunkt: vier Hosts, aber ein
-  Dutzend Abfrageformen). Herkunft, Datum, Auswahlregel und SHA-256 je Datei in
-  `tests/fixtures/PROVENANCE.md`, neu aufzeichnen mit
-  `scripts/record_fixtures.py`, geladen über `tests/fixture_data.py`. Gekürzt
-  ist nur die Zahl der Trefferzeilen, nie ein Feld; `count` bleibt stehen, weil
-  CKAN dort die Gesamtzahl meldet und der Server genau die liest.
-  Portfolio-Konvention, gleich wie in `meteoswiss-mcp` und
-  `swiss-statistics-mcp`.
-
-- **`tests/test_recorded_fixtures.py`** — 38 Zusicherungen, die jedes Werkzeug
-  aus seiner eigenen Aufzeichnung fahren. Darunter: die Beschreibung muss beim
-  Modell ankommen, ein leerer WMS-Layer wird zu «nein» und nicht zu einem
-  Fehler, und die Cube-Version geht als Zahl in die zweite SPARQL-Abfrage (die
-  Quelle liefert sie als Zeichenkette, `schema:version "6"` träfe nichts).
 
 ## [3.0.0] - 2026-08-14
 
