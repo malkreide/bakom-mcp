@@ -345,6 +345,13 @@ Handshake noch `Mcp-Session-Id`.
 Verbindungen in beiden Aeren, und die Suite wertet jede `MCPDeprecationWarning`
 als Fehler.
 
+**Was der Server ankuendigt.** Keine Aenderungsmeldungen: Tools, Ressourcen
+und Prompts stehen beim Import fest, deshalb meldet der Server `listChanged`
+und `resources.subscribe` in beiden Aeren als `false` und lehnt
+`subscriptions/listen` ab. Kein `outputSchema`: die Tools liefern Text
+(Markdown oder JSON-Text) im `content`. Beides prueft
+[`tests/test_capabilities.py`](tests/test_capabilities.py).
+
 **Update-Politik.** Faellt das Gate, die Konstante nicht blind nachziehen: erst
 das Spec-Changelog zwischen den beiden Revisionen lesen, pruefen, ob sich der
 Server weiterhin richtig verhaelt, dann Konstante, diesen Abschnitt, `README.md`

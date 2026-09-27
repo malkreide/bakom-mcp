@@ -344,6 +344,13 @@ and on `server/discover` alike. A tool call needs neither a handshake nor an
 checks this over real connections in both eras, and the suite treats every
 `MCPDeprecationWarning` as an error.
 
+**What the server announces.** No change notifications: tools, resources and
+prompts are fixed at import, so the server reports `listChanged` and
+`resources.subscribe` as `false` in both eras and rejects
+`subscriptions/listen`. No `outputSchema`: tools return text (Markdown or a
+JSON string) in `content`. Both are checked by
+[`tests/test_capabilities.py`](tests/test_capabilities.py).
+
 **Update policy.** When the gate fails, do not edit the constant blindly: read
 the spec changelog between the two revisions, verify the server still behaves,
 then move the constant, this section, `README.de.md` and

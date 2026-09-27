@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Behoben
+
+- **Änderungsmeldungen angekündigt, die nie kamen.** Unter Spec `2026-07-28`
+  meldete der Server `resources.subscribe` und alle drei `listChanged` als
+  `true`. Das SDK leitet die Flags allein daraus ab, ob `subscriptions/listen`
+  registriert ist, und `MCPServer` registriert es immer — der Server selbst
+  ändert zur Laufzeit keine Liste. Ein lauschender Client hielt einen Strom
+  offen, auf dem nie etwas ankam. Der Handler ist abgemeldet; die Envelope-Ära
+  meldet jetzt `false` wie die Handshake-Ära schon vorher, und
+  `subscriptions/listen` antwortet mit `-32601`. Einen öffentlichen Schalter hat
+  das SDK nicht, der Eingriff geht über ein privates Attribut.
+
+- **`outputSchema {"result": string}` auf allen zwölf Tools.** Aus `-> str`
+  leitet das SDK dieses Schema ab und legt den Text ein zweites Mal als
+  `structuredContent` bei. Die Tools liefern Markdown oder einen JSON-Text,
+  beides steht vollständig im `content`; das Schema versprach eine Struktur, die
+  es nicht gibt. Jetzt `structured_output=False`: kein `outputSchema`, kein
+  `structuredContent`. Fehler waren nicht betroffen, sie kommen weiter über
+  `ToolError` als `isError: true`.
+
+  `tests/test_capabilities.py` prüft beides über echte Verbindungen und durch
+  die ASGI-App, je mit einer Negativkontrolle am nackten `MCPServer`: fällt sie,
+  hat das SDK den Default geändert und der Eingriff gehört zurückgebaut.
+
 ## [3.0.1] - 2026-09-27
 
 ### Geändert
