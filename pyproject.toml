@@ -67,6 +67,11 @@ testpaths = ["tests"]
 markers = [
     "live: tests that hit real BAKOM/geo.admin.ch/opendata.swiss APIs (excluded from CI default)",
 ]
+# Was das SDK seit Spec 2026-07-28 als deprecated fuehrt, bricht die Suite —
+# nicht erst den Betrieb bei einem Client, der die Altlast nicht mehr bedient.
+filterwarnings = [
+    "error::mcp.shared.exceptions.MCPDeprecationWarning",
+]
 
 [tool.ruff]
 line-length = 100

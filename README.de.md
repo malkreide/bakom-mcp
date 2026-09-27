@@ -333,6 +333,18 @@ Zu beachten: `LATEST_PROTOCOL_VERSION` im SDK ist ein Alias auf die **moderne**
 Aera, nicht auf die Handshake-Aera — wer nur dagegen pinnt, laesst genau die
 Aera frei wandern, die heutige Clients tatsaechlich aushandeln.
 
+**Nativ in der Envelope-Aera.** Was die Spec `2026-07-28` als deprecated
+fuehrt (SEP-2577: Logging, Sampling, Roots), benutzt der Server nicht. Der
+Statustext von `bakom_multi_standort_konnektivitaet` reist in der
+Fortschrittsmeldung statt per `ctx.info()` — Logging wird in der modernen Aera
+nur zugestellt, wenn die Anfrage per `_meta` einen Log-Level anfordert, und
+fiel ohne dieses Opt-in still weg. `serverInfo` nennt die Paketversion, bei
+`initialize` wie bei `server/discover`. Ein Werkzeugaufruf braucht weder
+Handshake noch `Mcp-Session-Id`.
+[`tests/test_modern_era.py`](tests/test_modern_era.py) prueft das ueber echte
+Verbindungen in beiden Aeren, und die Suite wertet jede `MCPDeprecationWarning`
+als Fehler.
+
 **Update-Politik.** Faellt das Gate, die Konstante nicht blind nachziehen: erst
 das Spec-Changelog zwischen den beiden Revisionen lesen, pruefen, ob sich der
 Server weiterhin richtig verhaelt, dann Konstante, diesen Abschnitt, `README.md`

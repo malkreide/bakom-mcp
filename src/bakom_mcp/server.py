@@ -682,8 +682,14 @@ CACHE_HINTS: dict[CacheableMethod, CacheHint] = {
     "server/discover": CacheHint(ttl_ms=LIST_CACHE_TTL_MS, scope="public"),
 }
 
+# `version` geht in `serverInfo` — beim `initialize` wie bei `server/discover`.
+# Ohne das Argument meldet das SDK einen leeren String: der Server sagte jedem
+# Client «Version ''», waehrend der User-Agent desselben Prozesses die echte
+# Nummer trug.
 mcp = MCPServer(
     "bakom_mcp",
+    version=__version__,
+    website_url="https://github.com/malkreide/bakom-mcp",
     cache_hints=CACHE_HINTS,
     instructions=(
         "Dieser Server bietet Zugriff auf Schweizer Telekommunikations-, "
@@ -896,7 +902,6 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput, ctx: C
     """
     standort_results = []
     total = len(params.locations)
-    await ctx.info(f"Verarbeite {total} Standort(e)…")
 
     async with _shared_client(ctx) as client:
         for index, loc in enumerate(params.locations):
@@ -906,7 +911,15 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput, ctx: C
 
             # SDK-003: Progress-Report fuer Long-Running-Tools.
             # Claude-Desktop / MCP-Inspector zeigt 0/total → total/total Spinner.
-            await ctx.report_progress(progress=index, total=total)
+            #
+            # Der Text reist in der Fortschrittsmeldung, nicht in `ctx.info()`:
+            # Logging ist ab Spec 2026-07-28 deprecated (SEP-2577) und wird dort
+            # nur zugestellt, wenn die einzelne Anfrage per `_meta` einen
+            # Log-Level anfordert. Ohne dieses Opt-in fiel die Zeile still weg,
+            # die Fortschrittsmeldung erreicht beide Aeren.
+            await ctx.report_progress(
+                progress=index, total=total, message=f"Standort {index + 1}/{total}: {name}"
+            )
 
             if not (45.8 <= lat <= 47.9) or not (5.9 <= lon <= 10.6):
                 standort_results.append(
@@ -951,7 +964,7 @@ async def bakom_multi_standort_konnektivitaet(params: MultiLocationInput, ctx: C
                 )
 
     # SDK-003: Final-Progress signalisiert "fertig" an die UI.
-    await ctx.report_progress(progress=total, total=total)
+    await ctx.report_progress(progress=total, total=total, message=f"{total} Standort(e) abgefragt")
 
     mit_5g = sum(1 for s in standort_results if s.get("5g_abdeckung") is True)
     mit_glasfaser = sum(1 for s in standort_results if s.get("glasfaser_fttb") is True)
