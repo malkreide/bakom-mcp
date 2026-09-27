@@ -546,10 +546,15 @@ class TestToolCallLogging:
 
 
 # ---------------------------------------------------------------------------
-# SDK-003: ctx.report_progress + ctx.info in multi_standort
+# SDK-003: ctx.report_progress in multi_standort
 # ---------------------------------------------------------------------------
 class TestProgressReports:
-    """bakom_multi_standort_konnektivitaet ruft ctx.report_progress + ctx.info."""
+    """bakom_multi_standort_konnektivitaet meldet Fortschritt samt Text.
+
+    Dass der Text dort und nicht per `ctx.info()` reist, prueft
+    `test_modern_era.py` ueber eine echte Verbindung — ein Mock hier nimmt jeden
+    Aufruf an, auch einen deprecated.
+    """
 
     @pytest.mark.asyncio
     async def test_progress_called_per_location(self) -> None:
@@ -559,7 +564,6 @@ class TestProgressReports:
 
         ctx = MagicMock()
         ctx.request_context.lifespan_context = AppContext(http=client)
-        ctx.info = AsyncMock()
         ctx.report_progress = AsyncMock()
 
         params = MultiLocationInput(
@@ -578,8 +582,9 @@ class TestProgressReports:
         last_call = ctx.report_progress.call_args_list[-1]
         assert last_call.kwargs["progress"] == 3
         assert last_call.kwargs["total"] == 3
-        # ctx.info called once at the start
-        assert ctx.info.call_count == 1
+        # Jede Meldung traegt einen Text; die erste nennt den ersten Standort
+        assert all(c.kwargs.get("message") for c in ctx.report_progress.call_args_list)
+        assert "A" in ctx.report_progress.call_args_list[0].kwargs["message"]
         # Result still serializable
         assert isinstance(result, str)
 

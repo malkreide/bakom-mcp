@@ -7,7 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Geändert
+
+- **Nativ auf Spec `2026-07-28`.** `bakom_multi_standort_konnektivitaet`
+  schrieb seinen Statustext per `ctx.info()` — über die Logging-Fähigkeit, die
+  die Spec mit SEP-2577 deprecated. In der Envelope-Ära stellt das SDK solche
+  Zeilen nur zu, wenn die einzelne Anfrage per `_meta` einen Log-Level
+  anfordert; ohne Opt-in fiel der Text still weg (gemessen: 0 Meldungen), in
+  der Handshake-Ära kam er an, samt `MCPDeprecationWarning`. Der Text reist
+  jetzt in der Fortschrittsmeldung (`message`), je Standort, und erreicht beide
+  Ären.
+
+  Der Unit-Test dazu hatte `ctx.info` als `AsyncMock` und zählte die Aufrufe —
+  er bestätigte also genau die Altlast. `tests/test_modern_era.py` fährt
+  stattdessen echte Verbindungen in beiden Ären; ein statischer Test verbietet
+  `ctx.log/debug/info/warning/error` im ausgelieferten Code, weil eine
+  Deprecation-Warnung nur auf dem Pfad feuert, der gerade lief. Die Suite wertet
+  jede `MCPDeprecationWarning` als Fehler (`filterwarnings` in `pyproject.toml`).
+
 ### Behoben
+
+- **`serverInfo.version` war leer.** `MCPServer` bekam kein `version=`, das SDK
+  meldet dann `""` — bei `initialize` ebenso wie bei `server/discover`, während
+  der User-Agent desselben Prozesses die echte Nummer trug. Jetzt
+  `__version__`; dazu `website_url`.
 
 - **`allow_headers` stand auf `["*"]`.** Starlette schaltet damit auf
   `allow_all_headers` und spiegelt im Preflight zurück, was der Browser

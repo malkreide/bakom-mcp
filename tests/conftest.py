@@ -29,6 +29,5 @@ async def live_ctx():
     async with lifespan(mcp) as app_ctx:
         ctx = MagicMock()
         ctx.request_context.lifespan_context = app_ctx
-        ctx.info = AsyncMock()
         ctx.report_progress = AsyncMock()
         yield ctx

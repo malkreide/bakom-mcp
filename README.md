@@ -333,6 +333,17 @@ Note that the SDK's `LATEST_PROTOCOL_VERSION` is an alias for the **modern**
 era, not for the handshake era — pinning against it alone would leave the era
 that current clients actually negotiate free to drift.
 
+**Native in the envelope era.** The server uses nothing the `2026-07-28`
+spec deprecates (SEP-2577: logging, sampling, roots). The status text of
+`bakom_multi_standort_konnektivitaet` travels in the progress notification
+instead of `ctx.info()` — in the modern era logging is delivered only when the
+request opts in with a log level in `_meta`, and without that opt-in the line
+was silently dropped. `serverInfo` carries the package version on `initialize`
+and on `server/discover` alike. A tool call needs neither a handshake nor an
+`Mcp-Session-Id`. [`tests/test_modern_era.py`](tests/test_modern_era.py)
+checks this over real connections in both eras, and the suite treats every
+`MCPDeprecationWarning` as an error.
+
 **Update policy.** When the gate fails, do not edit the constant blindly: read
 the spec changelog between the two revisions, verify the server still behaves,
 then move the constant, this section, `README.de.md` and
