@@ -88,11 +88,21 @@ jobs:
         env:
           PYTEST_EXIT: ${{ steps.live.outputs.pytest_exit }}
 
+      # `outage` oeffnet ebenfalls ein Issue, aber mit anderem Text: Am
+      # 14.10.2026 (Issue #106) behauptete der Befund-Text, ein Aussetzer sei
+      # «ausgeschlossen», waehrend ckan.opendata.swiss ueber die 60 s Wartezeit
+      # hinaus 502 lieferte. Die Wiederholung schliesst nur Stoerungen aus, die
+      # kuerzer sind als sie. Ein Issue bleibt trotzdem richtig — haelt die
+      # Stoerung tagelang an, soll das jemand sehen.
       - name: Bei Fehlschlag Issue eröffnen oder kommentieren
-        if: steps.verdict.outputs.state == 'finding'
+        if: >-
+          steps.verdict.outputs.state == 'finding' ||
+          steps.verdict.outputs.state == 'outage'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          LIVE_STATE: ${{ steps.verdict.outputs.state }}
+          LIVE_REASON: ${{ steps.verdict.outputs.reason }}
         run: |
           set -euo pipefail
           gh label create live-test-failure \
@@ -100,14 +110,31 @@ jobs:
             --color B60205 --force
 
           {
-            echo "Der geplante Live-Test ist zweimal in Folge fehlgeschlagen — ein"
-            echo "einzelner Netzwerk-Aussetzer ist damit ausgeschlossen."
-            echo
-            echo "Lauf: $RUN_URL"
-            echo
-            echo "Erst die Quelle abfragen, dann einordnen: nicht aus der"
-            echo "Fehlermeldung schliessen, dass ein Datensatz weg ist — es kann"
-            echo "genauso eine umbenannte Kopfzeile sein."
+            if [ "$LIVE_STATE" = "outage" ]; then
+              echo "Die Quelle hat im geplanten Live-Test abgesagt, zweimal in Folge:"
+              echo "Jeder Fehlschlag ist ein HTTP 5xx oder eine Zeitüberschreitung,"
+              echo "keiner eine Zusicherung. Das ist eine Störung, kein Befund über"
+              echo "den Vertrag — ob die Felder noch stimmen, sagt dieser Lauf nicht."
+              echo
+              echo "Einordnung: $LIVE_REASON"
+              echo
+              echo "Lauf: $RUN_URL"
+              echo
+              echo "Fallen an mehreren Tagen dieselben Tests, ist es keine Störung"
+              echo "mehr: dann den Endpunkt von Hand abfragen (curl mit \`-A\` —"
+              echo "opendata.swiss sperrt den Standard-User-Agent von curl mit 403)."
+            else
+              echo "Der geplante Live-Test ist zweimal in Folge fehlgeschlagen, und"
+              echo "mindestens ein Fehlschlag ist keine Absage der Quelle."
+              echo
+              echo "Einordnung: $LIVE_REASON"
+              echo
+              echo "Lauf: $RUN_URL"
+              echo
+              echo "Erst die Quelle abfragen, dann einordnen: nicht aus der"
+              echo "Fehlermeldung schliessen, dass ein Datensatz weg ist — es kann"
+              echo "genauso eine umbenannte Kopfzeile sein."
+            fi
             echo
             echo '<details><summary>Letzte 40 Zeilen der Testausgabe</summary>'
             echo
@@ -139,9 +166,10 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
-      # Erst hier wird der Job rot. `clear` ist gruen; `finding` und `unknown`
-      # sind beide rot, aber nur `finding` hat oben ein Issue erzeugt — der
-      # Unterschied steht im Log, nicht im Exit-Code.
+      # Erst hier wird der Job rot. `clear` ist gruen; `finding`, `outage` und
+      # `unknown` sind rot, aber nur `finding` und `outage` haben oben ein Issue
+      # erzeugt, mit je eigenem Text — der Unterschied steht im Log, nicht im
+      # Exit-Code.
       #
       # Ueber `env`, nicht ueber `${{ }}` im Skript: Der Grund kann eine
       # Parser-Meldung ueber eine fremde Datei enthalten, und `${{ }}` setzt sie

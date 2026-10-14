@@ -388,6 +388,20 @@ anhebt, macht diesen Gate rot — nicht etwa ein Lint.
 `-m "not live"` aus; alle Live-Tests stehen in `tests/test_live.py` und tragen
 dort `pytestmark = pytest.mark.live`.
 
+**Die Wiederholung trennt Drift nur von Störungen, die kürzer sind als 60 s.**
+Am 14.10.2026 (Issue #106) lieferte `ckan.opendata.swiss` über mehrere Minuten
+HTTP 502: erster Durchgang 2 Tests rot, Wiederholung 7, fast alle andere; eine
+Stunde später alles grün. Das Issue behauptete, ein Aussetzer sei
+«ausgeschlossen». Seither ordnet `scripts/classify_live_run.py` einen Lauf, in
+dem **jeder** Fehlschlag die 5xx- oder Timeout-Meldung aus `_handle_api_error`
+trägt, als `outage` ein — eigener Issue-Text, Job weiter rot. Ein einziger
+anderer Fehlschlag macht ihn zum `finding`. Wer eine dieser Meldungen in
+`server.py` umformuliert, macht `ServerKopplungTest` rot, und das ist gewollt.
+
+Von Hand nachprüfen: opendata.swiss antwortet auf den Standard-User-Agent von
+curl mit **403** (nginx, seit mindestens 14.10.2026), auf den des Servers mit
+200. Ohne `-A "bakom-mcp/…"` hält man einen gesunden Host für gesperrt.
+
 Zwei Regeln für diese Datei:
 
 - Antworten über die Helfer `text()` / `daten()` prüfen. Die Tools geben Fehler

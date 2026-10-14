@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Was hat der geplante Live-Lauf festgestellt — clear, finding oder unknown?
+"""Was hat der geplante Live-Lauf festgestellt — clear, finding, outage oder unknown?
 
 WARUM DAS EIN SKRIPT IST UND KEIN YAML-BLOCK
 --------------------------------------------
 `if: failure()` kennt zwei Antworten: rot und nicht rot. Ein Live-Lauf hat
-drei, und die dritte ist die, die zaehlt:
+vier, und die letzten beiden sind die, die zaehlen:
 
   clear    Die Suite ist gelaufen und war gruen.
   finding  Die Suite ist gelaufen und etwas ist gefallen.
+  outage   Die Suite ist gelaufen, und JEDER Fehlschlag ist eine Absage der
+           Quelle (HTTP 5xx oder Zeitueberschreitung) — ueber den Vertrag
+           sagt der Lauf nichts.
   unknown  Die Suite ist NICHT gelaufen — und niemand weiss, ob der Vertrag
            mit der Quelle noch haelt.
 
@@ -53,6 +56,26 @@ Einordnung reicht den Grund durch, statt einen zu konstruieren. Sie sieht dann
 auch nicht ins XML — ein liegengebliebener Report aus einem frueheren Schritt
 belegt nichts ueber einen Lauf, der nicht stattgefunden hat.
 
+DIE GESTOERTE QUELLE IST KEIN BEFUND
+------------------------------------
+Gemessen am 14.10.2026 (Lauf 38547729127, Issue #106): Der erste Durchgang
+verlor 2 Tests, die Wiederholung 60 s spaeter 7 — fast alle andere, sechsmal
+HTTP 502, einmal Zeitueberschreitung, alle auf `ckan.opendata.swiss`. Eine
+Stunde spaeter war alles gruen, ohne Aenderung am Code. Als `finding`
+eingeordnet, hiess es im Issue, ein Netzwerk-Aussetzer sei «ausgeschlossen»:
+die Wiederholung trennt einen Aussetzer von Drift nur, wenn die Stoerung
+kuerzer ist als die Wartezeit.
+
+Drift faellt an denselben Tests mit Zusicherungen; eine Stoerung an
+wechselnden Tests mit einer Absage der Quelle. Deshalb `outage`, wenn jeder
+einzelne Fehlschlag die Absage-Meldung aus `_handle_api_error` in `server.py`
+traegt. Ein einziger anderer Fehlschlag — Zusicherung, 4xx, KeyError — macht
+den Lauf zum `finding`: Ein 4xx ist eine echte Antwort, keine Stoerung.
+
+Geprueft wird pro `<testcase>`, nicht pro Suite: Stimmt die Zahl der
+gefundenen `<failure>`/`<error>` nicht mit den Zaehlern der Suite ueberein,
+ist die Stoerung nicht belegt, und es bleibt `finding`.
+
 Aufruf:
     python scripts/classify_live_run.py live-report.xml
     python scripts/classify_live_run.py live-report.xml --pytest-exit 1
@@ -67,12 +90,52 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 CLEAR = "clear"
 FINDING = "finding"
+OUTAGE = "outage"
 UNKNOWN = "unknown"
+
+# Woertlich aus `_handle_api_error` in src/bakom_mcp/server.py. Aendert sich
+# dort ein Text, faellt `test_classify_live_run.ServerKopplungTest`. Gesucht
+# statt am Anfang verglichen: pytest bettet die Meldung bei einem
+# Fixture-Fehler in `failed on setup with "..."` ein. «nicht erreichbar» steht
+# dort nur bei Status >= 500; eine Statuszahl im Muster pruefte nichts dazu.
+OUTAGE_MARKERS: dict[str, re.Pattern[str]] = {
+    "HTTP 5xx": re.compile(r"API-Server nicht erreichbar"),
+    "Zeitueberschreitung": re.compile(r"Zeitüberschreitung\. API antwortet nicht"),
+}
+
+
+def _outage_kinds(suites: list[ET.Element], expected: int) -> dict[str, int] | None:
+    """Zaehlt die Absagen der Quelle je Art — oder None, wenn das nicht alles ist.
+
+    `expected` ist failures + errors laut Suite. Jeder `<failure>`/`<error>`
+    muss eine Absage-Meldung tragen, und es muessen genau so viele sein: Sonst
+    gibt es einen Fehlschlag, den diese Pruefung nicht gesehen hat.
+    """
+    kinds: dict[str, int] = {}
+    seen = 0
+    for suite in suites:
+        for case in suite.iter("testcase"):
+            for result in case:
+                if result.tag not in ("failure", "error"):
+                    continue
+                seen += 1
+                message = result.get("message") or ""
+                kind = next(
+                    (k for k, rx in OUTAGE_MARKERS.items() if rx.search(message)),
+                    None,
+                )
+                if kind is None:
+                    return None
+                kinds[kind] = kinds.get(kind, 0) + 1
+    if seen != expected:
+        return None
+    return kinds
 
 
 def classify(
@@ -113,6 +176,15 @@ def classify(
     )
 
     if failures or errors:
+        kinds = _outage_kinds(suites, failures + errors)
+        if kinds is not None:
+            detail = ", ".join(f"{n}x {k}" for k, n in sorted(kinds.items()))
+            return (
+                OUTAGE,
+                f"{failures + errors} von {tests} Test(s) an einer Absage der Quelle "
+                f"gescheitert ({detail}), kein anderer Fehlschlag — Stoerung, kein "
+                "Befund ueber den Vertrag",
+            )
         return (
             FINDING,
             f"{failures} Fehlschlag/Fehlschlaege und {errors} Fehler von {tests} Test(s)",
