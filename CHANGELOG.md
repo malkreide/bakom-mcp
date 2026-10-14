@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Behoben
+
+- **Live-Test meldete eine gestörte Quelle als Befund.** Am 14.10.2026 lieferte
+  `ckan.opendata.swiss` über mehrere Minuten HTTP 502; beide Durchgänge des
+  geplanten Laufs fielen an wechselnden Tests, und das Issue behauptete, ein
+  Netzwerk-Aussetzer sei «ausgeschlossen». `scripts/classify_live_run.py` kennt
+  jetzt den Zustand `outage`: jeder Fehlschlag ist ein HTTP 5xx oder eine
+  Zeitüberschreitung, keiner eine Zusicherung. Das Issue trägt dann einen
+  eigenen Text, der Job bleibt rot. Betrifft nur die CI, nicht das Paket.
+
 ## [3.0.2] - 2026-09-27
 
 ### Behoben

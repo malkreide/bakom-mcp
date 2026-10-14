@@ -10,18 +10,24 @@ Der wichtigste Fall ist `test_alle_uebersprungen_ist_nicht_gruen`. Gemessen am
 Live-Suite alle sechs Tests und pytest endet mit 0. Ein Job, der das als gruen
 bucht, schliesst ein offenes Issue mit einem Vergleich, den es nie gab.
 
-Nur Standardbibliothek, kein Netz.
+Kein Netz. Die Faelle zur gestoerten Quelle (`EchtesJunitTest`) lassen pytest
+selbst das XML schreiben, mit den Meldungen aus `_handle_api_error`: Ein von
+Hand geschriebenes `<failure message=...>` kodierte nur die Annahme, wie pytest
+die Meldung ablegt — und koennte sie nicht widerlegen.
 """
 
 from __future__ import annotations
 
 import os
+import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
 
 import classify_live_run as clr  # noqa: E402
 
@@ -109,6 +115,208 @@ class ClassifyTest(unittest.TestCase):
         xml = '<testsuite tests="2" failures="0" errors="0" skipped="0"/>'
         state, _ = self._state(xml)
         self.assertEqual(state, clr.CLEAR)
+
+
+# Ein Probelauf mit echten Fehlschlaegen. Jeder Fall in `EchtesJunitTest` waehlt
+# per `-k` die Tests aus, die in seinem Lauf fallen sollen; pytest schreibt das
+# XML so, wie es der Live-Workflow liest.
+PROBE = textwrap.dedent(
+    """
+    import httpx
+    import pytest
+
+    from bakom_mcp.server import _raise_api_error
+
+    URL = "https://ckan.opendata.swiss/api/3/action/package_search"
+
+
+    def status(code):
+        req = httpx.Request("GET", URL)
+        return httpx.HTTPStatusError(
+            "x", request=req, response=httpx.Response(code, request=req)
+        )
+
+
+    def test_http_502():
+        _raise_api_error(status(502))
+
+
+    def test_http_504():
+        _raise_api_error(status(504))
+
+
+    def test_timeout():
+        _raise_api_error(httpx.ReadTimeout("t", request=httpx.Request("GET", URL)))
+
+
+    def test_http_400():
+        _raise_api_error(status(400))
+
+
+    def test_http_404():
+        _raise_api_error(status(404))
+
+
+    def test_zusicherung():
+        assert "description" in {"notes": ""}
+
+
+    def test_gruen():
+        pass
+
+
+    @pytest.fixture
+    def quelle_weg():
+        _raise_api_error(status(503))
+
+
+    def test_setup_502(quelle_weg):
+        pass
+    """
+)
+
+
+def junit_aus_pytest(tmp: Path, auswahl: str) -> Path:
+    """Laesst pytest den Probelauf fahren und gibt den Pfad zum JUnit-XML zurueck."""
+    (tmp / "test_probe.py").write_text(PROBE, encoding="utf-8")
+    report = tmp / "live-report.xml"
+    env = dict(os.environ)
+    env["PYTHONPATH"] = os.pathsep.join(p for p in (str(ROOT / "src"), env.get("PYTHONPATH")) if p)
+    subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+            "-k",
+            auswahl,
+            f"--junitxml={report}",
+            "test_probe.py",
+        ],
+        cwd=tmp,
+        env=env,
+        capture_output=True,
+        check=False,
+    )
+    if not report.is_file():
+        raise AssertionError(f"pytest hat kein XML geschrieben (Auswahl {auswahl!r})")
+    return report
+
+
+class EchtesJunitTest(unittest.TestCase):
+    """Stoerung der Quelle vs. Befund — am XML, das pytest wirklich schreibt.
+
+    Ausgangsfall 14.10.2026, Lauf 38547729127: 6x HTTP 502, 1x
+    Zeitueberschreitung, alle auf ckan.opendata.swiss, beim naechsten Lauf
+    alles gruen. Eingeordnet als `finding`, behauptete das Issue, ein
+    Netzwerk-Aussetzer sei ausgeschlossen.
+    """
+
+    def _classify(self, auswahl: str) -> tuple[str, str]:
+        with tempfile.TemporaryDirectory() as tmp:
+            return clr.classify(junit_aus_pytest(Path(tmp), auswahl))
+
+    def test_nur_5xx_und_zeitueberschreitung_ist_stoerung(self):
+        state, reason = self._classify("http_502 or http_504 or timeout or gruen")
+        self.assertEqual(state, clr.OUTAGE)
+        self.assertIn("2x HTTP 5xx", reason)
+        self.assertIn("1x Zeitueberschreitung", reason)
+        self.assertIn("3 von 4", reason)
+
+    def test_nur_zeitueberschreitung_ist_stoerung(self):
+        state, _ = self._classify("timeout")
+        self.assertEqual(state, clr.OUTAGE)
+
+    def test_absage_im_fixture_setup_ist_stoerung(self):
+        """pytest legt sie als <error> ab, eingebettet in `failed on setup with`."""
+        state, reason = self._classify("setup_502")
+        self.assertEqual(state, clr.OUTAGE)
+        self.assertIn("1x HTTP 5xx", reason)
+
+    def test_eine_zusicherung_neben_502_ist_ein_befund(self):
+        state, _ = self._classify("http_502 or zusicherung")
+        self.assertEqual(state, clr.FINDING)
+
+    def test_400_ist_ein_befund(self):
+        """Ein 4xx ist eine echte Antwort der Quelle (CLAUDE.md: «Ein 4xx ist kein Nein»)."""
+        state, _ = self._classify("http_400")
+        self.assertEqual(state, clr.FINDING)
+
+    def test_404_neben_502_ist_ein_befund(self):
+        state, _ = self._classify("http_502 or http_404")
+        self.assertEqual(state, clr.FINDING)
+
+
+class StoerungRandfaelleTest(unittest.TestCase):
+    """Was pytest so nicht schreibt, aber ein anderer Reporter koennte."""
+
+    def _state(self, xml: str) -> str:
+        with tempfile.TemporaryDirectory() as tmp:
+            return clr.classify(write(Path(tmp), xml))[0]
+
+    def test_zaehler_ohne_testcases_beweist_keine_stoerung(self):
+        """Die Suite meldet einen Fehlschlag, zeigt ihn aber nicht: nicht belegt."""
+        self.assertEqual(self._state(suite(tests=3, failures=1)), clr.FINDING)
+
+    def test_ein_ungesehener_fehlschlag_macht_den_befund(self):
+        xml = (
+            '<testsuite tests="3" failures="2" errors="0" skipped="0">'
+            '<testcase name="a"><failure message="ToolError: Fehler: API-Server '
+            'nicht erreichbar (HTTP 502)."/></testcase>'
+            '<testcase name="b"/><testcase name="c"/>'
+            "</testsuite>"
+        )
+        self.assertEqual(self._state(xml), clr.FINDING)
+
+    def test_fehlschlag_ohne_meldung_ist_ein_befund(self):
+        xml = (
+            '<testsuite tests="1" failures="1" errors="0" skipped="0">'
+            '<testcase name="a"><failure/></testcase>'
+            "</testsuite>"
+        )
+        self.assertEqual(self._state(xml), clr.FINDING)
+
+
+class ServerKopplungTest(unittest.TestCase):
+    """Die Marker in classify_live_run.py sind Texte aus `_handle_api_error`.
+
+    Wird dort eine Meldung umformuliert, ordnet der Live-Workflow eine
+    Stoerung still wieder als Befund ein — und kein anderer Test faellt.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        sys.path.insert(0, str(ROOT / "src"))
+        import httpx
+
+        from bakom_mcp.server import _handle_api_error
+
+        cls.httpx = httpx
+        cls.handle = staticmethod(_handle_api_error)
+
+    def _status(self, code: int) -> str:
+        req = self.httpx.Request("GET", "https://ckan.opendata.swiss/")
+        resp = self.httpx.Response(code, request=req)
+        return self.handle(self.httpx.HTTPStatusError("x", request=req, response=resp))
+
+    def _ist_stoerung(self, meldung: str) -> bool:
+        return any(rx.search(meldung) for rx in clr.OUTAGE_MARKERS.values())
+
+    def test_5xx_meldungen_sind_stoerungen(self):
+        for code in (500, 502, 503, 504):
+            with self.subTest(code=code):
+                self.assertTrue(self._ist_stoerung(self._status(code)))
+
+    def test_zeitueberschreitung_ist_eine_stoerung(self):
+        meldung = self.handle(self.httpx.ReadTimeout("t"))
+        self.assertTrue(self._ist_stoerung(meldung))
+
+    def test_echte_antworten_sind_keine_stoerung(self):
+        for code in (400, 403, 404, 429):
+            with self.subTest(code=code):
+                self.assertFalse(self._ist_stoerung(self._status(code)))
 
 
 class MissingReportTest(unittest.TestCase):
