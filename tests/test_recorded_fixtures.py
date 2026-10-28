@@ -444,6 +444,82 @@ async def test_ein_abbruch_bleibt_ein_fehler():
         await server.bakom_aktuell(server.TelekomStatInput(thema="medien"), _ctx(client))
 
 
+# Aufgezeichnet am 2026-10-28 04:06 UTC, wortwoertlich: GetFeatureInfo wie in
+# `breitband_100.json`, aber mit `LAYERS=ch.bakom.gibtsnicht`. Der WMS antwortet
+# mit HTTP 200 und `content-type: text/xml` — nicht mit einem 4xx.
+WMS_ABSAGE = """\
+<?xml version='1.0' encoding="UTF-8" standalone="no" ?>
+<ServiceExceptionReport version="1.3.0" xmlns="http://www.opengis.net/ogc" \
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
+xsi:schemaLocation="http://www.opengis.net/ogc \
+http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd">
+<ServiceException code="LayerNotDefined">
+msWMSLoadGetMapParams(): WMS server error. Invalid layer(s) given in the LAYERS \
+parameter. A layer might be disabled for this request. Check \
+wms/ows_enable_request settings.
+msApplySubstitutions(): Regular expression error. Parameter pattern validation failed.
+</ServiceException>
+</ServiceExceptionReport>
+"""
+
+
+def _wms_klient(status: int, text: str) -> AsyncMock:
+    client = AsyncMock(spec=httpx.AsyncClient)
+    client.get = AsyncMock(
+        return_value=httpx.Response(
+            status, text=text, request=httpx.Request("GET", server.WMS_GEO_ADMIN)
+        )
+    )
+    return client
+
+
+_BREITBAND = server.BroadbandCoverageInput(latitude=47.3769, longitude=8.5417, min_speed_mbps="100")
+
+
+async def test_eine_wms_absage_ist_kein_nein():
+    """Ein unbekannter Layer kommt als HTTP 200 mit XML zurueck.
+
+    Bis Oktober 2026 wurde daraus «❌ Nicht versorgt» — fuer jeden Standort der
+    Schweiz, sobald der Layer umbenannt wuerde. Die Live-Tests pruefen nur, dass
+    ein bool zurueckkommt, und waeren gruen geblieben.
+    """
+    with pytest.raises(ToolError) as exc_info:
+        await server.bakom_broadband_coverage(_BREITBAND, _ctx(_wms_klient(200, WMS_ABSAGE)))
+    msg = str(exc_info.value)
+    assert "LayerNotDefined" in msg
+    assert "erneut" not in msg, "eine deterministische Absage bekommt keinen Wiederholungsrat"
+
+
+async def test_ein_wms_5xx_ist_kein_nein():
+    with pytest.raises(ToolError, match=r"HTTP 502"):
+        await server.bakom_glasfaser_verfuegbarkeit(
+            server.CoordinateInput(latitude=47.3769, longitude=8.5417),
+            _ctx(_wms_klient(502, "Bad Gateway")),
+        )
+
+
+async def test_json_ohne_features_ist_kein_nein():
+    with pytest.raises(ToolError, match=r"keine FeatureCollection"):
+        await server.bakom_broadband_coverage(_BREITBAND, _ctx(_wms_klient(200, "{}")))
+
+
+async def test_der_mehrfachvergleich_zaehlt_eine_absage_nicht_als_nein():
+    """Hier wird nicht geworfen, sondern je Standort ein `fehler` gesetzt.
+
+    Vorher stand dort `glasfaser_fttb: false` und `fehler: null` — dieselbe
+    Zeile wie am Grimsel, wo die Quelle tatsaechlich «nein» sagt.
+    """
+    klasse, eingabe, _ = WERKZEUGE["bakom_multi_standort_konnektivitaet"]
+    params = getattr(server, klasse)(**eingabe, response_format="json")
+    client = _wms_klient(200, WMS_ABSAGE)
+    daten = json.loads(await server.bakom_multi_standort_konnektivitaet(params, _ctx(client)))
+
+    for standort in daten["standorte"]:
+        assert standort["glasfaser_fttb"] is None, standort
+        assert standort["fehler"], standort
+    assert daten["zusammenfassung"]["mit_glasfaser"] == 0
+
+
 # --------------------------------------------------------------------------
 # Der Nachweis, nachgerechnet
 # --------------------------------------------------------------------------

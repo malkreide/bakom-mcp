@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Behoben
 
+- **Eine Absage des Geodienstes erschien als «nicht versorgt».** Die vier
+  Abdeckungs-Werkzeuge (Breitband, Glasfaser, Mobilfunk, Mehrfachvergleich)
+  fragen `wms.geo.admin.ch` per GetFeatureInfo ab. Ein HTTP-Fehler und eine
+  Antwort ohne JSON wurden dort still zu `False` — und der WMS meldet einen
+  unbekannten Layer mit **HTTP 200** und einem XML-`ServiceExceptionReport`
+  (gemessen 28.10.2026). Ein umbenannter Layer hätte jeden Standort der Schweiz
+  als unversorgt gemeldet, und die Live-Tests, die nur einen bool erwarten,
+  wären grün geblieben. Jetzt wirft die Abfrage; das Werkzeug meldet den
+  OGC-Code (`LayerNotDefined`) ohne Wiederholungsrat, der Mehrfachvergleich
+  setzt je Standort `fehler` statt `false`. `False` heisst nur noch: die Quelle
+  hat eine FeatureCollection ohne Features geliefert.
+
 - **Live-Test meldete eine gestörte Quelle als Befund.** Am 14.10.2026 lieferte
   `ckan.opendata.swiss` über mehrere Minuten HTTP 502; beide Durchgänge des
   geplanten Laufs fielen an wechselnden Tests, und das Issue behauptete, ein

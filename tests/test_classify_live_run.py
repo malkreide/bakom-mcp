@@ -318,6 +318,12 @@ class ServerKopplungTest(unittest.TestCase):
             with self.subTest(code=code):
                 self.assertFalse(self._ist_stoerung(self._status(code)))
 
+    def test_wms_absage_ist_keine_stoerung(self):
+        # Ein umbenannter Layer ist Drift, kein Aussetzer: `finding`, nicht `outage`.
+        from bakom_mcp.server import WmsAbsageError
+
+        self.assertFalse(self._ist_stoerung(self.handle(WmsAbsageError("LayerNotDefined"))))
+
 
 class MissingReportTest(unittest.TestCase):
     """Kein Report heisst: pytest kam nicht bis zum Schreiben. Nie clear."""
