@@ -513,6 +513,24 @@ Für die Nachrichtenlage gibt es keine bekannte maschinenlesbare Quelle:
 Abwesenheit ist. Ohne Verifikation von einem normalen Anschluss aus wird darauf
 nichts gebaut.
 
+### Was «nicht versorgt» heisst (`_wms_abgedeckt`)
+
+Breitband, Glasfaser, Mobilfunk und der Mehrfachvergleich fragen
+`wms.geo.admin.ch` per GetFeatureInfo ab. Der WMS (MapServer) lehnt eine Abfrage
+mit **HTTP 200** und einem XML-`ServiceExceptionReport` ab — ein unbekannter
+Layer ist kein 4xx. Bis Oktober 2026 wurde daraus still `False`, also
+«❌ Nicht versorgt». `False` heisst seither nur: FeatureCollection ohne Features;
+alles andere wirft `WmsAbsageError` bzw. den HTTP-Fehler.
+
+Der Ausfall vom 16.10.2026 (Issue #108) lief über denselben Pfad, war aber eine
+Zeitüberschreitung — die warf schon vorher und wurde richtig als `outage`
+eingeordnet. Die stille Lücke lag daneben, beim 5xx und beim XML.
+
+Wer einen Layer von Hand prüft: Mehrere IDs im statischen Katalog
+(`netzabdeckung-*`, `anschlussart-verfuegbarkeit`) antworten über WMS mit
+`LayerNotDefined`. Das belegt nur, dass der WMS sie nicht kennt, nicht, dass es
+sie auf geo.admin.ch nicht gibt.
+
 ### LINDAS (`bakom_medien_statistik`)
 
 Endpunkt `https://lindas.admin.ch/query` — **nicht** `/sparql`, das gibt 404.

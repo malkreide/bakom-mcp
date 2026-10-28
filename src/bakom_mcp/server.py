@@ -17,6 +17,7 @@ import asyncio
 import functools
 import json
 import logging
+import re
 import time
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
@@ -104,6 +105,19 @@ ALLOWED_EGRESS_HOSTS: frozenset[str] = frozenset(
 
 class EgressNotAllowedError(httpx.RequestError):
     """Outbound-Call an einen nicht in ALLOWED_EGRESS_HOSTS gelisteten Host."""
+
+
+class WmsAbsageError(Exception):
+    """Der WMS hat geantwortet, aber nicht mit einer FeatureCollection.
+
+    MapServer meldet eine abgelehnte Abfrage — etwa einen unbekannten Layer —
+    mit HTTP 200 und einem XML-`ServiceExceptionReport` (gemessen 28.10.2026,
+    `code="LayerNotDefined"`). Bis dahin wurde daraus still «nicht versorgt».
+    """
+
+    def __init__(self, code: str) -> None:
+        super().__init__(code)
+        self.code = code
 
 
 async def _enforce_egress_allowlist(request: httpx.Request) -> None:
@@ -527,6 +541,10 @@ async def _wms_abgedeckt(
     Prüft via WMS GetFeatureInfo ob ein Rasterlayer an einer LV95-Koordinate
     Daten enthält (= Abdeckung vorhanden).
     Gibt True zurück wenn mindestens 1 Feature gefunden wird.
+
+    `False` heisst nur: die Quelle hat eine FeatureCollection ohne Features
+    geliefert. Jede andere Antwort — ein HTTP-Fehler, ein XML-
+    `ServiceExceptionReport` — wirft, statt als «nicht versorgt» zu erscheinen.
     """
     bbox = f"{east - radius},{north - radius},{east + radius},{north + radius}"
     r = await client.get(
@@ -547,13 +565,15 @@ async def _wms_abgedeckt(
         },
         timeout=TIMEOUT,
     )
-    if r.status_code != 200:
-        return False
+    r.raise_for_status()
     try:
         data = r.json()
-        return len(data.get("features", [])) > 0
-    except Exception:
-        return False
+    except ValueError:
+        code = re.search(r'ServiceException code="(\w{1,40})"', r.text)
+        raise WmsAbsageError(code.group(1) if code else "keine JSON-Antwort") from None
+    if not isinstance(data, dict) or not isinstance(data.get("features"), list):
+        raise WmsAbsageError("keine FeatureCollection")
+    return len(data["features"]) > 0
 
 
 async def _opendata_dataset_info(client: httpx.AsyncClient, dataset_id: str) -> dict[str, Any]:
@@ -633,6 +653,12 @@ def _handle_api_error(e: Exception) -> str:
         if e.response.status_code >= 500:
             return f"Fehler: API-Server nicht erreichbar (HTTP {e.response.status_code})."
         return f"Fehler: API-Anfrage fehlgeschlagen (HTTP {e.response.status_code})."
+    if isinstance(e, WmsAbsageError):
+        # Deterministisch: ein Wiederholungsrat waere hier falsch.
+        return (
+            f"Fehler: Der Geodienst hat die Abfrage abgelehnt ({e.code}). "
+            "Das ist keine Aussage über die Abdeckung am Standort."
+        )
     if isinstance(e, httpx.TimeoutException):
         return "Fehler: Zeitüberschreitung. API antwortet nicht – bitte erneut versuchen."
     if isinstance(e, httpx.ConnectError):
