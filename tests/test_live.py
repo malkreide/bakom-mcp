@@ -23,11 +23,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import httpx
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from bakom_mcp.server import (  # noqa: E402
+    GEO_ADMIN_API,
+    LAYER_MOBILFUNKANLAGEN,
     AntennaSearchInput,
     BroadbandCoverageInput,
     BroadbandSpeed,
@@ -40,7 +43,9 @@ from bakom_mcp.server import (  # noqa: E402
     ResponseFormat,
     RTVSearchInput,
     TelekomStatInput,
+    _raise_api_error,
     bakom_aktuell,
+    bakom_breitbandatlas_datensaetze,
     bakom_broadband_coverage,
     bakom_frequenzdaten,
     bakom_glasfaser_verfuegbarkeit,
@@ -757,6 +762,39 @@ async def test_konnektivitaetsprofil_konsistent(live_ctx, ort):
     )
     for data in (breitband, mobilfunk, glasfaser):
         standort_stimmt(data, ort)
+
+
+async def test_jede_katalog_layer_id_gibt_es_auf_geo_admin(live_ctx):
+    """Der statische Katalog nennt nur Layer, die map.geo.admin.ch fuehrt.
+
+    Gemessen am 28.10.2026: 10 der 12 IDs gab es weder in `layersConfig` noch
+    in den WMS-/WMTS-Capabilities noch im STAC-Katalog; die opendata.swiss-
+    Datensaetze nannten selbst andere Layer. `bakom_breitbandatlas_datensaetze`
+    ruft keine API auf — ohne diesen Test faellt ein umbenannter Layer nie auf.
+
+    Der Metadaten-Endpunkt `MapServer/<layer>` taugt dafuer nicht: Er antwortet
+    auch fuer gueltige Raster-Layer wie `downlink100` mit HTTP 400.
+    """
+    client = live_ctx.request_context.lifespan_context.http
+    try:
+        r = await client.get(f"{GEO_ADMIN_API}/layersConfig", params={"lang": "de"})
+        r.raise_for_status()
+    except httpx.HTTPError as e:
+        # Ueber denselben Klassifikator wie die Werkzeuge: sonst ordnet
+        # `classify_live_run.py` einen 5xx hier als Befund statt als Stoerung ein.
+        _raise_api_error(e)
+    bekannt = set(r.json())
+    assert LAYER_MOBILFUNKANLAGEN in bekannt, "Positivkontrolle: layersConfig liefert Layer"
+
+    katalog = daten(
+        await bakom_breitbandatlas_datensaetze(
+            TelekomStatInput(thema="alle", response_format=ResponseFormat.JSON)
+        )
+    )
+    unbekannt = sorted(
+        d["layer_id"] for d in katalog["datensaetze"] if d["layer_id"] not in bekannt
+    )
+    assert not unbekannt, f"Katalog nennt Layer, die geo.admin.ch nicht kennt: {unbekannt}"
 
 
 # ---------------------------------------------------------------------------

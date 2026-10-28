@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Behoben
 
+- **Der Breitbandatlas-Katalog nannte Layer, die es nicht gibt.**
+  `bakom_breitbandatlas_datensaetze` führte 10 von 12 Layer-IDs, die
+  geo.admin.ch weder in `layersConfig` noch in WMS, WMTS oder STAC kennt
+  (gemessen 28.10.2026). Ersetzt durch die Layer, die die verlinkten
+  opendata.swiss-Datensätze selbst nennen: `mobilnetz-3g/4g/5g`,
+  `downlink30` bis `downlink1000`, `anschlussart-glasfaser`. Die Werkzeuge
+  fragten diese schon vorher ab. Der Eintrag «4G Mobilfunknetze (LTE) –
+  Antennenstandorte» entfällt: sein Layer existiert nicht mehr, erhalten ist
+  nur ein Archiv von 2018; die 4G-Antennen stehen im Layer
+  `standorte-mobilfunkanlagen`. Ein täglicher Live-Test gleicht den Katalog
+  jetzt gegen geo.admin.ch ab.
+
 - **Eine Absage des Geodienstes erschien als «nicht versorgt».** Die vier
   Abdeckungs-Werkzeuge (Breitband, Glasfaser, Mobilfunk, Mehrfachvergleich)
   fragen `wms.geo.admin.ch` per GetFeatureInfo ab. Ein HTTP-Fehler und eine

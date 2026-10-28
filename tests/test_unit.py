@@ -372,19 +372,48 @@ class TestStaticTool:
         assert "Glasfaser" in result
 
     @pytest.mark.asyncio
-    async def test_breitbandatlas_enthaelt_erwartete_layer_ids(self) -> None:
+    async def test_breitbandatlas_nennt_die_layer_der_abdeckungs_werkzeuge(self) -> None:
+        """Katalog und Abfrage meinen dieselben Layer.
+
+        Bis Oktober 2026 nannte der Katalog fuer Festnetz, Mobilfunk und
+        Glasfaser neun IDs, die es auf geo.admin.ch nirgends gibt
+        (`netzabdeckung-5g`, `verfuegbarkeit-einzelner-technologien_100`, …) —
+        und dieser Test sicherte genau diese IDs zu. Die Werkzeuge fragten
+        derweil die richtigen ab. Gekoppelt wird deshalb an die Layer, die die
+        Werkzeuge tatsaechlich schicken; die prueft der Live-Lauf taeglich.
+        """
         import json
+
+        gesendet: list[str] = []
+
+        async def antwort(url: str, **kw: object) -> httpx.Response:
+            gesendet.append(kw["params"]["LAYERS"])  # type: ignore[index]
+            return httpx.Response(
+                200,
+                json={"type": "FeatureCollection", "features": []},
+                request=httpx.Request("GET", url),
+            )
+
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(side_effect=antwort)
+        ctx = _ctx_with(client)
+        ort = {"latitude": 47.3769, "longitude": 8.5417}
+        for speed in BroadbandSpeed:
+            await bakom_broadband_coverage(BroadbandCoverageInput(**ort, min_speed_mbps=speed), ctx)
+        for gen in MobilGenerations:
+            await server_modul.bakom_mobilfunk_abdeckung(
+                server_modul.MobileCoverageInput(**ort, generation=gen), ctx
+            )
+        await server_modul.bakom_glasfaser_verfuegbarkeit(CoordinateInput(**ort), ctx)
 
         params = TelekomStatInput(thema="alle", response_format=ResponseFormat.JSON)
         data = json.loads(await bakom_breitbandatlas_datensaetze(params))
-        assert len(data["datensaetze"]) >= 8
-        layer_ids = [d["layer_id"] for d in data["datensaetze"]]
-        for erwartet in (
-            "ch.bakom.netzabdeckung-5g",
-            "ch.bakom.netzabdeckung-4g",
-            "ch.bakom.anschlussart-verfuegbarkeit",
-        ):
-            assert erwartet in layer_ids, f"Layer {erwartet} fehlt"
+        katalog = {
+            d["layer_id"]
+            for d in data["datensaetze"]
+            if d["kategorie"] in ("Festnetz", "Mobilfunk", "Glasfaser")
+        }
+        assert katalog == set(gesendet)
 
     @pytest.mark.asyncio
     async def test_breitbandatlas_pflichtfelder_und_kategorien(self) -> None:
@@ -406,7 +435,7 @@ class TestStaticTool:
         data = json.loads(await bakom_breitbandatlas_datensaetze(params))
         layer_ids = [d["layer_id"] for d in data["datensaetze"]]
         assert any(
-            teil in lid for lid in layer_ids for teil in ("netzabdeckung", "mobilfunk", "5g", "4g")
+            teil in lid for lid in layer_ids for teil in ("mobilnetz", "mobilfunk", "5g", "4g")
         ), layer_ids
 
 
