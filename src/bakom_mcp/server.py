@@ -247,9 +247,6 @@ ATTRIBUTION_FOOTER_MD = (
 LAYER_MOBILFUNKANLAGEN = "ch.bakom.standorte-mobilfunkanlagen"
 WMS_GEO_ADMIN = "https://wms.geo.admin.ch/"
 LAYER_RADIO_TV = "ch.bakom.radio-fernsehsender"
-LAYER_BROADBAND_5G = "ch.bakom.netzabdeckung-5g"
-LAYER_BROADBAND_4G = "ch.bakom.netzabdeckung-4g"
-LAYER_BROADBAND_FESTNETZ = "ch.bakom.anschlussart-verfuegbarkeit"
 
 
 # ---------------------------------------------------------------------------
@@ -2150,63 +2147,63 @@ async def bakom_breitbandatlas_datensaetze(params: TelekomStatInput) -> str:
     katalog = [
         {
             "titel": "5G-NR-Verfügbarkeit",
-            "layer_id": "ch.bakom.netzabdeckung-5g",
+            "layer_id": "ch.bakom.mobilnetz-5g",
             "kategorie": "Mobilfunk",
             "url": "https://opendata.swiss/de/dataset/5g-nr-verfugbarkeit",
             "aufloesung": "100×100 m",
         },
         {
             "titel": "4G-LTE/LTE-A-Verfügbarkeit",
-            "layer_id": "ch.bakom.netzabdeckung-4g",
+            "layer_id": "ch.bakom.mobilnetz-4g",
             "kategorie": "Mobilfunk",
             "url": "https://opendata.swiss/de/dataset/4g-lte-lte-a-verfugbarkeit",
             "aufloesung": "100×100 m",
         },
         {
             "titel": "3G-UMTS/HSPA-Verfügbarkeit",
-            "layer_id": "ch.bakom.netzabdeckung-3g",
+            "layer_id": "ch.bakom.mobilnetz-3g",
             "kategorie": "Mobilfunk",
             "url": "https://opendata.swiss/de/dataset/3g-umts-hspa-verfugbarkeit",
             "aufloesung": "100×100 m",
         },
         {
             "titel": "Festnetz ≥30 Mbit/s",
-            "layer_id": "ch.bakom.verfuegbarkeit-einzelner-technologien_30",
+            "layer_id": "ch.bakom.downlink30",
             "kategorie": "Festnetz",
             "url": "https://opendata.swiss/de/dataset/internet-verfugbarkeit-via-festnetz-download-geschwindigkeit-30-mbit-s",
             "aufloesung": "250×250 m",
         },
         {
             "titel": "Festnetz ≥100 Mbit/s",
-            "layer_id": "ch.bakom.verfuegbarkeit-einzelner-technologien_100",
+            "layer_id": "ch.bakom.downlink100",
             "kategorie": "Festnetz",
             "url": "https://opendata.swiss/de/dataset/internet-verfugbarkeit-via-festnetz-download-geschwindigkeit-100-mbit-s",
             "aufloesung": "250×250 m",
         },
         {
             "titel": "Festnetz ≥300 Mbit/s",
-            "layer_id": "ch.bakom.verfuegbarkeit-einzelner-technologien_300",
+            "layer_id": "ch.bakom.downlink300",
             "kategorie": "Festnetz",
             "url": "https://opendata.swiss/de/dataset/internet-verfugbarkeit-via-festnetz-download-geschwindigkeit-300-mbit-s",
             "aufloesung": "250×250 m",
         },
         {
             "titel": "Festnetz ≥500 Mbit/s",
-            "layer_id": "ch.bakom.verfuegbarkeit-einzelner-technologien_500",
+            "layer_id": "ch.bakom.downlink500",
             "kategorie": "Festnetz",
             "url": "https://opendata.swiss/de/dataset/internet-verfugbarkeit-via-festnetz-download-geschwindigkeit-500-mbit-s",
             "aufloesung": "250×250 m",
         },
         {
             "titel": "Festnetz ≥1000 Mbit/s (Gigabit)",
-            "layer_id": "ch.bakom.verfuegbarkeit-einzelner-technologien_1000",
+            "layer_id": "ch.bakom.downlink1000",
             "kategorie": "Festnetz",
             "url": "https://opendata.swiss/de/dataset/internet-verfugbarkeit-via-festnetz-download-geschwindigkeit-1000-mbit-s",
             "aufloesung": "250×250 m",
         },
         {
             "titel": "Glasfaser FTTB/FTTH",
-            "layer_id": "ch.bakom.anschlussart-verfuegbarkeit",
+            "layer_id": "ch.bakom.anschlussart-glasfaser",
             "kategorie": "Glasfaser",
             "url": "https://opendata.swiss/de/dataset/verfugbare-anschlussarten-glasfaser-fttb-ftth",
             "aufloesung": "250×250 m",
@@ -2216,13 +2213,6 @@ async def bakom_breitbandatlas_datensaetze(params: TelekomStatInput) -> str:
             "layer_id": "ch.bakom.standorte-mobilfunkanlagen",
             "kategorie": "Infrastruktur",
             "url": "https://opendata.swiss/de/dataset/mobilfunkanlagen",
-            "aufloesung": "Punktdaten",
-        },
-        {
-            "titel": "4G Mobilfunknetze (LTE) – Antennenstandorte",
-            "layer_id": "ch.bakom.standorte-mobilfunkanlagen-4g",
-            "kategorie": "Infrastruktur",
-            "url": "https://opendata.swiss/de/dataset/4g-mobilfunknetze-lte-antennenstandorte",
             "aufloesung": "Punktdaten",
         },
         {

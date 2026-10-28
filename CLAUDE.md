@@ -446,8 +446,10 @@ Gegenprobe bei Änderungen an der Suite — in `server.py` kurz umbiegen:
 
 | Konstante | Erwartung |
 |---|---|
-| `OPENDATA_SWISS_API` | 28 von 75 fallen |
-| `GEO_ADMIN_API` | 10 von 75 fallen |
+| `OPENDATA_SWISS_API` | 30 von 78 fallen |
+| `GEO_ADMIN_API` | 11 von 78 fallen |
+
+Gemessen am 28.10.2026, Host mit `gibtsnicht.` vorangestellt.
 
 Vorher prüfen, ob die umgebogene Konstante überhaupt gelesen wird — sonst
 beweist die grüne Suite nichts. `GEO_ADMIN_IDENTIFY`, `GEO_ADMIN_FIND` und
@@ -526,10 +528,35 @@ Der Ausfall vom 16.10.2026 (Issue #108) lief über denselben Pfad, war aber eine
 Zeitüberschreitung — die warf schon vorher und wurde richtig als `outage`
 eingeordnet. Die stille Lücke lag daneben, beim 5xx und beim XML.
 
-Wer einen Layer von Hand prüft: Mehrere IDs im statischen Katalog
-(`netzabdeckung-*`, `anschlussart-verfuegbarkeit`) antworten über WMS mit
-`LayerNotDefined`. Das belegt nur, dass der WMS sie nicht kennt, nicht, dass es
-sie auf geo.admin.ch nicht gibt.
+### Layer-IDs prüfen (`bakom_breitbandatlas_datensaetze`)
+
+Der Katalog ist statisch und ruft keine API auf. Bis Oktober 2026 nannte er 10
+von 12 IDs, die es auf geo.admin.ch nicht gibt (`netzabdeckung-5g`,
+`verfuegbarkeit-einzelner-technologien_100`, `anschlussart-verfuegbarkeit` …),
+und ein Unit-Test sicherte genau diese IDs zu. Die Werkzeuge fragten derweil
+die richtigen ab.
+
+Ob es einen Layer gibt, steht in vier Quellen, die am 28.10.2026 übereinstimmten:
+`MapServer/layersConfig`, WMS- und WMTS-Capabilities, STAC-Collections. Welchen
+Layer ein Datensatz meint, nennt opendata.swiss selbst — `package_show`, im
+Feld `url` der Ressource `map.geo.admin.ch/?layers=…`. Daher stammen die
+heutigen IDs.
+
+Kein Beleg sind:
+
+- **`MapServer/<layer>`**: antwortet auch für gültige Raster-Layer wie
+  `downlink100` mit HTTP 400 «No Vector Table».
+- **WMS GetFeatureInfo**: `LayerNotDefined` heisst nur, dass der WMS den Layer
+  nicht kennt.
+- **`data.geo.admin.ch/<layer>/`**: dort liegt für `mobil-antennenstandorte-lte`
+  noch ein Archiv vom 2.5.2018, ohne Layer dazu. Der Eintrag ist deshalb
+  entfernt; `standorte-mobilfunkanlagen` führt die 4G-Antennen
+  (`techno_de: Technologie 4G`).
+
+`test_jede_katalog_layer_id_gibt_es_auf_geo_admin` (live) gleicht täglich gegen
+`layersConfig` ab; `test_breitbandatlas_nennt_die_layer_der_abdeckungs_werkzeuge`
+(unit) koppelt Festnetz, Mobilfunk und Glasfaser an die Layer, die die Werkzeuge
+tatsächlich abfragen.
 
 ### LINDAS (`bakom_medien_statistik`)
 
