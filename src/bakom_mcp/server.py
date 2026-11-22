@@ -573,12 +573,34 @@ async def _wms_abgedeckt(
     return len(data["features"]) > 0
 
 
-async def _opendata_dataset_info(client: httpx.AsyncClient, dataset_id: str) -> dict[str, Any]:
-    """Metadaten eines opendata.swiss-Datensatzes abrufen."""
-    url = f"{OPENDATA_SWISS_API}/package_show"
-    r = await client.get(url, params={"id": dataset_id}, timeout=TIMEOUT)
+async def _ckan_get(client: httpx.AsyncClient, aktion: str, params: dict[str, Any]) -> Any:
+    """GET gegen den opendata.swiss-Katalog — eine Zeitueberschreitung wird einmal wiederholt.
+
+    Gemessen am 22.11.2026: Von 40 Abfragen an `package_search` hing eine 25 s
+    ohne ein einziges Byte, eine weitere brauchte 10 s, die uebrigen kamen unter
+    5 s; geo.admin.ch ueber dieselbe Verbindung 30/30 schnell. Es haengt die
+    einzelne Anfrage, nicht der Suchbegriff — eine zweite kommt meist sofort.
+    Im Live-Lauf vom 20.11. (Issue #112) fiel deshalb je Durchgang ein anderer
+    Test nach 20 s, und Nutzende warteten genauso lange auf «Zeitueberschreitung».
+
+    Sofort wiederholt, ohne Pause: Warten hilft einer haengenden Anfrage nicht.
+    Nur die Zeitueberschreitung: Ein 4xx ist eine echte Antwort, die beim
+    zweiten Mal gleich ausfiele; ein 5xx hielt am 14.10.2026 minutenlang an
+    (Issue #106), dort hilft eine sofortige Wiederholung nicht. Schlechtester
+    Fall: zweimal TIMEOUT, bevor die Meldung kommt.
+    """
+    url = f"{OPENDATA_SWISS_API}/{aktion}"
+    try:
+        r = await client.get(url, params=params, timeout=TIMEOUT)
+    except httpx.TimeoutException:
+        r = await client.get(url, params=params, timeout=TIMEOUT)
     r.raise_for_status()
     return r.json()
+
+
+async def _opendata_dataset_info(client: httpx.AsyncClient, dataset_id: str) -> dict[str, Any]:
+    """Metadaten eines opendata.swiss-Datensatzes abrufen."""
+    return await _ckan_get(client, "package_show", {"id": dataset_id})
 
 
 def _ckan_de(wert: Any) -> str:
@@ -1462,17 +1484,15 @@ async def bakom_rtv_suche(params: RTVSearchInput, ctx: Context) -> str:
             if params.query:
                 suchworte.append(params.query)
 
-            r = await client.get(
-                f"{OPENDATA_SWISS_API}/package_search",
-                params={
+            ckan_data = await _ckan_get(
+                client,
+                "package_search",
+                {
                     "fq": "organization:bundesamt-fur-kommunikation-bakom",
                     "q": " ".join(suchworte),
                     "rows": params.limit,
                 },
-                timeout=TIMEOUT,
             )
-            r.raise_for_status()
-            ckan_data = r.json()
             datasets = ckan_data.get("result", {}).get("results", [])
             resultate = [
                 {
@@ -1600,18 +1620,16 @@ async def bakom_medienstruktur_info(params: TelekomStatInput, ctx: Context) -> s
     try:
         async with _shared_client(ctx) as client:
             # Suche auf opendata.swiss nach BAKOM-Medien-Datensätzen
-            r = await client.get(
-                f"{OPENDATA_SWISS_API}/package_search",
-                params={
+            data = await _ckan_get(
+                client,
+                "package_search",
+                {
                     "fq": "organization:bundesamt-fur-kommunikation-bakom",
                     "q": params.thema,
                     "rows": 10,
                     "sort": "metadata_modified desc",
                 },
-                timeout=TIMEOUT,
             )
-            r.raise_for_status()
-            data = r.json()
             datasets = data.get("result", {}).get("results", [])
 
             datensaetze = []
@@ -1714,18 +1732,17 @@ async def bakom_aktuell(params: TelekomStatInput, ctx: Context) -> str:
     """
     try:
         async with _shared_client(ctx) as client:
-            r = await client.get(
-                f"{OPENDATA_SWISS_API}/package_search",
-                params={
+            antwort = await _ckan_get(
+                client,
+                "package_search",
+                {
                     "fq": "organization:bundesamt-fur-kommunikation-bakom",
                     "q": params.thema,
                     "rows": DEFAULT_LIMIT,
                     "sort": "metadata_modified desc",
                 },
-                timeout=TIMEOUT,
             )
-            r.raise_for_status()
-            treffer = r.json().get("result", {}).get("results", [])
+            treffer = antwort.get("result", {}).get("results", [])
 
             datensaetze = []
             for ds in treffer:
@@ -1831,18 +1848,16 @@ async def bakom_telekomstatistik_uebersicht(params: TelekomStatInput, ctx: Conte
     """
     try:
         async with _shared_client(ctx) as client:
-            r = await client.get(
-                f"{OPENDATA_SWISS_API}/package_search",
-                params={
+            data = await _ckan_get(
+                client,
+                "package_search",
+                {
                     "fq": "organization:bundesamt-fur-kommunikation-bakom",
                     "q": params.thema,
                     "rows": 10,
                     "sort": "score desc, metadata_modified desc",
                 },
-                timeout=TIMEOUT,
             )
-            r.raise_for_status()
-            data = r.json()
             datasets = data.get("result", {}).get("results", [])
             total = data.get("result", {}).get("count", 0)
 

@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Behoben
 
+- **Eine hängende Anfrage an opendata.swiss endete nach 20 s als Fehler.**
+  Der Katalog lässt einzelne Anfragen ohne Antwort hängen (gemessen 22.11.2026:
+  eine von 40), eine zweite kommt meist sofort. `bakom_rtv_suche`,
+  `bakom_medienstruktur_info`, `bakom_aktuell` und
+  `bakom_telekomstatistik_uebersicht` wiederholen eine Zeitüberschreitung jetzt
+  einmal. Eine 4xx- oder 5xx-Antwort wird nicht wiederholt. Im schlechtesten
+  Fall dauert es bis zur Meldung doppelt so lange wie bisher.
+
 - **Der Breitbandatlas-Katalog nannte Layer, die es nicht gibt.**
   `bakom_breitbandatlas_datensaetze` führte 10 von 12 Layer-IDs, die
   geo.admin.ch weder in `layersConfig` noch in WMS, WMTS oder STAC kennt
