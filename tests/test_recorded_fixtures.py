@@ -444,6 +444,64 @@ async def test_ein_abbruch_bleibt_ein_fehler():
         await server.bakom_aktuell(server.TelekomStatInput(thema="medien"), _ctx(client))
 
 
+# --------------------------------------------------------------------------
+# Die haengende Anfrage (Issue #112)
+# --------------------------------------------------------------------------
+# Gemessen am 22.11.2026: opendata.swiss laesst einzelne Anfragen ohne ein Byte
+# haengen, eine zweite kommt meist sofort. `_ckan_get` wiederholt deshalb eine
+# Zeitueberschreitung einmal — und sonst nichts.
+async def _katalog_mit(werkzeug: str, *antworten: Any) -> tuple[Any, AsyncMock]:
+    """Faehrt ein Katalog-Werkzeug; `antworten` sind Ausnahmen oder Fixture-Namen."""
+    klasse, eingabe, _ = WERKZEUGE[werkzeug]
+    strom = iter(antworten)
+
+    async def antwort(url: str, **kw: Any) -> httpx.Response:
+        naechste = next(strom)
+        if isinstance(naechste, Exception):
+            raise naechste
+        status, text = (200, fixture_text(naechste)) if isinstance(naechste, str) else naechste
+        return httpx.Response(
+            status, text=text, request=httpx.Request("GET", url, params=kw.get("params"))
+        )
+
+    client = AsyncMock(spec=httpx.AsyncClient)
+    client.get = AsyncMock(side_effect=antwort)
+    params = getattr(server, klasse)(**eingabe, response_format="json")
+    fn = getattr(server, werkzeug)
+    return json.loads(await fn(params, _ctx(client))), client
+
+
+@pytest.mark.parametrize("werkzeug", sorted(KATALOG_WERKZEUGE))
+async def test_eine_haengende_anfrage_wird_einmal_wiederholt(werkzeug):
+    """Erst haengt die Anfrage, dann kommt die aufgezeichnete Antwort durch."""
+    _, _, namen = WERKZEUGE[werkzeug]
+    liste, _ = KATALOG_WERKZEUGE[werkzeug]
+    daten, client = await _katalog_mit(werkzeug, httpx.ReadTimeout("haengt"), *namen)
+    assert daten[liste], f"{werkzeug} liefert nach der Wiederholung nichts"
+    assert client.get.await_count == 2
+    erste, zweite = client.get.await_args_list
+    assert erste == zweite, "die Wiederholung muss dieselbe Abfrage schicken"
+
+
+@pytest.mark.parametrize("werkzeug", sorted(KATALOG_WERKZEUGE))
+async def test_zweimal_haengend_ist_eine_zeitueberschreitung(werkzeug):
+    """Einmal, nicht beliebig oft: sonst wartet das Modell ein Vielfaches von TIMEOUT."""
+    with pytest.raises(ToolError, match="Zeitüberschreitung"):
+        await _katalog_mit(werkzeug, httpx.ReadTimeout("a"), httpx.ReadTimeout("b"))
+
+
+@pytest.mark.parametrize("werkzeug", sorted(KATALOG_WERKZEUGE))
+@pytest.mark.parametrize("status", [400, 503])
+async def test_eine_antwort_der_quelle_wird_nicht_wiederholt(werkzeug, status):
+    """Ein 4xx faellt beim zweiten Mal gleich aus; ein 5xx hielt am 14.10. minutenlang.
+
+    Faende hier eine zweite Anfrage statt, waere `next(strom)` erschoepft und der
+    Test fiele mit StopIteration statt mit dem ToolError der Quelle.
+    """
+    with pytest.raises(ToolError, match=f"HTTP {status}"):
+        await _katalog_mit(werkzeug, (status, "{}"))
+
+
 # Aufgezeichnet am 2026-10-28 04:06 UTC, wortwoertlich: GetFeatureInfo wie in
 # `breitband_100.json`, aber mit `LAYERS=ch.bakom.gibtsnicht`. Der WMS antwortet
 # mit HTTP 200 und `content-type: text/xml` — nicht mit einem 4xx.

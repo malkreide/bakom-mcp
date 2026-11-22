@@ -401,6 +401,16 @@ anderer Fehlschlag macht ihn zum `finding`. Wer eine dieser Meldungen in
 Von Hand nachprüfen: opendata.swiss antwortet auf den Standard-User-Agent von
 curl mit **403** (nginx, seit mindestens 14.10.2026), auf den des Servers mit
 200. Ohne `-A "bakom-mcp/…"` hält man einen gesunden Host für gesperrt.
+Ein Cache-Brecher wie `&_=123` macht dort jede Antwort zum **400** — das Suchwort
+variieren (`q=tv zz<Zufall>`), nicht einen eigenen Parameter anhängen.
+
+**opendata.swiss lässt einzelne Anfragen hängen.** Am 22.11.2026 hing von 40
+Abfragen an `package_search` eine 25 s ohne ein Byte; geo.admin.ch über dieselbe
+Verbindung 30/30 schnell (Issue #112). Alle Katalog-Abfragen laufen deshalb über
+`_ckan_get`, das eine Zeitüberschreitung **einmal** und sofort wiederholt — nicht
+4xx, nicht 5xx. Im Log sieht das so aus: ein Test braucht ~21 s und ist **grün**
+(20 s Timeout, dann die Wiederholung). Das ist kein Befund. Rot wird es erst,
+wenn beide Versuche hängen — dann ist die Störung länger als eine Anfrage.
 
 Zwei Regeln für diese Datei:
 
