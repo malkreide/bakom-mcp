@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.3] - 2026-11-23
+
 ### Behoben
 
 - **Eine hängende Anfrage an opendata.swiss endete nach 20 s als Fehler.**
