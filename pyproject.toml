@@ -47,7 +47,7 @@ dev = [
     # Exakt gepinnt, identisch zu .github/workflows/ci.yml und
     # .pre-commit-config.yaml. Eine andere Version meldet Abweichungen, die
     # niemand verursacht hat. Alle drei Stellen zusammen bumpen.
-    "ruff==0.16.9",
+    "ruff==0.17.3",
 ]
 
 [project.scripts]
